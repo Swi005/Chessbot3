@@ -18,4 +18,5 @@ public abstract class SimplePiece implements iPiece{
 
     public int getValue() { return value; }
     public char getSymbol(){ return symbol; }
+
 }
