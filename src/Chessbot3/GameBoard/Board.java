@@ -1,7 +1,7 @@
 package Chessbot3.GameBoard;
 
 import Chessbot3.Tuple;
-import Chessbot3.Piece.iPiece;
+import Chessbot3.Pieces.iPiece;
 
 import java.util.Arrays;
 
@@ -35,7 +35,7 @@ public class Board implements IBoard {
             new iPiece[] {}, 
             new iPiece[] {} 
         };
-        
+
     }
 
     public Board(iPiece[][] customBoard) 
@@ -47,6 +47,19 @@ public class Board implements IBoard {
     public iPiece GetPiece(Tuple<Integer, Integer> pos) 
     {
         return grid[pos.getX()][pos.getY()];
+    }
+
+    public Tuple<Integer,Integer> GetCoordsOfPiece(iPiece piece)
+    {
+        for (int i = 0; i < grid.length; i++) 
+        {
+            iPiece[] subRow = grid[i];
+            for (int j = 0; j < subRow.length; j++) 
+            {
+                if(subRow[j] == piece)
+                    return new Tuple<Integer, Integer>(i, j);
+            }
+        }
     }
 
     @Override
@@ -63,6 +76,7 @@ public class Board implements IBoard {
         return false;
     }
 
+    
     @Override
     public Move[] GenMoves(iPiece pice) {
         // TODO Auto-generated method stub
