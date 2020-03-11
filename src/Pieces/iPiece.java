@@ -1,12 +1,12 @@
 package Pieces;
 
+import Chessbot3.Color;
 import Chessbot3.Tuple;
-
-import java.awt.*;
 
 public interface iPiece {
     public Boolean isWhite();
     public Boolean isBlack();
+    public Color getColor();
     public Boolean isOppositeColor(iPiece p);
     public Boolean canSprint();
 

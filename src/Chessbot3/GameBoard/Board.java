@@ -1,7 +1,7 @@
 package Chessbot3.GameBoard;
 
 import Chessbot3.Tuple;
-import Chessbot3.Pieces.iPiece;
+import Pieces.iPiece;
 
 import java.util.Arrays;
 

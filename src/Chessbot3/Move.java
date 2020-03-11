@@ -7,7 +7,7 @@ public class Move implements Comparable
     private boolean stabilityIndex;
     private int weight;
 
-    public Move(int x, int y)
+    public Move(Tuple<Integer, Integer> fra , Tuple<Integer, Integer> til)
     {
         this.x = x;
         this.y = y;

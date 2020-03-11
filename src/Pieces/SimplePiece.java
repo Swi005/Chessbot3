@@ -1,26 +1,34 @@
 package Pieces;
 
+import Chessbot3.Color;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.Move;
 import Chessbot3.Tuple;
-import Pieces.iPiece;
 
-import java.lang.reflect.Array;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static Chessbot3.Chess.moveDict;
+import static Chessbot3.Color.WHITE;
 
 public abstract class SimplePiece implements iPiece {
-    Boolean isWhite;
+    Color color;
     int value;
     Character symbol;
     Boolean canSprint;
     Board gameboard;
+    BufferedImage image;
 
-    public Boolean isWhite() { return isWhite; }
-    public Boolean isBlack() { return !isWhite; }
-    public Boolean isOppositeColor(iPiece p){ return isWhite != p.isWhite(); }
+    public SimplePiece(Color c, Board gameboard){
+        this.color = c;
+        this.gameboard = gameboard;
+    }
 
+    public Boolean isWhite() { return color == WHITE; }
+    public Boolean isBlack() { return !isWhite(); }
+    public Color getColor() { return this.color; }
+
+    public Boolean isOppositeColor(iPiece p){ return this.getColor() != p.getColor(); }
     public Boolean canSprint(){ return canSprint; }
 
     public Integer getX(){ return 0; } // TODO: 11.03.2020 Fiks disse!
@@ -32,7 +40,7 @@ public abstract class SimplePiece implements iPiece {
 
     public ArrayList<Move> getMoves(){
         ArrayList<Move> ret = new ArrayList<>();
-        Array[][] grid = gameboard.getGrid();
+        iPiece[][] grid = gameboard.GetGrid();
         Integer fraX = getX();
         Integer fraY = getY();
         for(Tuple retning : moveDict.get(symbol)){
@@ -46,7 +54,7 @@ public abstract class SimplePiece implements iPiece {
                 iPiece mål = grid[tilX][tilY];
                 if(mål == null || this.isOppositeColor(mål)){
                     ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY)));
-                }
+                } else break;
                 if(!canSprint) break;
             }
         }

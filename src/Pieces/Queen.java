@@ -6,14 +6,14 @@ import Chessbot3.GameBoard.Board;
 import static Chessbot3.Chess.imageDict;
 import static Chessbot3.Color.WHITE;
 
-public class Rook extends SimplePiece {
-    public Rook(Color c, Board gameboard) {
+public class Queen extends SimplePiece {
+    public Queen(Color c, Board gameboard) {
         super(c, gameboard);
         canSprint = true;
-        value = 479;
-        symbol = 'R';
+        value = 929;
+        symbol = 'Q';
         if(c == WHITE){
-            image = imageDict.get("rook_white");
-        }else image = imageDict.get("rook_black");
+            image = imageDict.get("queen_white");
+        }else image = imageDict.get("queen_black");
     }
 }

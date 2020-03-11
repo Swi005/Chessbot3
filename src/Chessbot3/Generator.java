@@ -1,5 +1,9 @@
 package Chessbot3;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -35,5 +39,33 @@ public class Generator {
         directions.put('Q', new Tuple[] {N, E, S, W, NE, SE, SW, NW});
         directions.put('K', new Tuple[] {N, E, S, W, NE, SE, SW, NW});
         return directions;
+    }
+    public static Hashtable<String, BufferedImage> makeImages(){
+        /* Oppretter en dict på der nøkkelen er navnet på brikken, og innholdet er et BufferedImage.
+         */
+        Hashtable<String, BufferedImage> imageTable = new Hashtable<>();
+        for (String name : new String[] {
+                "bishop_black",
+                "bishop_white",
+                "horse_black",
+                "horse_white",
+                "king_black",
+                "king_white",
+                "pawn_black",
+                "pawn_white",
+                "queen_black",
+                "queen_white",
+                "rook_black",
+                "rook_white"
+        }) {
+            try {
+                File temp = new File("src\\Chessbot3\\Pieces\\" + name + ".png");
+                BufferedImage img = ImageIO.read(temp);
+                imageTable.put(name, img);
+            } catch (IOException e) {
+                System.out.println("Cannot find \"" + name + ".png\"");
+            }
+        }
+        return imageTable;
     }
 }
