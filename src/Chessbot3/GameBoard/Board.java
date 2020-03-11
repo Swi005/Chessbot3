@@ -10,21 +10,29 @@ import Chessbot3.Move;
  */
 public class Board implements IBoard {
 
-    IPice[][] grid;
+    iPiece[][] grid;
 
     int wScore;
     int bScore;
-    Tuple<Boolean,Boolean> wCastle;
+    Tuple<Boolean, Boolean> wCastle;
     Tuple<Boolean, Boolean> bCastle;
 
-    @Override
-    public IPice GetPice(Move move) {
-        // TODO Auto-generated method stub
-        return null;
+    public Board() {
+        grid = new iPiece[][] { new iPiece[] {}, new iPiece[] {}, new iPiece[] {}, new iPiece[] {}, new iPiece[] {},
+                new iPiece[] {}, new iPiece[] {}, new iPiece[] {} };
+    }
+
+    public Board(iPiece[][] customBoard) {
+        grid = customBoard;
     }
 
     @Override
-    public void MovePiece(IPice pice, Move move) {
+    public iPiece GetPice(Tuple<Integer, Integer> pos) {
+        return grid[pos.getX()][pos.getY()];
+    }
+
+    @Override
+    public void MovePiece(iPiece pice, Move move) {
         // TODO Auto-generated method stub
 
     }
@@ -36,16 +44,26 @@ public class Board implements IBoard {
     }
 
     @Override
-    public Move[] GenMoves(IPice pice) {
+    public Move[] GenMoves(iPiece pice) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public int GetScore(boolean isWhite) {
-        // TODO Auto-generated method stub
-        return 0;
+        if (isWhite)
+            return wScore;
+        else
+            return bScore;
     }
 
-    
+    public void Reverse()
+    {
+        for(int i = 0; i<grid.length/2; i++)
+        {
+            iPiece[] temp = grid[i];
+            grid[i] = grid[grid.length - i - 1];
+            grid[grid.length - i - 1] = temp;
+        }
+    }
 }
