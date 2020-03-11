@@ -60,6 +60,7 @@ public class Board implements IBoard {
                     return new Tuple<Integer, Integer>(i, j);
             }
         }
+        return null;
     }
 
     @Override

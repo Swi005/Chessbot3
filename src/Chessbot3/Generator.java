@@ -8,15 +8,15 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class Generator {
-    static Tuple<Integer, Integer> N = new Tuple(0, 1);
-    static Tuple<Integer, Integer> S = new Tuple(0, -1);
-    static Tuple<Integer, Integer> E = new Tuple(1, 0);
-    static Tuple<Integer, Integer> W = new Tuple(-1, 0);
+    public static Tuple<Integer, Integer> N = new Tuple(0, 1);
+    public static Tuple<Integer, Integer> S = new Tuple(0, -1);
+    public static Tuple<Integer, Integer> E = new Tuple(1, 0);
+    public static Tuple<Integer, Integer> W = new Tuple(-1, 0);
 
-    static Tuple<Integer, Integer> NW = new Tuple(-1, 1);
-    static Tuple<Integer, Integer> NE = new Tuple(1, 1);
-    static Tuple<Integer, Integer> SW = new Tuple(-1, -1);
-    static Tuple<Integer, Integer> SE = new Tuple(1, -1);
+    public static Tuple<Integer, Integer> NW = new Tuple(-1, 1);
+    public static Tuple<Integer, Integer> NE = new Tuple(1, 1);
+    public static Tuple<Integer, Integer> SW = new Tuple(-1, -1);
+    public static Tuple<Integer, Integer> SE = new Tuple(1, -1);
 
     static Tuple<Integer, Integer> NNW = new Tuple(-1, 2);
     static Tuple<Integer, Integer> NNE = new Tuple(1, 2);
