@@ -3,7 +3,6 @@ package Chessbot3.GameBoard;
 import Chessbot3.Tuple;
 import Chessbot3.Piece.iPiece;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import Chessbot3.Move;
@@ -14,6 +13,8 @@ import Chessbot3.Move;
 public class Board implements IBoard {
 
     iPiece[][] grid;
+
+    iPiece[] wPices, bPieces;
 
     int wScore;
     int bScore;
@@ -34,6 +35,7 @@ public class Board implements IBoard {
             new iPiece[] {}, 
             new iPiece[] {} 
         };
+        
     }
 
     public Board(iPiece[][] customBoard) 
