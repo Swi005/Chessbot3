@@ -2,7 +2,7 @@ package Chessbot3.GameBoard;
 
 import Chessbot3.Move;
 import Chessbot3.Tuple;
-import Chessbot3.Piece.iPiece;
+import Pieces.iPiece;
 
 /**
  * IBoard

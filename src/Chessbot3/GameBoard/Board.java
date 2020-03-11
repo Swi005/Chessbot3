@@ -1,11 +1,11 @@
 package Chessbot3.GameBoard;
 
 import Chessbot3.Tuple;
-import Chessbot3.Piece.iPiece;
 
 import java.util.Arrays;
 
 import Chessbot3.Move;
+import Pieces.iPiece;
 
 /**
  * Board
@@ -26,7 +26,7 @@ public class Board implements IBoard {
     {
         grid = new iPiece[][] 
         { 
-            new iPiece[] {}, 
+            new iPiece[] {},
             new iPiece[] {}, 
             new iPiece[] {}, 
             new iPiece[] {}, 

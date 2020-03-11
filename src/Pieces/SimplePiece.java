@@ -23,12 +23,12 @@ public abstract class SimplePiece implements iPiece {
 
     public Boolean canSprint(){ return canSprint; }
 
-    public int getX(){ return 0; } // TODO: 11.03.2020 Fiks disse!
-    public int getY(){ return 0; }
+    public Integer getX(){ return 0; } // TODO: 11.03.2020 Fiks disse!
+    public Integer getY(){ return 0; }
     public Tuple<Integer, Integer> getCoords() { return new Tuple(getX(), getY()); }
 
     public int getValue() { return value; }
-    public char getSymbol(){ return symbol; }
+    public Character getSymbol(){ return symbol; }
 
     public ArrayList<Move> getMoves(){
         ArrayList<Move> ret = new ArrayList<>();
