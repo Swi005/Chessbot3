@@ -16,7 +16,7 @@ public abstract class SimplePiece implements iPiece
     public Boolean isOppositeColor(iPiece p){ return isWhite != p.isWhite(); }
 
     public Boolean canSprint(){ return canSprint; }
-    
+
     public int getX(){ return 0; } // TODO: 11.03.2020 Fiks disse!
     public int getY(){ return 0; }
 

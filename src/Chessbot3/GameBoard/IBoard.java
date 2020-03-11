@@ -10,9 +10,9 @@ import Chessbot3.Piece.iPiece;
 public interface IBoard 
 {
 
-    public iPiece GetPice(Tuple<Integer,Integer> pos);
+    public iPiece GetPiece(Tuple<Integer,Integer> pos);
 
-    public void MovePiece(iPiece pice, Move move);
+    public void MovePiece(Move move);
 
     public boolean IsMate();
     
@@ -20,4 +20,7 @@ public interface IBoard
 
     public int GetScore(boolean isWhite);
 
+    public Board Copy();
+
+    public iPiece[][] GetGrid();
 }

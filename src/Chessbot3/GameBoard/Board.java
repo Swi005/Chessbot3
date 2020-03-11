@@ -3,6 +3,9 @@ package Chessbot3.GameBoard;
 import Chessbot3.Tuple;
 import Chessbot3.Piece.iPiece;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import Chessbot3.Move;
 
 /**
@@ -39,13 +42,13 @@ public class Board implements IBoard {
     }
 
     @Override
-    public iPiece GetPice(Tuple<Integer, Integer> pos) 
+    public iPiece GetPiece(Tuple<Integer, Integer> pos) 
     {
         return grid[pos.getX()][pos.getY()];
     }
 
     @Override
-    public void MovePiece(iPiece pice, Move move) 
+    public void MovePiece(Move move) 
     {
         // TODO Auto-generated method stub
 
@@ -73,6 +76,19 @@ public class Board implements IBoard {
             return bScore;
     }
 
+    @Override
+    public iPiece[][] GetGrid()
+    {
+        return Arrays.copyOf(this.grid, this.grid.length);
+    }
+
+    @Override
+    public Board Copy() 
+    {
+        return new Board(this.GetGrid());
+    }
+
+    
     public void Reverse()
     {
         for(int i = 0; i<grid.length/2; i++)
