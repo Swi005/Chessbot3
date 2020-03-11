@@ -14,6 +14,7 @@ public class Board implements IBoard {
 
     int wScore;
     int bScore;
+    boolean isWhitesTurn = true;
     Tuple<Boolean, Boolean> wCastle;
     Tuple<Boolean, Boolean> bCastle;
 
@@ -32,14 +33,16 @@ public class Board implements IBoard {
     }
 
     @Override
-    public void MovePiece(iPiece pice, Move move) {
+    public void MovePiece(iPiece pice, Move move) 
+    {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public boolean IsMate() {
-        // TODO Auto-generated method stub
+    public boolean IsMate() 
+    {
+        // TODO Check legal moves of king
         return false;
     }
 
