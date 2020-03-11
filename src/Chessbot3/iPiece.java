@@ -2,7 +2,7 @@ package Chessbot3;
 
 public interface iPiece {
 
-    public getMoves(Board);
+    public Move[] getMoves(Board board);
     public Boolean isWhite();
     public Boolean isBlack();
     public Boolean isOppositeColor(iPiece p);
