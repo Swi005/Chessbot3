@@ -1,5 +1,7 @@
 package Chessbot3;
 
+import Chessbot3.GameBoard.Board;
+
 public interface iPiece {
 
     public Move[] getMoves(Board board);
