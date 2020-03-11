@@ -2,7 +2,6 @@ package Chessbot3;
 
 import java.awt.image.BufferedImage;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 import Chessbot3.GameBoard.Board;
