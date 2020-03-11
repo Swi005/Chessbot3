@@ -32,7 +32,7 @@ public abstract class SimplePiece implements iPiece {
     public Boolean isOppositeColor(iPiece p){ return this.getColor() != p.getColor(); }
     public Boolean canSprint(){ return canSprint; }
 
-    public Integer getX(){ return getCoords().getX(); } // TODO: 11.03.2020 Fiks disse!
+    public Integer getX(){ return getCoords().getX(); }
     public Integer getY(){ return getCoords().getY(); }
     public Tuple<Integer, Integer> getCoords() { return gameboard.GetCoordsOfPiece(this); }
 

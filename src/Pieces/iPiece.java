@@ -1,7 +1,10 @@
 package Pieces;
 
 import Chessbot3.Color;
+import Chessbot3.Move;
 import Chessbot3.Tuple;
+
+import java.util.ArrayList;
 
 public interface iPiece {
     public Boolean isWhite();
@@ -17,5 +20,5 @@ public interface iPiece {
     public int getValue();
     public Character getSymbol();
 
-
+    ArrayList<Move> getMoves();
 }

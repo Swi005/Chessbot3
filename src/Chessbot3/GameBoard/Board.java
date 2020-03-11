@@ -1,11 +1,16 @@
 package Chessbot3.GameBoard;
 
+import Chessbot3.Color;
 import Chessbot3.Tuple;
 import Pieces.iPiece;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import Chessbot3.Move;
+
+import static Chessbot3.Color.WHITE;
 
 /**
  * Board
@@ -14,7 +19,7 @@ public class Board implements IBoard {
 
     iPiece[][] grid;
 
-    iPiece[] wPices, bPieces;
+    iPiece[] wPieces, bPieces;
 
     int wScore;
     int bScore;
@@ -79,9 +84,21 @@ public class Board implements IBoard {
 
     
     @Override
-    public Move[] GenMoves(iPiece pice) {
-        // TODO Auto-generated method stub
-        return null;
+    public ArrayList<Move> GenMoves(Color c) {
+        /* Lager en liste over nesten-lovlige trekk som en farge kan gjøre på dette brettet.
+        // TODO: 11.03.2020 Fiks rokader! Det er her spillet må sjekke hvem som kan rokere, og hvor. 
+         */
+        ArrayList<Move> ret = new ArrayList<>();
+        if(c == WHITE){
+            for(iPiece pie : wPieces){
+                ret.addAll(pie.getMoves());
+            }
+        }else{
+            for(iPiece pie : bPieces) {
+                ret.addAll(pie.getMoves());
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -101,7 +118,7 @@ public class Board implements IBoard {
 
     @Override
     public Board Copy() 
-    {
+    { // TODO: 11.03.2020 Tuplene med hvem som kan rokere hvor må også overføres til det nye brettet. 
         return new Board(this.GetGrid());
     }
 
