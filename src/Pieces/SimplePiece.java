@@ -1,6 +1,8 @@
-package Chessbot3;
+package Pieces;
 
-public abstract class SimplePiece implements iPiece{
+import Pieces.iPiece;
+
+public abstract class SimplePiece implements iPiece {
     Boolean isWhite;
     int value;
     char symbol;
@@ -18,5 +20,4 @@ public abstract class SimplePiece implements iPiece{
 
     public int getValue() { return value; }
     public char getSymbol(){ return symbol; }
-
 }

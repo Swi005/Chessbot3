@@ -1,4 +1,6 @@
-package Chessbot3;
+package Pieces;
+
+import Chessbot3.GameBoard.Board;
 
 public interface iPiece {
 
