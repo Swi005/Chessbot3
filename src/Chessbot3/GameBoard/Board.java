@@ -18,17 +18,29 @@ public class Board implements IBoard {
     Tuple<Boolean, Boolean> wCastle;
     Tuple<Boolean, Boolean> bCastle;
 
-    public Board() {
-        grid = new iPiece[][] { new iPiece[] {}, new iPiece[] {}, new iPiece[] {}, new iPiece[] {}, new iPiece[] {},
-                new iPiece[] {}, new iPiece[] {}, new iPiece[] {} };
+    public Board() 
+    {
+        grid = new iPiece[][] 
+        { 
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {},
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {} 
+        };
     }
 
-    public Board(iPiece[][] customBoard) {
+    public Board(iPiece[][] customBoard) 
+    {
         grid = customBoard;
     }
 
     @Override
-    public iPiece GetPice(Tuple<Integer, Integer> pos) {
+    public iPiece GetPice(Tuple<Integer, Integer> pos) 
+    {
         return grid[pos.getX()][pos.getY()];
     }
 
@@ -53,7 +65,8 @@ public class Board implements IBoard {
     }
 
     @Override
-    public int GetScore(boolean isWhite) {
+    public int GetScore(boolean isWhite) 
+    {
         if (isWhite)
             return wScore;
         else
