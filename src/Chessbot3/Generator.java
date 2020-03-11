@@ -26,7 +26,7 @@ public class Generator {
 
 
     public static Dictionary makeDirections(){
-        Dictionary<Character, Tuple[]> directions =  new Hashtable();
+        Dictionary<Character, Tuple<Integer, Integer>[]> directions =  new Hashtable();
         //Oppretter en dict med alle himmelretningene hver enkelt brikke kan bevege seg.
         directions.put('P', new Tuple[] {N, NW, NE});
         directions.put('N', new Tuple[] {NNW, NNE, EEN, EES, SSE, SSW, WWS, WWN});

@@ -1,6 +1,7 @@
 package Pieces;
 
 import Chessbot3.GameBoard.Board;
+import Chessbot3.Tuple;
 
 public interface iPiece {
 
@@ -13,4 +14,5 @@ public interface iPiece {
     public int getY();
     public int getValue();
     public char getSymbol();
+    public Tuple<Integer, Integer> getCoords();
 }
