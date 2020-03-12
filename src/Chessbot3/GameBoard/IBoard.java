@@ -1,6 +1,6 @@
 package Chessbot3.GameBoard;
 
-import Chessbot3.Color;
+import Pieces.WhiteBlack;
 import Chessbot3.Move;
 import Chessbot3.Tuple;
 import Pieces.iPiece;
@@ -19,7 +19,7 @@ public interface IBoard
 
     public boolean IsMate();
     
-    public List<Move> GenMoves(Color c);
+    public List<Move> GenMoves(WhiteBlack c);
 
     public int GetScore(boolean isWhite);
 

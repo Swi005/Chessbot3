@@ -1,13 +1,12 @@
 package Pieces;
 
-import Chessbot3.Color;
 import Chessbot3.GameBoard.Board;
 
 import static Chessbot3.Chess.imageDict;
-import static Chessbot3.Color.WHITE;
+import static Pieces.WhiteBlack.WHITE;
 
 public class Rook extends SimplePiece {
-    public Rook(Color c, Board gameboard) {
+    public Rook(WhiteBlack c, Board gameboard) {
         super(c, gameboard);
         canSprint = true;
         value = 479;

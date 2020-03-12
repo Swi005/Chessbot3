@@ -1,24 +1,31 @@
 package Chessbot3.GameBoard;
 
-import Chessbot3.Color;
+import Pieces.*;
 import Chessbot3.Tuple;
-import Pieces.King;
-import Pieces.Pawn;
-import Pieces.iPiece;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import Chessbot3.Move;
 
-import static Chessbot3.Color.BLACK;
-import static Chessbot3.Color.WHITE;
+import static Pieces.WhiteBlack.BLACK;
+import static Pieces.WhiteBlack.WHITE;
 
 /**
  * Board
  */
 public class Board implements IBoard {
+
+    private final char[][] initialBoard = new char[][]{
+    new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+    new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+    new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+    new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+};
 
     iPiece[][] grid;
 
@@ -32,19 +39,13 @@ public class Board implements IBoard {
 
     public Board() 
     {
-        grid = new iPiece[][] 
-        { 
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-            new iPiece[] {null, null, null, null, null, null, null, null},
-        };
-        // TODO: 12.03.2020 Remove this later
-        grid[4][7] = new Pawn(WHITE, this);
+        grid = new iPiece[8][8];
+        for(int x=0; x<8; x++){
+            for(int y=7; y>=0; y--){
+                char bokstav = initialBoard[x][y];
+                grid[y][x] = PieceFactory.getPiece(bokstav, this);
+            }
+        }
 
     }
 
@@ -89,7 +90,7 @@ public class Board implements IBoard {
 
     
     @Override
-    public ArrayList<Move> GenMoves(Color c) {
+    public ArrayList<Move> GenMoves(WhiteBlack c) {
         /* Lager en liste over nesten-lovlige trekk som en farge kan gjøre på dette brettet.
         // TODO: 11.03.2020 Fiks rokader! Det er her spillet må sjekke hvem som kan rokere, og hvor. 
          */

@@ -3,6 +3,7 @@ package Chessbot3;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -13,8 +14,6 @@ import Pieces.iPiece;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import static Chessbot3.Color.WHITE;
 
 public class Chess {
 
@@ -43,15 +42,11 @@ public class Chess {
         iPiece[][] grid = bård.GetGrid();
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
+                ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
                 if(grid[x][y] != null) {
-                    if (grid[x][y] instanceof Pawn) {
-                        //ImageIcon icon = new ImageIcon(new BufferedImage(55, 55, BufferedImage.TYPE_INT_ARGB));
-                        ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
-                        icon.setImage(imageDict.get("pawn_white"));
-
-
-                    }
-                }
+                    iPiece pie = grid[x][y];
+                    icon.setImage(pie.getImage());
+                }else icon.setImage(new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB));
             }
         }
     }

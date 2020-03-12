@@ -1,13 +1,12 @@
 package Pieces;
 
-import Chessbot3.Color;
 import Chessbot3.GameBoard.Board;
 
 import static Chessbot3.Chess.imageDict;
-import static Chessbot3.Color.WHITE;
+import static Pieces.WhiteBlack.WHITE;
 
 public class Queen extends SimplePiece {
-    public Queen(Color c, Board gameboard) {
+    public Queen(WhiteBlack c, Board gameboard) {
         super(c, gameboard);
         canSprint = true;
         value = 929;

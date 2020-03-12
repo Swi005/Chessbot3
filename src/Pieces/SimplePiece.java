@@ -1,6 +1,5 @@
 package Pieces;
 
-import Chessbot3.Color;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.Move;
 import Chessbot3.Tuple;
@@ -9,25 +8,26 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static Chessbot3.Chess.direcDict;
-import static Chessbot3.Color.BLACK;
-import static Chessbot3.Color.WHITE;
+import static Chessbot3.Chess.imageDict;
+import static Pieces.WhiteBlack.BLACK;
+import static Pieces.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
-    Color color;
+    WhiteBlack color;
     int value;
     Character symbol;
     Boolean canSprint;
     Board gameboard;
     BufferedImage image;
 
-    public SimplePiece(Color c, Board gameboard){
+    public SimplePiece(WhiteBlack c, Board gameboard){
         this.color = c;
         this.gameboard = gameboard;
     }
 
     public Boolean isWhite() { return color == WHITE; }
     public Boolean isBlack() { return color == BLACK; }
-    public Color getColor() { return this.color; }
+    public WhiteBlack getColor() { return this.color; }
 
     public Boolean isOppositeColor(iPiece p){ return this.getColor() != p.getColor(); }
     public Boolean canSprint(){ return canSprint; }
@@ -38,6 +38,7 @@ public abstract class SimplePiece implements iPiece {
 
     public int getValue() { return value; }
     public Character getSymbol(){ return symbol; }
+    public BufferedImage getImage(){ return image; }
 
     public ArrayList<Move> getMoves(){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå. NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
