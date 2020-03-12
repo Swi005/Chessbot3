@@ -2,6 +2,8 @@ package Chessbot3.GameBoard;
 
 import Chessbot3.Color;
 import Chessbot3.Tuple;
+import Pieces.King;
+import Pieces.Pawn;
 import Pieces.iPiece;
 
 import java.util.ArrayList;
@@ -32,15 +34,17 @@ public class Board implements IBoard {
     {
         grid = new iPiece[][] 
         { 
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {},
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {} 
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
+            new iPiece[] {null, null, null, null, null, null, null, null},
         };
+        // TODO: 12.03.2020 Remove this later
+        grid[4][7] = new Pawn(WHITE, this);
 
     }
 
