@@ -6,6 +6,7 @@ public class Move implements Comparable
     private Tuple<Integer, Integer> to;
     private boolean stabilityIndex;
     private int weight;
+    private String chars = "ABCDEFGH";
 
     public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to)
     {
@@ -31,7 +32,7 @@ public class Move implements Comparable
     public void addWeight(int n) {this.weight += n; }
     public void setStabIndex(boolean set) { this.stabilityIndex = set; }
 
-    public String toString() {return "(" + this.from + ", " + this.to + ")"; }
+    public String toString2() {return "(" + this.from + ", " + this.to + ")"; }
 
     public boolean equals(Move obj) {
         return (this.from == obj.getX() && this.to == obj.getY());
@@ -43,6 +44,13 @@ public class Move implements Comparable
         Integer foo = this.weight;
         Integer bar = i.weight;
         return foo.compareTo(bar);
+    }
+    public String toString() {
+        char rekkefra = chars.charAt(from.getX());
+        int radfra = from.getY()+1;
+        char rekketil = chars.charAt(to.getY());
+        int radtil = to.getY()+1;
+        return "(" + rekkefra+radfra + " " + rekketil+radtil + ")";
     }
 
 }

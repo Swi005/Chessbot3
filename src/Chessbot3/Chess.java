@@ -15,6 +15,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import static Pieces.WhiteBlack.WHITE;
+
 public class Chess {
 
     public static final Dictionary<Character, Tuple[]> direcDict = Generator.makeDirections();
@@ -38,6 +40,8 @@ public class Chess {
         //TODO: Do stuff with the board
     }
     public static void paintPieces(){
+        /* Tegner alle brikkene på brettet, helt fra scratch.
+         */
         Board bård = game.getCurrentBoard();
         iPiece[][] grid = bård.GetGrid();
         for(int x=0; x<8; x++){
@@ -53,7 +57,7 @@ public class Chess {
 
     private static JPanel initializeGUI() {
         JPanel gui = new JPanel(new BorderLayout(3, 3));
-        gui.setBorder(new EmptyBorder(5, 5, 5, 5));
+        gui.setBorder(new EmptyBorder(1, 1, 1, 1));
 
         JButton enter = new JButton("Enter");
         JButton back = new JButton("Go Back");
@@ -83,6 +87,8 @@ public class Chess {
     }
 
     private static void makeButtons() {
+        /* Skaper alle rutene som brikkene skal stå på. Disse rutene er egentlig knapper.
+         */
         Insets buttonMargin = new Insets(0,0,0,0);
         for (int ii = 0; ii < chessBoardSquares.length; ii++) {
             for (int jj = 0; jj < chessBoardSquares[ii].length; jj++) {

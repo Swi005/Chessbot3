@@ -28,8 +28,9 @@ public class Board implements IBoard {
 };
 
     iPiece[][] grid;
-
-    iPiece[] wPieces, bPieces;
+    
+    ArrayList<iPiece> wPieces;
+    ArrayList<iPiece> bPieces;
 
     int wScore;
     int bScore;
@@ -39,11 +40,18 @@ public class Board implements IBoard {
 
     public Board() 
     {
+        wPieces = new ArrayList<>();
+        bPieces = new ArrayList<>();
         grid = new iPiece[8][8];
-        for(int x=0; x<8; x++){
-            for(int y=7; y>=0; y--){
-                char bokstav = initialBoard[x][y];
-                grid[y][x] = PieceFactory.getPiece(bokstav, this);
+        for(int y=7; y>=0; y--){
+            for(int x=0; x<8; x++){
+                char bokstav = initialBoard[y][x]; //Ser på hvilken bokstav som er i de koordinatene, og
+                iPiece pie = PieceFactory.getPiece(bokstav, this); //Spawner tilsvarende brikke i griddet.
+                grid[x][y] = pie;
+                if(pie != null) {
+                    if (pie.getColor() == WHITE) wPieces.add(pie);
+                    else bPieces.add(pie);
+                }
             }
         }
 
