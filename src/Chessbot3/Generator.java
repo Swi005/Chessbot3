@@ -59,7 +59,7 @@ public class Generator {
                 "rook_white"
         }) {
             try {
-                File temp = new File("src\\Chessbot3\\Pieces\\" + name + ".png");
+                File temp = new File("src\\Pieces\\PieceImages\\" + name + ".png");
                 BufferedImage img = ImageIO.read(temp);
                 imageTable.put(name, img);
             } catch (IOException e) {

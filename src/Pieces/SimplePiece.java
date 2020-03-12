@@ -8,7 +8,7 @@ import Chessbot3.Tuple;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static Chessbot3.Chess.moveDict;
+import static Chessbot3.Chess.direcDict;
 import static Chessbot3.Color.BLACK;
 import static Chessbot3.Color.WHITE;
 
@@ -40,16 +40,18 @@ public abstract class SimplePiece implements iPiece {
     public Character getSymbol(){ return symbol; }
 
     public ArrayList<Move> getMoves(){
+        //Lager en liste over trekk som denne brikken kan ta akkurat nå. NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
+        //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må gjøres i en annen funksjon.
         ArrayList<Move> ret = new ArrayList<>();
         iPiece[][] grid = gameboard.GetGrid();
         Integer fraX = getX();
         Integer fraY = getY();
-        for(Tuple retning : moveDict.get(symbol)){ //Looper igjennom hver enkelt retning den kan gå.
+        for(Tuple<Integer, Integer> retning : direcDict.get(symbol)){ //Looper igjennom hver enkelt retning den kan gå.
             Integer tilX = fraX;
             Integer tilY = fraY;
             for(int i=0; i<=7; i++){ //Looper til 7, for noen ganger kan den gå 7 skritt, men forventer å bli brutt før det.
-                tilX += (Integer) retning.getX();
-                tilY += (Integer) retning.getY();
+                tilX += retning.getX();
+                tilY += retning.getY();
 
                 if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den prøver å gå ut av brettet.
                 iPiece mål = grid[tilX][tilY];

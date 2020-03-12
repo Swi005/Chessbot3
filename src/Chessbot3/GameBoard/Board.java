@@ -10,6 +10,7 @@ import java.util.List;
 
 import Chessbot3.Move;
 
+import static Chessbot3.Color.BLACK;
 import static Chessbot3.Color.WHITE;
 
 /**
@@ -78,7 +79,7 @@ public class Board implements IBoard {
     @Override
     public boolean IsMate() 
     {
-        // TODO Check legal moves of king
+        // TODO Check whether the GenMoves list is empty, and the king is in check.
         return false;
     }
 
@@ -93,11 +94,11 @@ public class Board implements IBoard {
             for(iPiece pie : wPieces){
                 ret.addAll(pie.getMoves());
             }
-        }else{
+        }else if(c == BLACK){
             for(iPiece pie : bPieces) {
                 ret.addAll(pie.getMoves());
             }
-        }
+        } else throw new IllegalArgumentException("Yo, please give me a color as an input!");
         return ret;
     }
 
@@ -118,7 +119,7 @@ public class Board implements IBoard {
 
     @Override
     public Board Copy() 
-    { // TODO: 11.03.2020 Tuplene med hvem som kan rokere hvor må også overføres til det nye brettet. 
+    { // TODO: 11.03.2020 Tuplene med hvem som kan rokere hvor må også overføres til det nye brettet.
         return new Board(this.GetGrid());
     }
 

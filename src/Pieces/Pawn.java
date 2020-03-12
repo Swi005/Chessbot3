@@ -7,8 +7,7 @@ import Chessbot3.Tuple;
 
 import java.util.ArrayList;
 
-import static Chessbot3.Chess.imageDict;
-import static Chessbot3.Chess.moveDict;
+import static Chessbot3.Chess.*;
 import static Chessbot3.Color.BLACK;
 import static Chessbot3.Color.WHITE;
 import static Chessbot3.Generator.*;
@@ -27,7 +26,7 @@ public class Pawn extends SimplePiece {
     @Override
     public ArrayList<Move> getMoves(){
         ArrayList<Move> ret = new ArrayList<>();
-        Tuple[] directions = moveDict.get('P');
+        Tuple[] directions = direcDict.get('P');
         if(color == BLACK){
             for(Tuple<Integer, Integer> direc : directions){
                 direc.setY(direc.getY()*-1); //Om det er en svart bonde, vil dette invertere alle retningene.
