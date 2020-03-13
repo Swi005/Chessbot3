@@ -13,8 +13,9 @@ public class King extends SimplePiece {
         canSprint = false;
         value = 69420;
         symbol = 'K';
-        if(c == WHITE){
+        if (c == WHITE) {
             image = imageDict.get("king_white");
-        }else image = imageDict.get("king_black");
+        } else
+            image = imageDict.get("king_black");
     }
 }

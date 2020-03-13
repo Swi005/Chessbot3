@@ -1,20 +1,18 @@
 package Chessbot3.GameBoard;
 
-import Chessbot3.Tuple;
-import Pieces.PieceFactory;
-import Pieces.WhiteBlack;
-import Pieces.iPiece;
+import static Pieces.WhiteBlack.BLACK;
+import static Pieces.WhiteBlack.WHITE;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Pieces.WhiteBlack;
 import Chessbot3.Move;
-
-import static Pieces.WhiteBlack.BLACK;
-import static Pieces.WhiteBlack.WHITE;
+import Chessbot3.Tuple;
+import Pieces.King;
+import Pieces.PieceFactory;
+import Pieces.WhiteBlack;
+import Pieces.iPiece;
 
 /**
  * Board
@@ -39,6 +37,7 @@ public class Board implements IBoard {
     int wScore;
     int bScore;
     boolean isWhitesTurn = true;
+    boolean isMate;
     Tuple<Boolean, Boolean> wCastle;
     Tuple<Boolean, Boolean> bCastle;
 
@@ -74,30 +73,44 @@ public class Board implements IBoard {
 
     public Tuple<Integer,Integer> GetCoordsOfPiece(iPiece piece)
     {
-        for (int i = 0; i < grid.length; i++) 
-        {
+        for (int i = 0; i < grid.length; i++) {
             iPiece[] subRow = grid[i];
-            for (int j = 0; j < subRow.length; j++) 
-            {
-                if(subRow[j] == piece)
+            for (int j = 0; j < subRow.length; j++) {
+                if (subRow[j] == piece)
                     return new Tuple<Integer, Integer>(i, j);
             }
         }
         return null;
     }
 
+    public int AddScore(iPiece piece) 
+    {
+        if(piece.getColor() == WHITE)
+            bScore += piece.getValue();
+        else
+            wScore += piece.getValue();
+        return piece.getValue();
+    }
+
     @Override
     public void MovePiece(Move move) 
     {
-        // TODO Auto-generated method stub
-
+        iPiece piece = grid[move.getX().getX()][move.getX().getY()];//store piece in temp var
+        grid[move.getX().getX()][move.getX().getY()] = null; //Remove piece from preious position
+        if (grid[move.getY().getX()][move.getY().getY()] != null) 
+        {
+            //TODO: Kill piece if one is at that position
+        }
+            
+        grid[move.getY().getX()][move.getY().getY()] = piece;
+         
     }
 
     @Override
     public boolean IsMate() 
     {
         // TODO Check legal moves of king
-        return false;
+        return isMate;
     }
 
     @Override
@@ -108,6 +121,13 @@ public class Board implements IBoard {
         {
             for (iPiece pie : wPices) 
             {
+                if(pie instanceof King && pie.getMoves().size() ==0)
+                {
+                    isMate= true;
+                }
+                else
+                    isMate= false;
+                    
                 ret.addAll(pie.getMoves());
             }
         }
@@ -115,6 +135,13 @@ public class Board implements IBoard {
         {
             for (iPiece pie : bPieces) 
             {
+                if(pie instanceof King && pie.getMoves().size() ==0)
+                {
+                    isMate= true;
+                }
+                else
+                    isMate = false;
+                    
                 ret.addAll(pie.getMoves());
             }
         }
