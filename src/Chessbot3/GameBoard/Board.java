@@ -3,8 +3,11 @@ package Chessbot3.GameBoard;
 import Chessbot3.Tuple;
 import Pieces.iPiece;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import Chessbot3.Color;
 import Chessbot3.Move;
 
 /**
@@ -35,12 +38,16 @@ public class Board implements IBoard {
             new iPiece[] {}, 
             new iPiece[] {} 
         };
-
+        wPices = GeneratePieceArray(true);
+        bPieces = GeneratePieceArray(false);
     }
 
-    public Board(iPiece[][] customBoard) 
+    public Board(iPiece[][] customBoard, boolean isWhite) 
     {
         grid = customBoard;
+        this.isWhitesTurn = isWhite;
+        wPices = GeneratePieceArray(true);
+        bPieces = GeneratePieceArray(false);
     }
 
     @Override
@@ -102,10 +109,25 @@ public class Board implements IBoard {
     @Override
     public Board Copy() 
     {
-        return new Board(this.GetGrid());
+        return new Board(this.GetGrid(),this.isWhitesTurn);
     }
 
-    
+    public iPiece[] GeneratePieceArray(boolean isWhite) 
+    {
+        List<iPiece> returnList = new ArrayList<>();
+        for (iPiece[] row : grid) 
+        {
+            for (iPiece piece : row) {
+                if (isWhite)
+                    if (piece.getColor() == Color.WHITE)
+                        returnList.add(piece);
+                if (!isWhite)
+                    if (piece.getColor() == Color.BLACK)
+                        returnList.add(piece);
+            }
+        }
+        return returnList.toArray(new iPiece[returnList.size()]);
+    }
     public void Reverse()
     {
         for(int i = 0; i<grid.length/2; i++)
