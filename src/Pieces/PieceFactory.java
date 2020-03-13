@@ -5,8 +5,9 @@ import Chessbot3.GameBoard.Board;
 import static Pieces.WhiteBlack.BLACK;
 import static Pieces.WhiteBlack.WHITE;
 
-public class PieceFactory {
-    public static iPiece getPiece(char bokstav, Board b){
+public class PieceFactory 
+{
+    public static iPiece getPiece(char bokstav, Board b) {
         iPiece pie;
         switch(bokstav){
             case 'p':
