@@ -101,7 +101,7 @@ public class Board implements IBoard {
     }
 
     @Override
-    public Move[] GenMoves(WhiteBlack c) 
+    public Move[] GenMoves(WhiteBlack c)
     {
         List<Move> ret = new ArrayList<>();
         if (c == WHITE) 

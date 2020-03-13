@@ -48,7 +48,7 @@ public class Move implements Comparable
     public String toString() {
         char rekkefra = chars.charAt(from.getX());
         int radfra = 8-from.getY();
-        char rekketil = chars.charAt(to.getY());
+        char rekketil = chars.charAt(to.getX());
         int radtil = 8-to.getY();
         return "(" + rekkefra+radfra + "-" + rekketil+radtil + ")";
     }

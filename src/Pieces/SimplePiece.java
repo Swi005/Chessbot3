@@ -42,7 +42,7 @@ public abstract class SimplePiece implements iPiece {
 
     public ArrayList<Move> getMoves(){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå. NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
-        //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må gjøres i en annen funksjon.
+        //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må sjekkes i en annen funksjon.
         ArrayList<Move> ret = new ArrayList<>();
         iPiece[][] grid = gameboard.GetGrid();
         Integer fraX = getX();
@@ -55,10 +55,17 @@ public abstract class SimplePiece implements iPiece {
                 tilY += retning.getY();
 
                 if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den prøver å gå ut av brettet.
+
+
                 iPiece mål = grid[tilX][tilY];
-                if(mål == null || this.isOppositeColor(mål)){ //Kan kun gå der om det er en tom rute eller en fiendtlig brikke.
-                    ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY)));
-                } else break;
+                if(mål == null){
+                    ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY))); //Om det er en tom rute.
+                }
+                else if(this.isOppositeColor(mål))      {
+                    ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY))); //Om det står en fiendtlig brikke der.
+                    break;
+                }
+                else break;
                 if(!canSprint) break; //Om brikken er en konge/hest/bonde, kan den ikke gå mer enn ett skritt om gangen. Derfor bryttes loopen her.
             }
         }

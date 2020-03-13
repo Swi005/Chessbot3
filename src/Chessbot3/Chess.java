@@ -3,7 +3,9 @@ package Chessbot3;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
 import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -37,6 +39,12 @@ public class Chess {
         frame.setMinimumSize(frame.getSize());
         paintPieces();
         frame.setVisible(true);
+        /*
+        Move[] liste = game.getCurrentBoard().GenMoves(BLACK);
+        for(Move move : liste) {
+            System.out.println(move);
+        }
+        */
 
         //TODO: Do stuff with the board
     }
