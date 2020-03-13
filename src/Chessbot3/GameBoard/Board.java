@@ -68,7 +68,7 @@ public class Board implements IBoard {
     @Override
     public iPiece GetPiece(Tuple<Integer, Integer> pos) 
     {
-        return grid[pos.getX()][pos.getY()];
+        return grid[pos.getY()][pos.getX()];
     }
 
     public Tuple<Integer,Integer> GetCoordsOfPiece(iPiece piece)
@@ -195,5 +195,20 @@ public class Board implements IBoard {
             grid[i] = grid[grid.length - i - 1];
             grid[grid.length - i - 1] = temp;
         }
+    }
+    public String toString(){
+        String ret = "";
+        for(int x=0; x<8; x++){
+            String rekke = "";
+            for(int y=0; y<8; y++){
+                iPiece pie = GetPiece(new Tuple(x, y));
+                if(pie == null) rekke += ".";
+                else if(pie.isWhite()) rekke += pie.getSymbol();
+                else rekke += Character.toLowerCase(pie.getSymbol());
+                rekke += "";
+            }
+            ret += rekke += "\n";
+        }
+        return ret;
     }
 }

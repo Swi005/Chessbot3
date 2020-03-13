@@ -24,7 +24,7 @@ public class Chess {
 
     public static JButton enter = new JButton("Enter");
     public static JButton back = new JButton("Go Back");
-    public static JButton neww = new JButton("New Game"); // TODO: 12.03.2020 Sørg for at knapper gjør noe.
+    public static JButton neww = new JButton("New Game");
     public static JButton quit = new JButton("Quit Game");
 
     public static void main(String[] args) {
@@ -98,7 +98,7 @@ public class Chess {
                 butt.setIcon(icon);
                 if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) butt.setBackground(Color.LIGHT_GRAY);
                 else butt.setBackground(Color.gray);
-                butt.addActionListener(new Action()); // TODO: 12.03.2020 Legg til at knapper gjør noe
+                butt.addActionListener(new Action());
                 chessBoardSquares[jj][ii] = butt;
             }
         }

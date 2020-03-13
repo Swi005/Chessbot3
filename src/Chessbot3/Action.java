@@ -63,6 +63,7 @@ public class Action extends KeyAdapter implements ActionListener {
         if (usertext.equals("quit")) System.exit(0);
         else if (usertext.equals("back")) game.goBack();
         else if (usertext.equals("new")) game.newGame();
+        else if (usertext.equals("print")) game.printBoard();
     }
 
 }

@@ -44,6 +44,8 @@ public class Game {
 
     public void playerMove(Move move){ }
 
+    public void printBoard() { System.out.println(currentBoard); }
+
     public Board getCurrentBoard(){ return currentBoard; }
 
 
