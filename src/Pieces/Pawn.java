@@ -50,8 +50,4 @@ public class Pawn extends SimplePiece {
         }
         return ret;
     }
-
-
-
-    // TODO: 11.03.2020 Override getMoves(), siden bondelogikk fungerer helt annerledes enn resten av brikkene. 
 }

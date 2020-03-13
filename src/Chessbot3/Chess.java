@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import Chessbot3.GameBoard.Board;
 import Pieces.Pawn;
 import Pieces.iPiece;
+import Chessbot3.GameBoard.Action;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,9 +26,14 @@ public class Chess {
     public static final Dictionary<Character, Tuple[]> direcDict = Generator.makeDirections();
     public static final Hashtable<String, BufferedImage> imageDict = Generator.makeImages();
     public static JPanel chessBoard;
-    public static JTextField textField;
+    public static JTextField textField = new JTextField(20);
     public static JButton[][] chessBoardSquares = new JButton[8][8];
     public static Game game;
+
+    public static JButton enter = new JButton("Enter");
+    public static JButton back = new JButton("Go Back");
+    public static JButton neww = new JButton("New Game"); // TODO: 12.03.2020 Sørg for at knapper gjør noe.
+    public static JButton quit = new JButton("Quit Game");
 
     public static void main(String[] args) {
         game = new Game();
@@ -40,13 +46,10 @@ public class Chess {
         paintPieces();
         frame.setVisible(true);
 
-        Move[] liste = game.getCurrentBoard().GenMoves(BLACK);
+        Move[] liste = game.getCurrentBoard().GenMoves(WHITE);
         for(Move move : liste) {
             System.out.println(move);
         }
-
-
-        //TODO: Do stuff with the board
     }
     public static void paintPieces(){
         /* Tegner alle brikkene på brettet, helt fra scratch.
@@ -68,15 +71,13 @@ public class Chess {
         JPanel gui = new JPanel(new BorderLayout(3, 3));
         gui.setBorder(new EmptyBorder(1, 1, 1, 1));
 
-        JButton enter = new JButton("Enter");
-        JButton back = new JButton("Go Back");
-        JButton neww = new JButton("New Game"); // TODO: 12.03.2020 Sørg for at knapper gjør noe.
-        JButton quit = new JButton("Quit Game");
-
         JToolBar toolbar2 = new JToolBar();
         toolbar2.add(quit);
         toolbar2.add(neww);
         toolbar2.add(back);
+        quit.addActionListener(new Action());
+        back.addActionListener(new Action());
+        neww.addActionListener(new Action());
         gui.add(toolbar2, BorderLayout.PAGE_START);
 
         JToolBar toolbar = new JToolBar();
@@ -84,8 +85,10 @@ public class Chess {
 
         JTextField text = new JTextField(20);
         textField = text;
+        textField.addKeyListener(new Action());
         toolbar.add(text);
         toolbar.add(enter);
+        enter.addActionListener(new Action());
 
         chessBoard = new JPanel(new GridLayout(0, 8));
         chessBoard.setBorder(new LineBorder(Color.BLACK));
