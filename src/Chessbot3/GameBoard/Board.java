@@ -45,8 +45,10 @@ public class Board implements IBoard {
     public Board() 
     {
         grid = new iPiece[8][8];
-        for(int y=0; y<8; y++){
-            for(int x=0; x<8; x++){
+        for (int y = 0; y < 8; y++) 
+        {
+            for (int x = 0; x < 8; x++) 
+            {
                 iPiece pie = PieceFactory.getPiece(initialBoard[y][x], this);
                 grid[x][y] = pie;
             }
@@ -99,25 +101,24 @@ public class Board implements IBoard {
     }
 
     @Override
-    public List<Move> GenMoves(WhiteBlack c) {
+    public Move[] GenMoves(WhiteBlack c) 
+    {
         List<Move> ret = new ArrayList<>();
-        if(c == WHITE){
-            for(iPiece pie : wPices){
+        if (c == WHITE) 
+        {
+            for (iPiece pie : wPices) 
+            {
                 ret.addAll(pie.getMoves());
             }
         }
-        else{
-            for(iPiece pie : bPieces){
+        else 
+        {
+            for (iPiece pie : bPieces) 
+            {
                 ret.addAll(pie.getMoves());
             }
         }
-        return ret;
-    }
-
-
-    public Move[] GenMoves(iPiece pice) {
-        // TODO Auto-generated method stub
-        return null;
+        return ret.toArray(new Move[ret.size()]);
     }
 
     @Override

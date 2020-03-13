@@ -19,7 +19,7 @@ public interface IBoard
 
     public boolean IsMate();
     
-    public List<Move> GenMoves(WhiteBlack c);
+    public Move[] GenMoves(WhiteBlack c);
 
     public int GetScore(boolean isWhite);
 
