@@ -39,12 +39,12 @@ public class Chess {
         frame.setMinimumSize(frame.getSize());
         paintPieces();
         frame.setVisible(true);
-        /*
+
         Move[] liste = game.getCurrentBoard().GenMoves(BLACK);
         for(Move move : liste) {
             System.out.println(move);
         }
-        */
+
 
         //TODO: Do stuff with the board
     }

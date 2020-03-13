@@ -24,12 +24,11 @@ public class Pawn extends SimplePiece {
     @Override
     public ArrayList<Move> getMoves(){
         ArrayList<Move> ret = new ArrayList<>();
-        Tuple[] directions = direcDict.get('P');
-        if(color == BLACK){
-            for(Tuple<Integer, Integer> direc : directions){
-                direc.setY(direc.getY()*-1); //Om det er en svart bonde, vil dette invertere alle retningene.
-            }
-        }
+        Tuple[] directions;
+        if(color == WHITE){
+            directions = direcDict.get('P');
+        } else directions = direcDict.get('p');
+
         Integer fraX = getX();
         Integer fraY = getY();
         for(Tuple<Integer, Integer> direc : directions){ //Looper igjennom alle retningene den kan gå.
@@ -37,13 +36,14 @@ public class Pawn extends SimplePiece {
             Integer tilY = fraY+direc.getY();
             if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den holder på å gå utenfor brettet.
             iPiece mål = gameboard.GetGrid()[tilX][tilY];
+
             if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der.
                 if(mål != null && this.isOppositeColor(mål)) ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY)));
             }
             if(direc.getX() == 0 && mål == null){ //Om den prøver å gå rett frem, må målet være en åpen rute.
                 ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY)));
                 //Om den klarer å gå et skritt, og det er første gang den flytter, kan den prøve om det er lov å gå et skritt til.
-                if((fraY == 1 && color == WHITE) || (fraY == 6 && color == BLACK) && gameboard.GetGrid()[tilX][tilY+direc.getY()] == null){
+                if((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK) && gameboard.GetGrid()[tilX][tilY+direc.getY()] == null){
                     ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY+direc.getY()))); //Om den får lov til å gå to skritt.
                 }
             }
