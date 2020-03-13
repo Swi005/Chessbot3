@@ -1,10 +1,12 @@
 package Chessbot3.GameBoard;
 
 import Chessbot3.Tuple;
+import Pieces.King;
 import Pieces.PieceFactory;
 import Pieces.WhiteBlack;
 import Pieces.iPiece;
 
+import java.lang.ProcessBuilder.Redirect.Type;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +41,7 @@ public class Board implements IBoard {
     int wScore;
     int bScore;
     boolean isWhitesTurn = true;
+    boolean isMate;
     Tuple<Boolean, Boolean> wCastle;
     Tuple<Boolean, Boolean> bCastle;
 
@@ -97,7 +100,7 @@ public class Board implements IBoard {
     public boolean IsMate() 
     {
         // TODO Check legal moves of king
-        return false;
+        return isMate;
     }
 
     @Override
@@ -108,6 +111,13 @@ public class Board implements IBoard {
         {
             for (iPiece pie : wPices) 
             {
+                if(pie instanceof King && pie.getMoves().size() ==0)
+                {
+                    isMate= true;
+                }
+                else
+                    isMate= false;
+                    
                 ret.addAll(pie.getMoves());
             }
         }
@@ -115,6 +125,13 @@ public class Board implements IBoard {
         {
             for (iPiece pie : bPieces) 
             {
+                if(pie instanceof King && pie.getMoves().size() ==0)
+                {
+                    isMate= true;
+                }
+                else
+                    isMate = false;
+                    
                 ret.addAll(pie.getMoves());
             }
         }
