@@ -1,19 +1,36 @@
 package Chessbot3.GameBoard;
 
 import Chessbot3.Tuple;
+import Pieces.PieceFactory;
+import Pieces.WhiteBlack;
 import Pieces.iPiece;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Chessbot3.Color;
+import Pieces.WhiteBlack;
 import Chessbot3.Move;
+
+import static Pieces.WhiteBlack.BLACK;
+import static Pieces.WhiteBlack.WHITE;
 
 /**
  * Board
  */
 public class Board implements IBoard {
+
+    private static final char[][] initialBoard = new char[][]{
+            new char[] {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+            new char[] {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[] {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+            new char[] {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+    };
 
     iPiece[][] grid;
 
@@ -27,19 +44,16 @@ public class Board implements IBoard {
 
     public Board() 
     {
-        grid = new iPiece[][] 
-        { 
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {},
-            new iPiece[] {}, 
-            new iPiece[] {}, 
-            new iPiece[] {} 
-        };
+        grid = new iPiece[8][8];
+        for(int y=0; y<8; y++){
+            for(int x=0; x<8; x++){
+                iPiece pie = PieceFactory.getPiece(initialBoard[y][x], this);
+                grid[x][y] = pie;
+            }
+        }
         wPices = GeneratePieceArray(true);
         bPieces = GeneratePieceArray(false);
+
     }
 
     public Board(iPiece[][] customBoard, boolean isWhite) 
@@ -84,8 +98,23 @@ public class Board implements IBoard {
         return false;
     }
 
-    
     @Override
+    public List<Move> GenMoves(WhiteBlack c) {
+        List<Move> ret = new ArrayList<>();
+        if(c == WHITE){
+            for(iPiece pie : wPices){
+                ret.addAll(pie.getMoves());
+            }
+        }
+        else{
+            for(iPiece pie : bPieces){
+                ret.addAll(pie.getMoves());
+            }
+        }
+        return ret;
+    }
+
+
     public Move[] GenMoves(iPiece pice) {
         // TODO Auto-generated method stub
         return null;
@@ -118,12 +147,14 @@ public class Board implements IBoard {
         for (iPiece[] row : grid) 
         {
             for (iPiece piece : row) {
-                if (isWhite)
-                    if (piece.getColor() == Color.WHITE)
-                        returnList.add(piece);
-                if (!isWhite)
-                    if (piece.getColor() == Color.BLACK)
-                        returnList.add(piece);
+                if(piece != null) {
+                    if (isWhite)
+                        if (piece.getColor() == WHITE)
+                            returnList.add(piece);
+                    if (!isWhite)
+                        if (piece.getColor() == BLACK)
+                            returnList.add(piece);
+                }
             }
         }
         return returnList.toArray(new iPiece[returnList.size()]);
