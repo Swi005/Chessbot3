@@ -1,36 +1,23 @@
 package Chessbot3.GameBoard;
 
-import Pieces.*;
 import Chessbot3.Tuple;
+import Pieces.iPiece;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import Chessbot3.Color;
 import Chessbot3.Move;
-
-import static Pieces.WhiteBlack.BLACK;
-import static Pieces.WhiteBlack.WHITE;
 
 /**
  * Board
  */
 public class Board implements IBoard {
 
-    private final char[][] initialBoard = new char[][]{
-    new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
-    new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-    new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-    new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-    new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
-};
-
     iPiece[][] grid;
-    
-    ArrayList<iPiece> wPieces;
-    ArrayList<iPiece> bPieces;
+
+    iPiece[] wPices, bPieces;
 
     int wScore;
     int bScore;
@@ -40,26 +27,27 @@ public class Board implements IBoard {
 
     public Board() 
     {
-        wPieces = new ArrayList<>();
-        bPieces = new ArrayList<>();
-        grid = new iPiece[8][8];
-        for(int y=7; y>=0; y--){
-            for(int x=0; x<8; x++){
-                char bokstav = initialBoard[y][x]; //Ser på hvilken bokstav som er i de koordinatene, og
-                iPiece pie = PieceFactory.getPiece(bokstav, this); //Spawner tilsvarende brikke i griddet.
-                grid[x][y] = pie;
-                if(pie != null) {
-                    if (pie.getColor() == WHITE) wPieces.add(pie);
-                    else bPieces.add(pie);
-                }
-            }
-        }
-
+        grid = new iPiece[][] 
+        { 
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {},
+            new iPiece[] {}, 
+            new iPiece[] {}, 
+            new iPiece[] {} 
+        };
+        wPices = GeneratePieceArray(true);
+        bPieces = GeneratePieceArray(false);
     }
 
-    public Board(iPiece[][] customBoard) 
+    public Board(iPiece[][] customBoard, boolean isWhite) 
     {
         grid = customBoard;
+        this.isWhitesTurn = isWhite;
+        wPices = GeneratePieceArray(true);
+        bPieces = GeneratePieceArray(false);
     }
 
     @Override
@@ -92,27 +80,15 @@ public class Board implements IBoard {
     @Override
     public boolean IsMate() 
     {
-        // TODO Check whether the GenMoves list is empty, and the king is in check.
+        // TODO Check legal moves of king
         return false;
     }
 
     
     @Override
-    public ArrayList<Move> GenMoves(WhiteBlack c) {
-        /* Lager en liste over nesten-lovlige trekk som en farge kan gjøre på dette brettet.
-        // TODO: 11.03.2020 Fiks rokader! Det er her spillet må sjekke hvem som kan rokere, og hvor. 
-         */
-        ArrayList<Move> ret = new ArrayList<>();
-        if(c == WHITE){
-            for(iPiece pie : wPieces){
-                ret.addAll(pie.getMoves());
-            }
-        }else if(c == BLACK){
-            for(iPiece pie : bPieces) {
-                ret.addAll(pie.getMoves());
-            }
-        } else throw new IllegalArgumentException("Yo, please give me a color as an input!");
-        return ret;
+    public Move[] GenMoves(iPiece pice) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -132,11 +108,26 @@ public class Board implements IBoard {
 
     @Override
     public Board Copy() 
-    { // TODO: 11.03.2020 Tuplene med hvem som kan rokere hvor må også overføres til det nye brettet.
-        return new Board(this.GetGrid());
+    {
+        return new Board(this.GetGrid(),this.isWhitesTurn);
     }
 
-    
+    public iPiece[] GeneratePieceArray(boolean isWhite) 
+    {
+        List<iPiece> returnList = new ArrayList<>();
+        for (iPiece[] row : grid) 
+        {
+            for (iPiece piece : row) {
+                if (isWhite)
+                    if (piece.getColor() == Color.WHITE)
+                        returnList.add(piece);
+                if (!isWhite)
+                    if (piece.getColor() == Color.BLACK)
+                        returnList.add(piece);
+            }
+        }
+        return returnList.toArray(new iPiece[returnList.size()]);
+    }
     public void Reverse()
     {
         for(int i = 0; i<grid.length/2; i++)
