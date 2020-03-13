@@ -64,6 +64,8 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("back")) game.goBack();
         else if (usertext.equals("new")) game.newGame();
         else if (usertext.equals("print")) game.printBoard();
+        else if (usertext.equals("boards")) game.printBoardHistory();
+        else if (usertext.equals("moves")) game.printMoveHistory();
     }
 
 }

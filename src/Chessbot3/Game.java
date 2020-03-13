@@ -38,11 +38,16 @@ public class Game {
         paintPieces();
     }
 
-    public ArrayList<Move> getMoveHistory(){ return madeMoves; }
+    public void printMoveHistory(){
+        for(Move move : madeMoves) System.out.println(move);
+    }
+    public void printBoardHistory(){
+        for(Board bård : previousBoards) System.out.println(bård);
+    }
 
     public void botMove(){ }
 
-    public void playerMove(Move move){ }
+    public void playerMove(Move move){ } // TODO: 13.03.2020 Legg til støtte for å kunne gjøre trekk
 
     public void printBoard() { System.out.println(currentBoard); }
 
