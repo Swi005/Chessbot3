@@ -42,7 +42,7 @@ public class Game {
 
     public void botMove(){ }
 
-    public void playerMove(){ }
+    public void playerMove(Move move){ }
 
     public Board getCurrentBoard(){ return currentBoard; }
 

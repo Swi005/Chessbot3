@@ -3,23 +3,15 @@ package Chessbot3;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
-import java.nio.Buffer;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import Chessbot3.GameBoard.Board;
-import Pieces.Pawn;
 import Pieces.iPiece;
-import Chessbot3.GameBoard.Action;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import static Pieces.WhiteBlack.BLACK;
-import static Pieces.WhiteBlack.WHITE;
 
 public class Chess {
 
@@ -45,11 +37,6 @@ public class Chess {
         frame.setMinimumSize(frame.getSize());
         paintPieces();
         frame.setVisible(true);
-
-        Move[] liste = game.getCurrentBoard().GenMoves(WHITE);
-        for(Move move : liste) {
-            System.out.println(move);
-        }
     }
     public static void paintPieces(){
         /* Tegner alle brikkene på brettet, helt fra scratch.
@@ -111,7 +98,7 @@ public class Chess {
                 butt.setIcon(icon);
                 if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) butt.setBackground(Color.LIGHT_GRAY);
                 else butt.setBackground(Color.gray);
-                //butt.addActionListener(new Action()); // TODO: 12.03.2020 Legg til at knapper gjør noe
+                butt.addActionListener(new Action()); // TODO: 12.03.2020 Legg til at knapper gjør noe
                 chessBoardSquares[jj][ii] = butt;
             }
         }
