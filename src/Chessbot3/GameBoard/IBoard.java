@@ -5,6 +5,7 @@ import Chessbot3.Move;
 import Chessbot3.Tuple;
 import Pieces.iPiece;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public interface IBoard
 
     public iPiece GetPiece(Tuple<Integer,Integer> pos);
 
-    public void MovePiece(Move move);
+    public ArrayList<Tuple> MovePiece(Move move);
 
     public boolean IsMate();
     

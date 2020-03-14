@@ -5,6 +5,7 @@ import Chessbot3.GameBoard.Board;
 import java.util.ArrayList;
 
 import static Chessbot3.Chess.paintPieces;
+import static Chessbot3.Chess.repaintPiece;
 
 public class Game {
 
@@ -47,7 +48,10 @@ public class Game {
 
     public void botMove(){ }
 
-    public void playerMove(Move move){ } // TODO: 13.03.2020 Legg til støtte for å kunne gjøre trekk
+    public void playerMove(Move move){
+        ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
+        for(Tuple tup : dirtyLocs) repaintPiece(tup);
+    }
 
     public void printBoard() { System.out.println(currentBoard); }
 

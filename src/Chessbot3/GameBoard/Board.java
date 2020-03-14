@@ -93,17 +93,19 @@ public class Board implements IBoard {
     }
 
     @Override
-    public void MovePiece(Move move) 
+    public ArrayList<Tuple> MovePiece(Move move)
     {
-        iPiece piece = grid[move.getX().getX()][move.getX().getY()];//store piece in temp var
-        grid[move.getX().getX()][move.getX().getY()] = null; //Remove piece from preious position
-        if (grid[move.getY().getX()][move.getY().getY()] != null) 
-        {
-            //TODO: Kill piece if one is at that position
-        }
-            
-        grid[move.getY().getX()][move.getY().getY()] = piece;
-         
+        ArrayList<Tuple> ret = new ArrayList<>();
+        Tuple<Integer, Integer> fra = move.getX();
+        Tuple<Integer, Integer> til = move.getY();
+        ret.add(fra);
+        ret.add(til);
+
+        grid[til.getX()][til.getY()] = grid[fra.getX()][fra.getY()];
+        grid[fra.getX()][fra.getY()] = null;
+        // TODO: 14.03.2020 En passant, og rokadelogikk 
+
+        return ret; //Returnerer en liste over lokasjoner som ble endret på, så de kan bli tegnet på nytt.
     }
 
     @Override
@@ -201,7 +203,7 @@ public class Board implements IBoard {
         for(int x=0; x<8; x++){
             String rekke = "";
             for(int y=0; y<8; y++){
-                iPiece pie = GetPiece(new Tuple(x, y));
+                iPiece pie = GetPiece(new Tuple<>(x, y));
                 if(pie == null) rekke += ".";
                 else if(pie.isWhite()) rekke += pie.getSymbol();
                 else rekke += Character.toLowerCase(pie.getSymbol());
@@ -209,6 +211,7 @@ public class Board implements IBoard {
             }
             ret += rekke += "\n";
         }
+        ret += "White: " + wScore + " Black: " + bScore;
         return ret;
     }
 }

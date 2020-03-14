@@ -53,6 +53,17 @@ public class Chess {
             }
         }
     }
+    public static void repaintPiece(Tuple<Integer, Integer> tuple){
+        //Tegner en bestemt rute på nytt.
+        Integer x = tuple.getX();
+        Integer y = tuple.getY();
+        iPiece[][] grid = game.getCurrentBoard().GetGrid();
+        ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
+        if(grid[x][y] != null) {
+            iPiece pie = grid[x][y];
+            icon.setImage(pie.getImage());
+        }else icon.setImage(new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB));
+    }
 
     private static JPanel initializeGUI() {
         JPanel gui = new JPanel(new BorderLayout(3, 3));
