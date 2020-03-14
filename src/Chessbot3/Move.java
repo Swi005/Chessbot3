@@ -35,7 +35,7 @@ public class Move implements Comparable
     public String toString2() {return "(" + this.from + ", " + this.to + ")"; }
 
     public boolean equals(Move obj) {
-        return (this.from == obj.getX() && this.to == obj.getY());
+        return (this.getX().getX() == obj.getX().getX() && this.getX().getY() == obj.getX().getY() && this.getY().getX() == obj.getY().getX() && this.getY().getY() == obj.getY().getY());
     }
     @Override
     public int compareTo(Object m) 

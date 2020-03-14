@@ -119,18 +119,22 @@ public class Board implements IBoard {
     }
 
     public Boolean checkPlayerMove(Move playerMove){
-        // TODO: 14.03.2020 Sjekk at denne faktisk funker, når vi har fikset bugsene rundt copy(). 
+        // TODO: 14.03.2020 Sjekk at denne faktisk funker, når vi har fikset bugsene rundt copy().
         Move[] availableMoves;
-        if(isWhitesTurn) availableMoves = GenMoves(WHITE);
+        if(this.isWhitesTurn) availableMoves = GenMoves(WHITE);
         else availableMoves = GenMoves(BLACK);
         Boolean ret = false;
-        for(Move move : availableMoves) if(move.equals(playerMove)) ret = true;
+        for(Move move : availableMoves){
+            if(move.equals(playerMove)){
+                ret = true;
+            }
+        }
         if(ret){
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
             Move[] counterMoves;
-            if(isWhitesTurn) counterMoves = GenMoves(BLACK);
-            else counterMoves = GenMoves(WHITE);
+            if(copy.isWhitesTurn) counterMoves = GenMoves(WHITE);
+            else counterMoves = GenMoves(BLACK);
             for(Move counter : counterMoves){
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
                 if(target instanceof King) return false;
@@ -193,7 +197,7 @@ public class Board implements IBoard {
     @Override
     public Board Copy() 
     {
-        return new Board(this.GetGrid(),this.isWhitesTurn);
+        return new Board(this.GetGrid(), this.isWhitesTurn);
     }
 
     public iPiece[] GeneratePieceArray(boolean isWhite) 
