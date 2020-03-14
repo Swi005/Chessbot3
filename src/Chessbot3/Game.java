@@ -54,11 +54,12 @@ public class Game {
     public void botMove(){ }
 
     public void playerMove(Move move){
-        previousBoards.add(currentBoard.Copy());
-        ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
-        madeMoves.add(move);
-
-        for(Tuple tup : dirtyLocs) repaintPiece(tup);
+        if(currentBoard.checkPlayerMove(move)) {
+            previousBoards.add(currentBoard.Copy());
+            ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
+            madeMoves.add(move);
+            for (Tuple tup : dirtyLocs) repaintPiece(tup);
+        }else System.err.println("Not a legal move!");
     }
 
     public void printBoard() { System.out.println(currentBoard); }

@@ -118,6 +118,27 @@ public class Board implements IBoard {
         return isMate;
     }
 
+    public Boolean checkPlayerMove(Move playerMove){
+        // TODO: 14.03.2020 Sjekk at denne faktisk funker, når vi har fikset bugsene rundt copy(). 
+        Move[] availableMoves;
+        if(isWhitesTurn) availableMoves = GenMoves(WHITE);
+        else availableMoves = GenMoves(BLACK);
+        Boolean ret = false;
+        for(Move move : availableMoves) if(move.equals(playerMove)) ret = true;
+        if(ret){
+            Board copy = this.Copy();
+            copy.MovePiece(playerMove);
+            Move[] counterMoves;
+            if(isWhitesTurn) counterMoves = GenMoves(BLACK);
+            else counterMoves = GenMoves(WHITE);
+            for(Move counter : counterMoves){
+                iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
+                if(target instanceof King) return false;
+            }
+            return true;
+        } else return false;
+    }
+
     @Override
     public Move[] GenMoves(WhiteBlack c)
     {
