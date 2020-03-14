@@ -41,15 +41,14 @@ public class Chess {
     public static void paintPieces(){
         /* Tegner alle brikkene på brettet, helt fra scratch.
          */
-        Board bård = game.getCurrentBoard();
-        iPiece[][] grid = bård.GetGrid();
+        iPiece[][] grid = game.getCurrentBoard().GetGrid();
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
-                ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
                 if(grid[x][y] != null) {
-                    iPiece pie = grid[x][y];
-                    icon.setImage(pie.getImage());
-                }else icon.setImage(new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB));
+                    ImageIcon newIcon = new ImageIcon();
+                    newIcon.setImage(grid[x][y].getImage());
+                    chessBoardSquares[x][y].setIcon(newIcon);
+                }else chessBoardSquares[x][y].setIcon(new ImageIcon());
             }
         }
     }
@@ -58,11 +57,10 @@ public class Chess {
         Integer x = tuple.getX();
         Integer y = tuple.getY();
         iPiece[][] grid = game.getCurrentBoard().GetGrid();
-        ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
         if(grid[x][y] != null) {
-            iPiece pie = grid[x][y];
-            icon.setImage(pie.getImage());
-        }else icon.setImage(new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB));
+            ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
+            icon.setImage(grid[x][y].getImage());
+        }else chessBoardSquares[x][y].setIcon(new ImageIcon());
     }
 
     private static JPanel initializeGUI() {

@@ -34,12 +34,12 @@ public class Board implements IBoard {
 
     iPiece[] wPices, bPieces;
 
-    int wScore;
-    int bScore;
-    boolean isWhitesTurn = true;
+    private int wScore;
+    private int bScore;
+    private boolean isWhitesTurn = true;
     boolean isMate;
-    Tuple<Boolean, Boolean> wCastle;
-    Tuple<Boolean, Boolean> bCastle;
+    private Tuple<Boolean, Boolean> wCastle;
+    private Tuple<Boolean, Boolean> bCastle;
 
     public Board() 
     {
@@ -57,12 +57,12 @@ public class Board implements IBoard {
 
     }
 
-    public Board(iPiece[][] customBoard, boolean isWhite) 
+    public Board(iPiece[][] customBoard, boolean isWhite)
     {
-        grid = customBoard;
+        this.grid = customBoard;
         this.isWhitesTurn = isWhite;
-        wPices = GeneratePieceArray(true);
-        bPieces = GeneratePieceArray(false);
+        this.wPices = GeneratePieceArray(true);
+        this.bPieces = GeneratePieceArray(false);
     }
 
     @Override
@@ -96,6 +96,7 @@ public class Board implements IBoard {
     public ArrayList<Tuple> MovePiece(Move move)
     {
         ArrayList<Tuple> ret = new ArrayList<>();
+
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
         ret.add(fra);
@@ -103,7 +104,9 @@ public class Board implements IBoard {
 
         grid[til.getX()][til.getY()] = grid[fra.getX()][fra.getY()];
         grid[fra.getX()][fra.getY()] = null;
-        // TODO: 14.03.2020 En passant, og rokadelogikk 
+        // TODO: 14.03.2020 En passant, og rokadelogikk
+
+        isWhitesTurn = !isWhitesTurn;
 
         return ret; //Returnerer en liste over lokasjoner som ble endret på, så de kan bli tegnet på nytt.
     }
@@ -123,6 +126,7 @@ public class Board implements IBoard {
         {
             for (iPiece pie : wPices) 
             {
+                // TODO: 14.03.2020 Erstatt alt dette. Bare fordi kongen ikke kan flytte betyr ikke det at det er matt.
                 if(pie instanceof King && pie.getMoves().size() ==0)
                 {
                     isMate= true;
@@ -209,7 +213,7 @@ public class Board implements IBoard {
                 else rekke += Character.toLowerCase(pie.getSymbol());
                 rekke += "";
             }
-            ret += rekke += "\n";
+            ret += rekke + "\n";
         }
         ret += "White: " + wScore + " Black: " + bScore;
         return ret;

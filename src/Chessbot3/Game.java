@@ -16,7 +16,8 @@ public class Game {
 
     public Game(){
         currentBoard = new Board();
-        previousBoards.add(currentBoard);
+        Board copy = currentBoard.Copy();
+        previousBoards.add(copy);
     }
 
     public void goBack(){
@@ -43,13 +44,20 @@ public class Game {
         for(Move move : madeMoves) System.out.println(move);
     }
     public void printBoardHistory(){
-        for(Board bård : previousBoards) System.out.println(bård);
+
+        for(Board bård : previousBoards) {
+            System.out.println(bård);
+            System.out.println();
+        }
     }
 
     public void botMove(){ }
 
     public void playerMove(Move move){
+        previousBoards.add(currentBoard.Copy());
         ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
+        madeMoves.add(move);
+
         for(Tuple tup : dirtyLocs) repaintPiece(tup);
     }
 
