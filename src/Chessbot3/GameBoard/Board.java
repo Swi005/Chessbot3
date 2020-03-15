@@ -20,20 +20,20 @@ import Pieces.iPiece;
 public class Board implements IBoard {
 
     private static final char[][] initialBoard = new char[][]{
-            new char[] {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
-            new char[] {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[] {'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[] {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-            new char[] {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+            new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+            new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+            new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+            new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
     iPiece[][] grid;
 
-    iPiece[] wPices, bPieces;
-
+    private List<iPiece> wPieces;
+    private List<iPiece> bPieces;
     private int wScore;
     private int bScore;
     private boolean isWhitesTurn = true;
@@ -41,38 +41,40 @@ public class Board implements IBoard {
     private Tuple<Boolean, Boolean> wCastle;
     private Tuple<Boolean, Boolean> bCastle;
 
-    public Board() 
-    {
+    public Board() {
+        this.wPieces = new ArrayList<>();
+        this.bPieces = new ArrayList<>();
         grid = new iPiece[8][8];
-        for (int y = 0; y < 8; y++) 
-        {
-            for (int x = 0; x < 8; x++) 
-            {
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
                 iPiece pie = PieceFactory.getPiece(initialBoard[y][x], this);
                 grid[x][y] = pie;
             }
         }
-        wPices = GeneratePieceArray(true);
-        bPieces = GeneratePieceArray(false);
+        wCastle = new Tuple<>(true, true);
+        bCastle = new Tuple<>(true, true);
+        wScore = 0;
+        bScore = 0;
 
     }
 
-    public Board(iPiece[][] customBoard, boolean isWhite)
-    {
+    public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle) {
         this.grid = customBoard;
         this.isWhitesTurn = isWhite;
-        this.wPices = GeneratePieceArray(true);
-        this.bPieces = GeneratePieceArray(false);
+        this.wPieces = new ArrayList<>();
+        this.bPieces = new ArrayList<>();
+        this.wCastle = wCastle;
+        this.bCastle = bCastle;
+        this.wScore = wScore;
+        this.bScore = bScore;
     }
 
     @Override
-    public iPiece GetPiece(Tuple<Integer, Integer> pos) 
-    {
+    public iPiece GetPiece(Tuple<Integer, Integer> pos) {
         return grid[pos.getY()][pos.getX()];
     }
 
-    public Tuple<Integer,Integer> GetCoordsOfPiece(iPiece piece)
-    {
+    public Tuple<Integer, Integer> GetCoordsOfPiece(iPiece piece) {
         for (int i = 0; i < grid.length; i++) {
             iPiece[] subRow = grid[i];
             for (int j = 0; j < subRow.length; j++) {
@@ -83,9 +85,8 @@ public class Board implements IBoard {
         return null;
     }
 
-    public int AddScore(iPiece piece) 
-    {
-        if(piece.getColor() == WHITE)
+    public int AddScore(iPiece piece) {
+        if (piece.getColor() == WHITE)
             bScore += piece.getValue();
         else
             wScore += piece.getValue();
@@ -93,14 +94,17 @@ public class Board implements IBoard {
     }
 
     @Override
-    public ArrayList<Tuple> MovePiece(Move move)
-    {
+    public ArrayList<Tuple> MovePiece(Move move) {
         ArrayList<Tuple> ret = new ArrayList<>();
 
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
         ret.add(fra);
         ret.add(til);
+
+        iPiece target = grid[til.getX()][til.getY()];
+        if(wPieces.contains(target)) wPieces.remove(target);
+        else if(bPieces.contains(target)) bPieces.remove(target);
 
         grid[til.getX()][til.getY()] = grid[fra.getX()][fra.getY()];
         grid[fra.getX()][fra.getY()] = null;
@@ -112,35 +116,36 @@ public class Board implements IBoard {
     }
 
     @Override
-    public boolean IsMate() 
-    {
+    public boolean IsMate() {
         // TODO Check legal moves of king
         return isMate;
     }
 
-    public Boolean checkPlayerMove(Move playerMove){
-        // TODO: 14.03.2020 Sjekk at denne faktisk funker, når vi har fikset bugsene rundt copy().
+    public Boolean checkPlayerMove(Move playerMove) {
         Move[] availableMoves;
-        if(this.isWhitesTurn) availableMoves = GenMoves(WHITE);
+        if (this.isWhitesTurn) availableMoves = GenMoves(WHITE);
         else availableMoves = GenMoves(BLACK);
         Boolean ret = false;
-        for(Move move : availableMoves){
-            if(move.equals(playerMove)){
+        for (Move move : availableMoves) {
+            System.out.println(move);
+            if (move.equals(playerMove)) {
                 ret = true;
             }
         }
-        if(ret){
+        /* // TODO: 15.03.2020 Fiks denne, så det ikke blir lov å sette seg selv i sjakk 
+        if(ret) {
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
             Move[] counterMoves;
-            if(copy.isWhitesTurn) counterMoves = GenMoves(WHITE);
+            if (copy.isWhitesTurn) counterMoves = GenMoves(WHITE);
             else counterMoves = GenMoves(BLACK);
-            for(Move counter : counterMoves){
+            for (Move counter : counterMoves) {
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
-                if(target instanceof King) return false;
+                if (target instanceof King) return false;
             }
             return true;
-        } else return false;
+        */
+        return ret;
     }
 
     @Override
@@ -149,7 +154,7 @@ public class Board implements IBoard {
         List<Move> ret = new ArrayList<>();
         if (c == WHITE) 
         {
-            for (iPiece pie : wPices) 
+            for (iPiece pie : wPieces)
             {
                 // TODO: 14.03.2020 Erstatt alt dette. Bare fordi kongen ikke kan flytte betyr ikke det at det er matt.
                 if(pie instanceof King && pie.getMoves().size() ==0)
@@ -197,9 +202,12 @@ public class Board implements IBoard {
     @Override
     public Board Copy() 
     {
-        return new Board(this.GetGrid(), this.isWhitesTurn);
+        return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle, this.bCastle);
     }
-
+    public void addPiece(iPiece pie, WhiteBlack color){
+        if(color == WHITE) wPieces.add(pie);
+        else bPieces.add(pie);
+    }
     public iPiece[] GeneratePieceArray(boolean isWhite) 
     {
         List<iPiece> returnList = new ArrayList<>();
