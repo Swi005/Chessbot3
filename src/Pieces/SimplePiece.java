@@ -29,7 +29,10 @@ public abstract class SimplePiece implements iPiece {
     public Boolean isBlack() { return color == BLACK; }
     public WhiteBlack getColor() { return this.color; }
 
-    public Boolean isOppositeColor(iPiece p){ return this.getColor() != p.getColor(); }
+    public Boolean isOppositeColor(iPiece p) {
+        if(p == null) return false;
+        return this.getColor() != p.getColor();
+    }
     public Boolean canSprint(){ return canSprint; }
 
     public Integer getX(){ return getCoords().getX(); }

@@ -71,7 +71,7 @@ public class Board implements IBoard {
 
     @Override
     public iPiece GetPiece(Tuple<Integer, Integer> pos) {
-        return grid[pos.getY()][pos.getX()];
+        return grid[pos.getX()][pos.getY()];
     }
 
     public Tuple<Integer, Integer> GetCoordsOfPiece(iPiece piece) {
@@ -226,6 +226,13 @@ public class Board implements IBoard {
         }
         return returnList.toArray(new iPiece[returnList.size()]);
     }
+    public Boolean isWhitesTurn(){ return this.isWhitesTurn; }
+
+    public WhiteBlack getPlayerToMove(){
+        if(isWhitesTurn) return WHITE;
+        else return BLACK;
+    }
+
     public void Reverse()
     {
         for(int i = 0; i<grid.length/2; i++)
