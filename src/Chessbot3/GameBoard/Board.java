@@ -245,9 +245,9 @@ public class Board implements IBoard {
     }
     public String toString(){
         String ret = "";
-        for(int x=0; x<8; x++){
+        for(int y=0; y<8; y++){
             String rekke = "";
-            for(int y=0; y<8; y++){
+            for(int x=0; x<8; x++){
                 iPiece pie = GetPiece(new Tuple<>(x, y));
                 if(pie == null) rekke += ".";
                 else if(pie.isWhite()) rekke += pie.getSymbol();

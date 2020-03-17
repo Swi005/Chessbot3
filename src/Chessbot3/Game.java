@@ -44,14 +44,14 @@ public class Game {
         for(Move move : madeMoves) System.out.println(move);
     }
     public void printBoardHistory(){
-
         for(Board bård : previousBoards) {
-            System.out.println(bård);
-            System.out.println();
+            System.out.println(bård + "\n");
         }
     }
 
-    public void botMove(){ }
+    public void botMove(Move move){
+
+    }
 
     public Boolean playerMove(Move move){
         if(currentBoard.checkPlayerMove(move)) {
