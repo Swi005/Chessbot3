@@ -120,8 +120,9 @@ public class Board implements IBoard {
         // TODO Check legal moves of king
         return isMate;
     }
-
-    public Boolean checkPlayerMove(Move playerMove) {
+    
+    public Boolean checkPlayerMove(Move playerMove) 
+    {
         Move[] availableMoves;
         if (this.isWhitesTurn) availableMoves = GenMoves(WHITE);
         else availableMoves = GenMoves(BLACK);
