@@ -55,8 +55,8 @@ public class Game {
 
     public Boolean playerMove(Move move){
         if(currentBoard.checkPlayerMove(move)) {
-            previousBoards.add(currentBoard.Copy());
             ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
+            previousBoards.add(currentBoard.Copy());
             for (Tuple tup : dirtyLocs) repaintPiece(tup);
             madeMoves.add(move);
             return true;
