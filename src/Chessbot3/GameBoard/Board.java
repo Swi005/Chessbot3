@@ -197,7 +197,13 @@ public class Board implements IBoard {
     @Override
     public iPiece[][] GetGrid()
     {
-        return Arrays.copyOf(this.grid, this.grid.length);
+        iPiece[][] retgrid = new iPiece[8][8];
+        for(int y=0; y<8; y++){
+            for(int x=0; x<8; x++){
+                retgrid[y][x] = grid[y][x];
+            }
+        }
+        return retgrid;
     }
 
     @Override
