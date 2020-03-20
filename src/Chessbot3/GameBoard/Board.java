@@ -8,6 +8,7 @@ import java.util.List;
 
 import Chessbot3.Move;
 import Chessbot3.Tuple;
+import Pieces.King;
 import Pieces.PieceFactory;
 import Pieces.WhiteBlack;
 import Pieces.iPiece;
@@ -15,7 +16,7 @@ import Pieces.iPiece;
 /**
  * Board
  */
-public class Board implements IBoard {
+public class Board {
 
     private static final char[][] initialBoard = new char[][]{
             new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
@@ -32,8 +33,13 @@ public class Board implements IBoard {
     private static final Tuple H8 = new Tuple(7,0);
     private static final Tuple A1 = new Tuple(0,7);
     private static final Tuple H1 = new Tuple(7,7);
+
     private static final Tuple E1 = new Tuple(4,7);
     private static final Tuple E8 = new Tuple(4,0);
+    private static final Tuple G1 = new Tuple(6,7);
+    private static final Tuple C1 = new Tuple(2,7);
+    private static final Tuple G8 = new Tuple(6,0);
+    private static final Tuple C8 = new Tuple(2,0);
 
 
     iPiece[][] grid;
@@ -137,13 +143,9 @@ public class Board implements IBoard {
         else bScore += x;
     }
 
-    @Override
-    public ArrayList<Tuple> MovePiece(Move move) {
+    public void MovePiece(Move move) {
         //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
         //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med checkPlayerMove/GenMoves.
-        //Returnerer en liste over lokasjoner som ble endret på, slik at paintPiece kan oppdatere GUI.
-        ArrayList<Tuple> ret = new ArrayList<>();
-        System.out.println(wCastle);
 
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
@@ -157,10 +159,22 @@ public class Board implements IBoard {
         else if(fra.equals(E1)) wCastle = new Tuple(false, false); //Om kongen flytter seg, kan den aldri rokere.
         else if(fra.equals(E8)) bCastle = new Tuple(false, false);
 
-
-
-        ret.add(fra);
-        ret.add(til);
+        //Flytter tårnet, om kongen rokerer.
+        if(GetPiece(fra) instanceof King){
+            if(fra.equals(E1) && til.equals(G1)){
+                grid[5][7] = grid[7][7]; //Flytter tårnet når hvit rokerer kort.
+                grid[7][7] = null;
+            }else if(fra.equals(E1) && til.equals(C1)){
+                grid[3][7] = grid[0][7]; //Flytter tårnet når hvit rokerer langt.
+                grid[0][7] = null;
+            }else if(fra.equals(E8) && til.equals(G8)){
+                grid[5][0] = grid[7][0]; //Flytter tårnet når svart rokerer kort.
+                grid[7][0] = null;
+            }else if(fra.equals(E8) && til.equals(C8)){
+                grid[3][0] = grid[0][0]; //Flytter tårnet når svart rokerer langt.
+                grid[0][0] = null;
+            }
+        }
 
         iPiece target = grid[til.getX()][til.getY()];
 
@@ -169,8 +183,6 @@ public class Board implements IBoard {
         // TODO: 14.03.2020 En passant, og rokadelogikk
 
         isWhitesTurn = !isWhitesTurn;
-
-        return ret; //Returnerer en liste over lokasjoner som ble endret på, så de kan bli tegnet på nytt.
     }
 
     public Boolean checkPlayerMove(Move playerMove)
@@ -202,7 +214,6 @@ public class Board implements IBoard {
         */
         return ret;
     }
-    @Override
     public int GetScore(boolean isWhite)
     {
         if (isWhite)
@@ -215,8 +226,6 @@ public class Board implements IBoard {
         if(color == WHITE) return wScore;
         else return bScore;
     }
-
-    @Override
     public iPiece[][] GetGrid()
     {
         //Returnerer selve rutenettet av brikker.
@@ -229,7 +238,6 @@ public class Board implements IBoard {
         return retgrid;
     }
 
-    @Override
     public Board Copy()
     {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
@@ -255,7 +263,6 @@ public class Board implements IBoard {
         return ret;
     }
 
-    @Override
     public iPiece GetPiece(Tuple<Integer, Integer> pos) {
         return grid[pos.getX()][pos.getY()];
     }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Chessbot3.Chess.paintPieces;
-import static Chessbot3.Chess.repaintPiece;
 import static Pieces.WhiteBlack.WHITE;
 
 public class Game {
@@ -75,9 +74,9 @@ public class Game {
         //Oppdaterer også GUI.
         if(currentBoard.checkPlayerMove(move)) {
             previousBoards.add(currentBoard.Copy());
-            ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
-            for (Tuple tup : dirtyLocs) repaintPiece(tup);
+            currentBoard.MovePiece(move);
             madeMoves.add(move);
+            paintPieces();
             return true;
         }else {
             System.err.println("Not a legal move!");

@@ -99,5 +99,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("moves")) game.printMoveHistory();
         else if (usertext.equals("turn")) game.printTurn();
         else if (usertext.equals("pieces")) game.printPieces();
+        else if (usertext.equals("paint")) paintPieces();
     }
 }

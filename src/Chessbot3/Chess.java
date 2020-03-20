@@ -32,7 +32,7 @@ public class Chess {
     public static Game game;
 
     //Knappene og tekstfeltet som vises på skjermen.
-    //Disse må være statiske, slik at Action kan referere til dem.
+    //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
     public static JButton enter = new JButton("Enter");
     public static JButton back = new JButton("Go Back");
     public static JButton neww = new JButton("New Game");
@@ -43,7 +43,7 @@ public class Chess {
         //Opprettet GUI, og alt som skal til for å spille.
         //Når main er ferdig er det ingen kode som kjører, kun actionListeners i Action som venter på at du skal trykke noe.
         //Hver gang spilleren gjør et trekk aktiverer det botten til den har gjort et trekk,
-        //så er det ingen kode som kjører lenger, helt til spilleren gjør et nytt trekk.
+        //etter det er det ingen kode som kjører lenger, før spilleren gjør et nytt trekk.
 
         game = new Game();
         JFrame frame = new JFrame("Chessbot3");
