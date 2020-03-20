@@ -19,7 +19,7 @@ public class Tuple<X, Y> {
     public Tuple<X, Y> copy() { return new Tuple(getX(), getY()); }
 
     public String toString(){
-        return "(" + this.x + ", " + this.y + ")";
+        return "(" + this.x.toString() + ", " + this.y.toString() + ")";
     }
     public boolean equals(Tuple obj){ return (this.x == obj.getX() && this.y == obj.getY()); }
 }

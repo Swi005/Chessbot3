@@ -28,6 +28,14 @@ public class Board implements IBoard {
             new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
+    private static final Tuple A8 = new Tuple(0,0);
+    private static final Tuple H8 = new Tuple(7,0);
+    private static final Tuple A1 = new Tuple(0,7);
+    private static final Tuple H1 = new Tuple(7,7);
+    private static final Tuple E1 = new Tuple(4,7);
+    private static final Tuple E8 = new Tuple(4,0);
+
+
     iPiece[][] grid;
 
     private int wScore;
@@ -117,11 +125,16 @@ public class Board implements IBoard {
     }
 
     public int AddScore(iPiece piece) {
+        if(piece == null) return 0;
         if (piece.getColor() == WHITE)
             bScore += piece.getValue();
         else
             wScore += piece.getValue();
         return piece.getValue();
+    }
+    public void AddScore(Integer x, WhiteBlack c){
+        if(c == WHITE) wScore += x;
+        else bScore += x;
     }
 
     @Override
@@ -130,9 +143,22 @@ public class Board implements IBoard {
         //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med checkPlayerMove/GenMoves.
         //Returnerer en liste over lokasjoner som ble endret på, slik at paintPiece kan oppdatere GUI.
         ArrayList<Tuple> ret = new ArrayList<>();
+        System.out.println(wCastle);
 
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
+
+        //Oppdaterer rokadebetingelser
+        if(fra.equals(A1) || til.equals(A1)) wCastle.setX(false); //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
+        else if(fra.equals(H1) || til.equals(H1)) wCastle.setY(false);
+        else if(fra.equals(A8) || til.equals(A8)) bCastle.setX(false);
+        else if(fra.equals(H8) || til.equals(H8)) bCastle.setY(false);
+
+        else if(fra.equals(E1)) wCastle = new Tuple(false, false); //Om kongen flytter seg, kan den aldri rokere.
+        else if(fra.equals(E8)) bCastle = new Tuple(false, false);
+
+
+
         ret.add(fra);
         ret.add(til);
 
