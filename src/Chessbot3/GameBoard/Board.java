@@ -65,13 +65,41 @@ public class Board implements IBoard {
     }
 
     public List<Move> GenMoves(WhiteBlack c){
-        //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå, inkludert rokader og en passant.
+        //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå,
+        // inkludert rokader og en passant.
         List<iPiece> list = GetPieceList(c);
         ArrayList<Move> ret = new ArrayList();
         for(iPiece pie : list){
             ret.addAll(pie.getMoves(this));
         }
-        // TODO: 20.03.2020 Legg til rokadetrekk og en passant her
+        ret.addAll(GetCastleMoves(c)); //Legger til rokadetrekk
+        // TODO: 20.03.2020 Legg til passanttrekk 
+        return ret;
+    }
+    private List<Move> GetCastleMoves(WhiteBlack c){
+        //En funksjon kun for å legge til rokader som lovlige trekk.
+        //En rokade er lov om:
+        // 1: Kongen ikke har flyttet seg i det hele tatt ennå
+        // 2: Tårnet på den valgte siden ikke har flyttet seg ennå (og lever fortsatt)
+        // 3: Alle rutene imellom kongen og det valgte tårnet er åpne
+        // 4: Ingen av rutene fra og med kongen til og med der kongen vil flytte blir truet av noen fiendtlig brikke. 
+        // Nummer 4 ignorerer vi, fordi det vil doble kompleksiteten til GenMoves.
+        List<Move> ret = new ArrayList<>();
+        if(c == WHITE){
+            if(wCastle.getY() && GetPiece(5, 7) ==  null && GetPiece(6, 7) == null){
+                ret.add(new Move(new Tuple(4, 7), new Tuple(6, 7))); //Hvit rokerer kort
+            }
+            if(wCastle.getX() && GetPiece(3, 7) ==  null && GetPiece(2, 7) == null && GetPiece(1, 7) ==  null){
+                ret.add(new Move(new Tuple(4, 7), new Tuple(2, 7))); //Hvit rokerer langt
+            }
+        }else if(c == BLACK){
+            if(bCastle.getY() && GetPiece(5, 0) ==  null && GetPiece(6, 0) == null){
+                ret.add(new Move(new Tuple(4, 0), new Tuple(6, 0))); //Svart rokerer kort
+            }
+            if(bCastle.getX() && GetPiece(3, 0) == null && GetPiece(2, 0) ==  null && GetPiece(1, 0) ==  null){
+                ret.add(new Move(new Tuple(4, 0), new Tuple(2, 0))); //Svart rokerer langt
+            }
+        }
         return ret;
     }
 
