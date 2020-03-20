@@ -6,8 +6,8 @@ import static Chessbot3.Chess.imageDict;
 import static Pieces.WhiteBlack.WHITE;
 
 public class Rook extends SimplePiece {
-    public Rook(WhiteBlack c, Board gameboard) {
-        super(c, gameboard);
+    public Rook(WhiteBlack c) {
+        super(c);
         canSprint = true;
         value = 479;
         symbol = 'R';

@@ -4,12 +4,10 @@ import static Pieces.WhiteBlack.BLACK;
 import static Pieces.WhiteBlack.WHITE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import Chessbot3.Move;
 import Chessbot3.Tuple;
-import Pieces.King;
 import Pieces.PieceFactory;
 import Pieces.WhiteBlack;
 import Pieces.iPiece;
@@ -32,22 +30,17 @@ public class Board implements IBoard {
 
     iPiece[][] grid;
 
-    private List<iPiece> wPieces;
-    private List<iPiece> bPieces;
     private int wScore;
     private int bScore;
     private boolean isWhitesTurn = true;
-    boolean isMate;
     private Tuple<Boolean, Boolean> wCastle;
     private Tuple<Boolean, Boolean> bCastle;
 
     public Board() {
-        this.wPieces = new ArrayList<>();
-        this.bPieces = new ArrayList<>();
         grid = new iPiece[8][8];
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                iPiece pie = PieceFactory.getPiece(initialBoard[y][x], this);
+                iPiece pie = PieceFactory.getPiece(initialBoard[y][x]);
                 grid[x][y] = pie;
             }
         }
@@ -61,17 +54,21 @@ public class Board implements IBoard {
     public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle) {
         this.grid = customBoard;
         this.isWhitesTurn = isWhite;
-        this.wPieces = new ArrayList<>();
-        this.bPieces = new ArrayList<>();
         this.wCastle = wCastle;
         this.bCastle = bCastle;
         this.wScore = wScore;
         this.bScore = bScore;
     }
 
-    @Override
-    public iPiece GetPiece(Tuple<Integer, Integer> pos) {
-        return grid[pos.getX()][pos.getY()];
+    public List<Move> GenMoves(WhiteBlack c){
+        ArrayList<Move> ret = new ArrayList();
+        for(int y=0; y<8; y++){
+            for(int x=0; x<8; x++){
+                iPiece pie = grid[y][x];
+                if(pie != null && pie.getColor() == c) ret.addAll(pie.getMoves(this));
+            }
+        }
+        return ret;
     }
 
     public Tuple<Integer, Integer> GetCoordsOfPiece(iPiece piece) {
@@ -103,8 +100,6 @@ public class Board implements IBoard {
         ret.add(til);
 
         iPiece target = grid[til.getX()][til.getY()];
-        if(wPieces.contains(target)) wPieces.remove(target);
-        else if(bPieces.contains(target)) bPieces.remove(target);
 
         grid[til.getX()][til.getY()] = grid[fra.getX()][fra.getY()];
         grid[fra.getX()][fra.getY()] = null;
@@ -115,25 +110,18 @@ public class Board implements IBoard {
         return ret; //Returnerer en liste over lokasjoner som ble endret på, så de kan bli tegnet på nytt.
     }
 
-    @Override
-    public boolean IsMate() {
-        // TODO Check legal moves of king
-        return isMate;
-    }
-    
-    public Boolean checkPlayerMove(Move playerMove) 
+    public Boolean checkPlayerMove(Move playerMove)
     {
-        Move[] availableMoves;
-        if (this.isWhitesTurn) availableMoves = GenMoves(WHITE);
+        List<Move> availableMoves;
+        if (IsWhitesTurn()) availableMoves = GenMoves(WHITE);
         else availableMoves = GenMoves(BLACK);
         Boolean ret = false;
         for (Move move : availableMoves) {
-            System.out.println(move);
             if (move.equals(playerMove)) {
                 ret = true;
             }
         }
-        /* // TODO: 15.03.2020 Fiks denne, så det ikke blir lov å sette seg selv i sjakk 
+        /* // TODO: 15.03.2020 Fiks denne, så det ikke blir lov å sette seg selv i sjakk
         if(ret) {
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
@@ -148,45 +136,8 @@ public class Board implements IBoard {
         */
         return ret;
     }
-
     @Override
-    public Move[] GenMoves(WhiteBlack c)
-    {
-        List<Move> ret = new ArrayList<>();
-        if (c == WHITE) 
-        {
-            for (iPiece pie : wPieces)
-            {
-                // TODO: 14.03.2020 Erstatt alt dette. Bare fordi kongen ikke kan flytte betyr ikke det at det er matt.
-                if(pie instanceof King && pie.getMoves().size() ==0)
-                {
-                    isMate= true;
-                }
-                else
-                    isMate= false;
-                    
-                ret.addAll(pie.getMoves());
-            }
-        }
-        else 
-        {
-            for (iPiece pie : bPieces) 
-            {
-                if(pie instanceof King && pie.getMoves().size() ==0)
-                {
-                    isMate= true;
-                }
-                else
-                    isMate = false;
-                    
-                ret.addAll(pie.getMoves());
-            }
-        }
-        return ret.toArray(new Move[ret.size()]);
-    }
-
-    @Override
-    public int GetScore(boolean isWhite) 
+    public int GetScore(boolean isWhite)
     {
         if (isWhite)
             return wScore;
@@ -207,38 +158,24 @@ public class Board implements IBoard {
     }
 
     @Override
-    public Board Copy() 
+    public Board Copy()
     {
         return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle, this.bCastle);
     }
-    public void addPiece(iPiece pie, WhiteBlack color){
-        if(color == WHITE) wPieces.add(pie);
-        else bPieces.add(pie);
-    }
-    public iPiece[] GeneratePieceArray(boolean isWhite) 
-    {
-        List<iPiece> returnList = new ArrayList<>();
-        for (iPiece[] row : grid) 
-        {
-            for (iPiece piece : row) {
-                if(piece != null) {
-                    if (isWhite)
-                        if (piece.getColor() == WHITE)
-                            returnList.add(piece);
-                    if (!isWhite)
-                        if (piece.getColor() == BLACK)
-                            returnList.add(piece);
-                }
-            }
-        }
-        return returnList.toArray(new iPiece[returnList.size()]);
-    }
-    public Boolean isWhitesTurn(){ return this.isWhitesTurn; }
 
-    public WhiteBlack getPlayerToMove(){
+    public Boolean IsWhitesTurn(){ return this.isWhitesTurn; }
+
+    public WhiteBlack GetColorToMove(){
         if(isWhitesTurn) return WHITE;
         else return BLACK;
     }
+
+    @Override
+    public iPiece GetPiece(Tuple<Integer, Integer> pos) {
+        return grid[pos.getX()][pos.getY()];
+    }
+
+    public iPiece GetPiece(int x, int y){ return grid[x][y]; }
 
     public void Reverse()
     {
@@ -254,7 +191,7 @@ public class Board implements IBoard {
         for(int y=0; y<8; y++){
             String rekke = "";
             for(int x=0; x<8; x++){
-                iPiece pie = GetPiece(new Tuple<>(x, y));
+                iPiece pie = GetPiece(x, y);
                 if(pie == null) rekke += ".";
                 else if(pie.isWhite()) rekke += pie.getSymbol();
                 else rekke += Character.toLowerCase(pie.getSymbol());

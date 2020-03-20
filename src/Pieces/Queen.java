@@ -6,8 +6,8 @@ import static Chessbot3.Chess.imageDict;
 import static Pieces.WhiteBlack.WHITE;
 
 public class Queen extends SimplePiece {
-    public Queen(WhiteBlack c, Board gameboard) {
-        super(c, gameboard);
+    public Queen(WhiteBlack c) {
+        super(c);
         canSprint = true;
         value = 929;
         symbol = 'Q';

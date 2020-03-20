@@ -6,8 +6,8 @@ import static Chessbot3.Chess.imageDict;
 import static Pieces.WhiteBlack.WHITE;
 
 public class Bishop extends SimplePiece {
-    public Bishop(WhiteBlack c, Board gameboard) {
-        super(c, gameboard);
+    public Bishop(WhiteBlack c) {
+        super(c);
         canSprint = true;
         value = 320;
         symbol = 'B';

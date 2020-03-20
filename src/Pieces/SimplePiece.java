@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static Chessbot3.Chess.direcDict;
-import static Chessbot3.Chess.imageDict;
 import static Pieces.WhiteBlack.BLACK;
 import static Pieces.WhiteBlack.WHITE;
 
@@ -17,12 +16,10 @@ public abstract class SimplePiece implements iPiece {
     int value;
     Character symbol;
     Boolean canSprint;
-    Board gameboard;
     BufferedImage image;
 
-    public SimplePiece(WhiteBlack c, Board gameboard){
+    public SimplePiece(WhiteBlack c){
         this.color = c;
-        this.gameboard = gameboard;
     }
 
     public Boolean isWhite() { return color == WHITE; }
@@ -35,21 +32,21 @@ public abstract class SimplePiece implements iPiece {
     }
     public Boolean canSprint(){ return canSprint; }
 
-    public Integer getX(){ return getCoords().getX(); }
-    public Integer getY(){ return getCoords().getY(); }
-    public Tuple<Integer, Integer> getCoords() { return gameboard.GetCoordsOfPiece(this); }
+    public Integer getX(Board bård){ return getCoords(bård).getX(); }
+    public Integer getY(Board bård){ return getCoords(bård).getY(); }
+    public Tuple<Integer, Integer> getCoords(Board bård) { return bård.GetCoordsOfPiece(this); }
 
     public int getValue() { return value; }
     public Character getSymbol(){ return symbol; }
     public BufferedImage getImage(){ return image; }
 
-    public ArrayList<Move> getMoves(){
+    public ArrayList<Move> getMoves(Board bård){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå. NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
         //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må sjekkes i en annen funksjon.
         ArrayList<Move> ret = new ArrayList<>();
-        iPiece[][] grid = gameboard.GetGrid();
-        Integer fraX = getX();
-        Integer fraY = getY();
+        iPiece[][] grid = bård.GetGrid();
+        Integer fraX = getX(bård);
+        Integer fraY = getY(bård);
         for(Tuple<Integer, Integer> retning : direcDict.get(symbol)){ //Looper igjennom hver enkelt retning den kan gå.
             Integer tilX = fraX;
             Integer tilY = fraY;
@@ -58,7 +55,6 @@ public abstract class SimplePiece implements iPiece {
                 tilY += retning.getY();
 
                 if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den prøver å gå ut av brettet.
-
 
                 iPiece mål = grid[tilX][tilY];
                 if(mål == null){

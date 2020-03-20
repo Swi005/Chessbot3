@@ -1,5 +1,6 @@
 package Pieces;
 
+import Chessbot3.GameBoard.Board;
 import Chessbot3.Move;
 import Chessbot3.Tuple;
 
@@ -13,13 +14,13 @@ public interface iPiece {
     public Boolean isOppositeColor(iPiece p);
     public Boolean canSprint();
 
-    public Integer getX();
-    public Integer getY();
-    public Tuple<Integer, Integer> getCoords();
+    public Integer getX(Board bård);
+    public Integer getY(Board bård);
+    public Tuple<Integer, Integer> getCoords(Board bård);
     public BufferedImage getImage();
 
     public int getValue();
     public Character getSymbol();
 
-    ArrayList<Move> getMoves();
+    ArrayList<Move> getMoves(Board bård);
 }

@@ -17,10 +17,8 @@ public interface IBoard
     public iPiece GetPiece(Tuple<Integer,Integer> pos);
 
     public ArrayList<Tuple> MovePiece(Move move);
-
-    public boolean IsMate();
     
-    public Move[] GenMoves(WhiteBlack c);
+    public List<Move> GenMoves(WhiteBlack c);
 
     public int GetScore(boolean isWhite);
 

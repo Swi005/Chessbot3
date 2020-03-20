@@ -7,56 +7,44 @@ import static Pieces.WhiteBlack.WHITE;
 
 public class PieceFactory 
 {
-    public static iPiece getPiece(char bokstav, Board b) {
+    public static iPiece getPiece(char bokstav) {
         iPiece pie;
         switch(bokstav){
             case 'p':
-                pie = new Pawn(BLACK, b);
-                b.addPiece(pie, BLACK);
+                pie = new Pawn(BLACK);
                 break;
             case 'P':
-                pie = new Pawn(WHITE, b);
-                b.addPiece(pie, WHITE);
+                pie = new Pawn(WHITE);
                 break;
             case 'r':
-                pie = new Rook(BLACK, b);
-                b.addPiece(pie, BLACK);
+                pie = new Rook(BLACK);
                 break;
             case 'R':
-                pie = new Rook(WHITE, b);
-                b.addPiece(pie, WHITE);
+                pie = new Rook(WHITE);
                 break;
             case 'n':
-                pie = new Knight(BLACK, b);
-                b.addPiece(pie, BLACK);
+                pie = new Knight(BLACK);
                 break;
             case 'N':
-                pie = new Knight(WHITE, b);
-                b.addPiece(pie, WHITE);
+                pie = new Knight(WHITE);
                 break;
             case 'b':
-                pie = new Bishop(BLACK, b);
-                b.addPiece(pie, BLACK);
+                pie = new Bishop(BLACK);
                 break;
             case 'B':
-                pie = new Bishop(WHITE, b);
-                b.addPiece(pie, WHITE);
+                pie = new Bishop(WHITE);
                 break;
             case 'q':
-                pie = new Queen(BLACK, b);
-                b.addPiece(pie, BLACK);
+                pie = new Queen(BLACK);
                 break;
             case 'Q':
-                pie = new Queen(WHITE, b);
-                b.addPiece(pie, WHITE);
+                pie = new Queen(WHITE);
                 break;
             case 'k':
-                pie = new King(BLACK, b);
-                b.addPiece(pie, BLACK);
+                pie = new King(BLACK);
                 break;
             case 'K':
-                pie = new King(WHITE, b);
-                b.addPiece(pie, WHITE);
+                pie = new King(WHITE);
                 break;
             case '.':
                 pie = null;

@@ -32,7 +32,7 @@ public class Action extends KeyAdapter implements ActionListener {
     private void findSquare(ActionEvent e) {
         //Holder styr på hva som gjøres hver gang spilleren trykker på en rute på brettet.
         Board bård = game.getCurrentBoard();
-        WhiteBlack colorToMove = bård.getPlayerToMove();
+        WhiteBlack colorToMove = bård.GetColorToMove();
 
         //Looper igjennom alle knappene i listen til den finner den riktige.
         for(int x=0; x<8; x++){
@@ -86,6 +86,8 @@ public class Action extends KeyAdapter implements ActionListener {
     }
 
     private void enter(){
+        //Hva som skjer hver gang brukeren trykker på enter enten på tastaturet eller skjermen.
+        //Her finner vi også er komplett liste over juksekoder.
         usertext = textField.getText();
         textField.setText("");
         if (usertext.equals("quit")) System.exit(0);
@@ -94,6 +96,9 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("print")) game.printBoard();
         else if (usertext.equals("boards")) game.printBoardHistory();
         else if (usertext.equals("moves")) game.printMoveHistory();
+        else if (usertext.equals("turn")) game.printTurn();
+        else if (usertext.equals("getmoves")) game.printMoves();
+        //else if (usertext.equals("printpieces")) game.printPieces();
     }
 
 }
