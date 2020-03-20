@@ -19,12 +19,15 @@ public class Game {
 
 
     public Game(){
+        //Oppretter et nytt game-objekt, og dermed også et nytt parti.
+        //For å starte på nytt kan du bruke game.newGame(), som resetter alt i dette objektet.
+
         currentBoard = new Board();
-        //Board copy = currentBoard.Copy();
-        //previousBoards.add(copy);
+        previousBoards.add(currentBoard.Copy());
     }
 
     public void goBack(){
+        //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerens nyeste trekk blir resatt. *insert King Crimson reference here*
         int size = previousBoards.size();
         if(size>2){
             currentBoard = previousBoards.get(size-2);
@@ -46,6 +49,7 @@ public class Game {
     }
 
     public void newGame(){
+        //Starter et nytt spill.
         previousBoards.clear();
         madeMoves.clear();
         currentBoard = new Board();
@@ -53,9 +57,12 @@ public class Game {
         paintPieces();
     }
 
+    //Printer alle trekkene som har blitt gjort.
     public void printMoveHistory(){
         for(Move move : madeMoves) System.out.println(move);
     }
+
+    //Printer alle tidligere brett.
     public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
 
     public void botMove(Move move){
@@ -63,6 +70,9 @@ public class Game {
     }
 
     public Boolean playerMove(Move move){
+        //Tar inn et trekk, sjekker om det er lovlig, og gjør trekket på brettet.
+        //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
+        //Oppdaterer også GUI.
         if(currentBoard.checkPlayerMove(move)) {
             previousBoards.add(currentBoard.Copy());
             ArrayList<Tuple> dirtyLocs = currentBoard.MovePiece(move);
@@ -75,19 +85,23 @@ public class Game {
         }
     }
 
+    //printer det nåværende brettet til konsollen.
     public void printBoard() { System.out.println(currentBoard); }
 
+    //Returnerer det nåværende brettet.
     public Board getCurrentBoard(){ return currentBoard; }
 
+    //Printer hvilken farge som skal flytte.
     public void printTurn() {
-        if(currentBoard.IsWhitesTurn()) System.out.println("White to move");
-        else System.out.println("Black to move");
+        System.out.println(currentBoard.GetColorToMove() + " to move");
     }
 
+    //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
     public void printMoves() {
         for(Move move : currentBoard.GenMoves(WHITE)) System.out.println(move);;
     }
 
+    //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
     public void printPieces() {
         WhiteBlack color = currentBoard.GetColorToMove();
         for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);

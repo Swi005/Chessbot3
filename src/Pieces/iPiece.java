@@ -21,6 +21,7 @@ public interface iPiece {
 
     public int getValue();
     public Character getSymbol();
+    public String toString();
 
     ArrayList<Move> getMoves(Board bård);
 }

@@ -2,6 +2,11 @@ package Chessbot3;
 
 public class Move implements Comparable
 {
+    //Et objekt for å representere et trekk.
+    //Objektet holde selv styr på hvor den skal flytte, samt 'vekten' og 'stabiliteten' dens.
+    //Positiv vekt er et bra trekk, negativ vekt er et dårlig ett.
+    //stabilityIndex=false betyr at trekket kan forårsake at verdifulle brikker (fra begge sider) blir drept, og må søkes lengre.
+
     private Tuple<Integer, Integer> from;
     private Tuple<Integer, Integer> to;
     private boolean stabilityIndex;

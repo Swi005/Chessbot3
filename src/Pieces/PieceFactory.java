@@ -8,6 +8,7 @@ import static Pieces.WhiteBlack.WHITE;
 public class PieceFactory 
 {
     public static iPiece getPiece(char bokstav) {
+        //Tar inn en bokstav, spawner en ny tilsvarende brikke, og returnerer brikken.
         iPiece pie;
         switch(bokstav){
             case 'p':

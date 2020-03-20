@@ -8,16 +8,20 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class Generator {
+
+    //De primære himmelretningene, lagret som vektorer.
     public static Tuple<Integer, Integer> N = new Tuple(0, -1);
     public static Tuple<Integer, Integer> S = new Tuple(0, 1);
     public static Tuple<Integer, Integer> E = new Tuple(1, 0);
     public static Tuple<Integer, Integer> W = new Tuple(-1, 0);
 
+    //Sekundære himmelretninger.
     public static Tuple<Integer, Integer> NW = new Tuple(-1, -1);
     public static Tuple<Integer, Integer> NE = new Tuple(1, -1);
     public static Tuple<Integer, Integer> SW = new Tuple(-1, 1);
     public static Tuple<Integer, Integer> SE = new Tuple(1, 1);
 
+    //Hesteretninger. f. eks to opp og en til venstre, eller to til høyre og en opp.
     static Tuple<Integer, Integer> NNW = new Tuple(-1, -2);
     static Tuple<Integer, Integer> NNE = new Tuple(1, -2);
     static Tuple<Integer, Integer> EEN = new Tuple(2, -1);
@@ -30,8 +34,10 @@ public class Generator {
 
 
     public static Dictionary makeDirections(){
-        Dictionary<Character, Tuple<Integer, Integer>[]> directions =  new Hashtable();
         //Oppretter en dict med alle himmelretningene hver enkelt brikke kan bevege seg.
+        //Denne blir kalt opp en gang i starten av Chess, og alle andre kan referere til dem med direcDict.get().
+
+        Dictionary<Character, Tuple<Integer, Integer>[]> directions =  new Hashtable();
         directions.put('P', new Tuple[] {N, NW, NE}); //Hvite bønder
         directions.put('p', new Tuple[] {S, SW, SE}); //Svarte bønder
         directions.put('N', new Tuple[] {NNW, NNE, EEN, EES, SSE, SSW, WWS, WWN});
@@ -42,8 +48,8 @@ public class Generator {
         return directions;
     }
     public static Hashtable<String, BufferedImage> makeImages(){
-        /* Oppretter en dict på der nøkkelen er navnet på brikken, og innholdet er et BufferedImage.
-         */
+        //Oppretter en dict på der nøkkelen er navnet på brikken, og innholdet er et BufferedImage.
+
         Hashtable<String, BufferedImage> imageTable = new Hashtable<>();
         for (String name : new String[] {
                 "bishop_black",

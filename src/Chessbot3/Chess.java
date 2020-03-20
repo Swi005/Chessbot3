@@ -15,19 +15,36 @@ import javax.swing.border.LineBorder;
 
 public class Chess {
 
+    //Dict over hvilke retninger hver brikke kan gå.
     public static final Dictionary<Character, Tuple[]> direcDict = Generator.makeDirections();
+
+    //Dict over bildet som hører til hver enkelt brikke.
     public static final Hashtable<String, BufferedImage> imageDict = Generator.makeImages();
+
+    //Selve vinduet som vises på skjermen.
     public static JPanel chessBoard;
-    public static JTextField textField = new JTextField(20);
+
+    //En nøstet liste over alle rutene på brettet.
+    //Disse må være statiske, så Action kan referere til dem når noen gjør et trekk.
     public static JButton[][] chessBoardSquares = new JButton[8][8];
+
+    //Selve partiet.
     public static Game game;
 
+    //Knappene og tekstfeltet som vises på skjermen.
+    //Disse må være statiske, slik at Action kan referere til dem.
     public static JButton enter = new JButton("Enter");
     public static JButton back = new JButton("Go Back");
     public static JButton neww = new JButton("New Game");
     public static JButton quit = new JButton("Quit Game");
+    public static JTextField textField = new JTextField(20);
 
     public static void main(String[] args) {
+        //Opprettet GUI, og alt som skal til for å spille.
+        //Når main er ferdig er det ingen kode som kjører, kun actionListeners i Action som venter på at du skal trykke noe.
+        //Hver gang spilleren gjør et trekk aktiverer det botten til den har gjort et trekk,
+        //så er det ingen kode som kjører lenger, helt til spilleren gjør et nytt trekk.
+
         game = new Game();
         JFrame frame = new JFrame("Chessbot3");
         frame.add(initializeGUI());
@@ -54,6 +71,7 @@ public class Chess {
     }
     public static void repaintPiece(Tuple<Integer, Integer> tuple){
         //Tegner en bestemt rute på nytt.
+        //Denne må kalles opp for hver rute som blir rørt når noen gjør et trekk.
         Integer x = tuple.getX();
         Integer y = tuple.getY();
         iPiece[][] grid = game.getCurrentBoard().GetGrid();
@@ -64,6 +82,8 @@ public class Chess {
     }
 
     private static JPanel initializeGUI() {
+        //Lager selve vinduet i GUI-en.
+        //Den oppretter alle knappene, tekstfeltet, samt rutene som brikkene skal stå på.
         JPanel gui = new JPanel(new BorderLayout(3, 3));
         gui.setBorder(new EmptyBorder(1, 1, 1, 1));
 
@@ -80,7 +100,7 @@ public class Chess {
         gui.add(toolbar, BorderLayout.PAGE_END);
 
         JTextField text = new JTextField(20);
-        textField = text;
+        textField = text; //Tekstfeltet støtter kun juksekoder, en komplett liste finnes i Action.enter().
         textField.addKeyListener(new Action());
         toolbar.add(text);
         toolbar.add(enter);
@@ -95,8 +115,9 @@ public class Chess {
     }
 
     private static void makeButtons() {
-        /* Skaper alle rutene som brikkene skal stå på. Disse rutene er egentlig knapper.
-         */
+        //Skaper alle rutene som brikkene skal stå på. Disse rutene er egentlig knapper.
+        //Disse knappene får alle sammen et blankt ikon, som paintPieces() og repaintPiece tegner oppå.
+
         Insets buttonMargin = new Insets(0,0,0,0);
         for (int ii = 0; ii < chessBoardSquares.length; ii++) {
             for (int jj = 0; jj < chessBoardSquares[ii].length; jj++) {

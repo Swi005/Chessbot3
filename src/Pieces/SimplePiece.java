@@ -19,6 +19,8 @@ public abstract class SimplePiece implements iPiece {
     BufferedImage image;
 
     public SimplePiece(WhiteBlack c){
+        //Det eneste som er felles for alle brikker er hvordan fargen blir assignert.
+        //Verdi, symbolet, bildet osv er unikt for hver brikketype, og blir fikset i kosnturktøren til de andre brikkeklassene.
         this.color = c;
     }
 
@@ -26,11 +28,11 @@ public abstract class SimplePiece implements iPiece {
     public Boolean isBlack() { return color == BLACK; }
     public WhiteBlack getColor() { return this.color; }
 
-    public Boolean isOppositeColor(iPiece p) {
+    public Boolean isOppositeColor(iPiece p) { //Om en brikke har en annen farge enn en annen brikke. Da kan disse angripe hverandre.
         if(p == null) return false;
         return this.getColor() != p.getColor();
     }
-    public Boolean canSprint(){ return canSprint; }
+    public Boolean canSprint(){ return canSprint; } //Om brikken kan gå flere skritt om gangen eller ei.
     public String toString(){ return color + " " + getClass().getName().substring(7).toUpperCase(); }
 
     public Integer getX(Board bård){ return getCoords(bård).getX(); }
@@ -43,7 +45,7 @@ public abstract class SimplePiece implements iPiece {
 
     public ArrayList<Move> getMoves(Board bård){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå. NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
-        //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må sjekkes i en annen funksjon.
+        //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må sjekkes i checkPlayerMove.
         ArrayList<Move> ret = new ArrayList<>();
         iPiece[][] grid = bård.GetGrid();
         Integer fraX = getX(bård);

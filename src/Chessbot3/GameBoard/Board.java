@@ -37,6 +37,7 @@ public class Board implements IBoard {
     private Tuple<Boolean, Boolean> bCastle;
 
     public Board() {
+        //Det initielle brettet. Plasserer brikker med hensyn på initialBoard.
         grid = new iPiece[8][8];
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
@@ -51,7 +52,10 @@ public class Board implements IBoard {
 
     }
 
-    public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle) {
+    public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle)
+    //En konstruktør som kun skal brukes for å opprette en kopi av et tidligere brett.
+    //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
+    {
         this.grid = customBoard;
         this.isWhitesTurn = isWhite;
         this.wCastle = wCastle;
@@ -61,15 +65,19 @@ public class Board implements IBoard {
     }
 
     public List<Move> GenMoves(WhiteBlack c){
+        //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå, inkludert rokader og en passant.
         List<iPiece> list = GetPieceList(c);
         ArrayList<Move> ret = new ArrayList();
         for(iPiece pie : list){
             ret.addAll(pie.getMoves(this));
         }
+        // TODO: 20.03.2020 Legg til rokadetrekk og en passant her
         return ret;
     }
 
-    public Tuple<Integer, Integer> GetCoordsOfPiece(iPiece piece) {
+    public Tuple<Integer, Integer> GetCoordsOfPiece(iPiece piece) throws IllegalArgumentException {
+        //Søker etter en brikke og returnerer koordinatene dens.
+        //Kræsjer om den ikke finner den.
         for (int i = 0; i < grid.length; i++) {
             iPiece[] subRow = grid[i];
             for (int j = 0; j < subRow.length; j++) {
@@ -77,7 +85,7 @@ public class Board implements IBoard {
                     return new Tuple<Integer, Integer>(i, j);
             }
         }
-        return null;
+        throw new IllegalArgumentException("Fant ikke brikken!");
     }
 
     public int AddScore(iPiece piece) {
@@ -90,6 +98,9 @@ public class Board implements IBoard {
 
     @Override
     public ArrayList<Tuple> MovePiece(Move move) {
+        //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
+        //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med checkPlayerMove/GenMoves.
+        //Returnerer en liste over lokasjoner som ble endret på, slik at paintPiece kan oppdatere GUI.
         ArrayList<Tuple> ret = new ArrayList<>();
 
         Tuple<Integer, Integer> fra = move.getX();
@@ -110,6 +121,9 @@ public class Board implements IBoard {
 
     public Boolean checkPlayerMove(Move playerMove)
     {
+        //Sjekker om spillerens trekk er lovlig.
+        // Tar hensyn til om trekket setter seg selv i sjakk.
+        // Returnerer true om det er lov.
         List<Move> availableMoves;
         if (IsWhitesTurn()) availableMoves = GenMoves(WHITE);
         else availableMoves = GenMoves(BLACK);
@@ -142,10 +156,16 @@ public class Board implements IBoard {
         else
             return bScore;
     }
+    public int GetScore(WhiteBlack color){
+        //Returnerer scoren til en farge.
+        if(color == WHITE) return wScore;
+        else return bScore;
+    }
 
     @Override
     public iPiece[][] GetGrid()
     {
+        //Returnerer selve rutenettet av brikker.
         iPiece[][] retgrid = new iPiece[8][8];
         for(int y=0; y<8; y++){
             for(int x=0; x<8; x++){
@@ -158,16 +178,19 @@ public class Board implements IBoard {
     @Override
     public Board Copy()
     {
+        //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
         return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle, this.bCastle);
     }
 
     public Boolean IsWhitesTurn(){ return this.isWhitesTurn; }
 
     public WhiteBlack GetColorToMove(){
+        //Returnerer hvilken farge som skal flytte.
         if(isWhitesTurn) return WHITE;
         else return BLACK;
     }
     public List<iPiece> GetPieceList(WhiteBlack c){
+        //Lager en liste over alle brikkene til en farge.
         List<iPiece> ret = new ArrayList<>();
         for(int y=0; y<8; y++){
             for(int x=0; x<8; x++){
@@ -187,6 +210,7 @@ public class Board implements IBoard {
 
     public void Reverse()
     {
+        //Reverserer brettet. Nå er plutselig svart nederst!.
         for(int i = 0; i<grid.length/2; i++)
         {
             iPiece[] temp = grid[i];
