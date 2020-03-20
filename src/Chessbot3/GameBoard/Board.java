@@ -61,12 +61,10 @@ public class Board implements IBoard {
     }
 
     public List<Move> GenMoves(WhiteBlack c){
+        List<iPiece> list = GetPieceList(c);
         ArrayList<Move> ret = new ArrayList();
-        for(int y=0; y<8; y++){
-            for(int x=0; x<8; x++){
-                iPiece pie = grid[y][x];
-                if(pie != null && pie.getColor() == c) ret.addAll(pie.getMoves(this));
-            }
+        for(iPiece pie : list){
+            ret.addAll(pie.getMoves(this));
         }
         return ret;
     }
@@ -168,6 +166,16 @@ public class Board implements IBoard {
     public WhiteBlack GetColorToMove(){
         if(isWhitesTurn) return WHITE;
         else return BLACK;
+    }
+    public List<iPiece> GetPieceList(WhiteBlack c){
+        List<iPiece> ret = new ArrayList<>();
+        for(int y=0; y<8; y++){
+            for(int x=0; x<8; x++){
+                iPiece pie = grid[y][x];
+                if(pie != null && pie.getColor() == c) ret.add(pie);
+            }
+        }
+        return ret;
     }
 
     @Override

@@ -31,6 +31,7 @@ public abstract class SimplePiece implements iPiece {
         return this.getColor() != p.getColor();
     }
     public Boolean canSprint(){ return canSprint; }
+    public String toString(){ return color + " " + getClass().getName().substring(7).toUpperCase(); }
 
     public Integer getX(Board bård){ return getCoords(bård).getX(); }
     public Integer getY(Board bård){ return getCoords(bård).getY(); }

@@ -1,6 +1,7 @@
 package Chessbot3;
 
 import Chessbot3.GameBoard.Board;
+import Pieces.WhiteBlack;
 import Pieces.iPiece;
 
 import java.util.ArrayList;
@@ -86,11 +87,9 @@ public class Game {
     public void printMoves() {
         for(Move move : currentBoard.GenMoves(WHITE)) System.out.println(move);;
     }
-    /* // TODO: 20.03.2020 Rework 
+
     public void printPieces() {
-        if(currentBoard.IsWhitesTurn()) for(iPiece pie : currentBoard.wPieces) System.out.println(pie);
-        else for(iPiece pie : currentBoard.bPieces) System.out.println(pie);
+        WhiteBlack color = currentBoard.GetColorToMove();
+        for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);
     }
-    
-     */
 }
