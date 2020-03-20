@@ -199,20 +199,24 @@ public class Board {
                 ret = true;
             }
         }
-        /* // TODO: 15.03.2020 Fiks denne, så det ikke blir lov å sette seg selv i sjakk
+
+        //Om spillerens trekk er på listen, er det kanskje lovlig.
+        //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
+        //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
+        //Da er trekker ulovlig, og returnerer false;
         if(ret) {
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
-            Move[] counterMoves;
+            List<Move> counterMoves;
             if (copy.isWhitesTurn) counterMoves = GenMoves(WHITE);
             else counterMoves = GenMoves(BLACK);
             for (Move counter : counterMoves) {
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
-                if (target instanceof King) return false;
+                if (target instanceof King) return false; //Om motstanderen kan ta kongen
             }
-            return true;
-        */
-        return ret;
+            return true; //Om motstanderen ikke har noen trekk som kan ta kongen
+        }
+        return false; //Om trekket ikke engang er på den originale listen.
     }
     public int GetScore(boolean isWhite)
     {
