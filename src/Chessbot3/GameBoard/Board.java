@@ -22,7 +22,7 @@ public class Board {
             new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
+            new char[]{'.', '.', '.', '.', '.', 'N', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
@@ -175,17 +175,18 @@ public class Board {
                 grid[0][0] = null;
             }
         }
-
+        // TODO: 22.03.2020 Legg til score og sånt shit her?
         iPiece target = grid[til.getX()][til.getY()];
 
+        //Flytter faktisk brikken.
         grid[til.getX()][til.getY()] = grid[fra.getX()][fra.getY()];
         grid[fra.getX()][fra.getY()] = null;
-        // TODO: 14.03.2020 En passant, og rokadelogikk
+        // TODO: 14.03.2020 En passant
 
         isWhitesTurn = !isWhitesTurn;
     }
 
-    public Boolean checkPlayerMove(Move playerMove)
+    public Boolean CheckPlayerMove(Move playerMove)
     {
         //Sjekker om spillerens trekk er lovlig.
         // Tar hensyn til om trekket setter seg selv i sjakk.
@@ -208,8 +209,8 @@ public class Board {
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
             List<Move> counterMoves;
-            if (copy.isWhitesTurn) counterMoves = GenMoves(WHITE);
-            else counterMoves = GenMoves(BLACK);
+            if (copy.isWhitesTurn) counterMoves = copy.GenMoves(WHITE);
+            else counterMoves = copy.GenMoves(BLACK);
             for (Move counter : counterMoves) {
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
                 if (target instanceof King) return false; //Om motstanderen kan ta kongen
@@ -218,6 +219,33 @@ public class Board {
         }
         return false; //Om trekket ikke engang er på den originale listen.
     }
+
+    public Boolean CheckCheckMate(){
+        List<Move> originalList = GenMoves(GetColorToMove());
+        List<Move> legals = new ArrayList<>();
+        for(Move move : originalList){
+            if(CheckPlayerMove(move)) legals.add(move);
+        }
+        System.out.println("du har " + legals.size() + " trekk");
+        if(legals.size()>0) return false;
+        else{
+            Tuple kingpos = null;
+            outer : for(int y=0; y<8; y++){
+                for(int x=0; x<8; x++){
+                    if(GetPiece(x, y) instanceof King){
+                        kingpos = new Tuple(x, y);
+                        System.out.println("found king: " + kingpos);
+                        break outer;
+                    }
+                }
+            }
+            for(Move move : GenMoves(GetOppositeColorToMove())){
+                if(move.getY().equals(kingpos)) return true;
+            }
+            return null;
+        }
+    }
+
     public int GetScore(boolean isWhite)
     {
         if (isWhite)
@@ -232,7 +260,7 @@ public class Board {
     }
     public iPiece[][] GetGrid()
     {
-        //Returnerer selve rutenettet av brikker.
+        //Returnerer en kopi av selve rutenettet av brikker.
         iPiece[][] retgrid = new iPiece[8][8];
         for(int y=0; y<8; y++){
             for(int x=0; x<8; x++){
@@ -255,6 +283,12 @@ public class Board {
         if(isWhitesTurn) return WHITE;
         else return BLACK;
     }
+    public WhiteBlack GetOppositeColorToMove(){
+        //Retrunerer den andre fargen, den fargen som ikke skal flytte.
+        if(isWhitesTurn) return BLACK;
+        else return WHITE;
+    }
+
     public List<iPiece> GetPieceList(WhiteBlack c){
         //Lager en liste over alle brikkene til en farge.
         List<iPiece> ret = new ArrayList<>();

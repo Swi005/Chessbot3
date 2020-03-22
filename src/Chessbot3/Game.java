@@ -72,16 +72,21 @@ public class Game {
         //Tar inn et trekk, sjekker om det er lovlig, og gjør trekket på brettet.
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også GUI.
-        if(currentBoard.checkPlayerMove(move)) {
+        if(currentBoard.CheckPlayerMove(move)) {
             previousBoards.add(currentBoard.Copy());
             currentBoard.MovePiece(move);
-            madeMoves.add(move);
-            paintPieces();
-            return true;
+            if(currentBoard.CheckCheckMate() == null) System.out.println("Draw!");
+            else if(currentBoard.CheckCheckMate()) System.out.println("Checkmate!");
+            else {
+                madeMoves.add(move);
+                paintPieces();
+                return true;
+            }
         }else {
             System.err.println("Not a legal move!");
             return false;
         }
+        return true;
     }
 
     //printer det nåværende brettet til konsollen.
