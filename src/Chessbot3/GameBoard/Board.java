@@ -22,7 +22,7 @@ public class Board {
             new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[]{'.', '.', '.', '.', '.', 'N', '.', '.'},
+            new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
@@ -226,7 +226,6 @@ public class Board {
         for(Move move : originalList){
             if(CheckPlayerMove(move)) legals.add(move);
         }
-        System.out.println("du har " + legals.size() + " trekk");
         if(legals.size()>0) return false;
         else{
             Tuple kingpos = null;
@@ -234,7 +233,6 @@ public class Board {
                 for(int x=0; x<8; x++){
                     if(GetPiece(x, y) instanceof King){
                         kingpos = new Tuple(x, y);
-                        System.out.println("found king: " + kingpos);
                         break outer;
                     }
                 }
