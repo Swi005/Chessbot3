@@ -77,16 +77,13 @@ public class Game {
             currentBoard.MovePiece(move);
             if(currentBoard.CheckCheckMate() == null) System.out.println("Draw!");
             else if(currentBoard.CheckCheckMate()) System.out.println("Checkmate!");
-            else {
-                madeMoves.add(move);
-                paintPieces();
-                return true;
-            }
+            madeMoves.add(move);
+            paintPieces();
+            return true;
         }else {
             System.err.println("Not a legal move!");
             return false;
         }
-        return true;
     }
 
     //printer det nåværende brettet til konsollen.
@@ -102,7 +99,7 @@ public class Game {
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
     public void printMoves() {
-        for(Move move : currentBoard.GenMoves(WHITE)) System.out.println(move);;
+        for(Move move : currentBoard.GenMoves(currentBoard.GetColorToMove())) System.out.println(move);;
     }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.

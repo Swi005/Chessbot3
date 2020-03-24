@@ -47,8 +47,8 @@ public class Board {
     private int wScore;
     private int bScore;
     private boolean isWhitesTurn = true;
-    private Tuple<Boolean, Boolean> wCastle;
-    private Tuple<Boolean, Boolean> bCastle;
+    public Tuple<Boolean, Boolean> wCastle;
+    public Tuple<Boolean, Boolean> bCastle;
 
     public Board() {
         //Det initielle brettet. Plasserer brikker med hensyn på initialBoard.
@@ -86,34 +86,8 @@ public class Board {
         for(iPiece pie : list){
             ret.addAll(pie.getMoves(this));
         }
-        ret.addAll(GetCastleMoves(c)); //Legger til rokadetrekk
+        //ret.addAll(GetCastleMoves(c)); //Legger til rokadetrekk
         // TODO: 20.03.2020 Legg til passanttrekk 
-        return ret;
-    }
-    private List<Move> GetCastleMoves(WhiteBlack c){
-        //En funksjon kun for å legge til rokader som lovlige trekk.
-        //En rokade er lov om:
-        // 1: Kongen ikke har flyttet seg i det hele tatt ennå
-        // 2: Tårnet på den valgte siden ikke har flyttet seg ennå (og lever fortsatt)
-        // 3: Alle rutene imellom kongen og det valgte tårnet er åpne
-        // 4: Ingen av rutene fra og med kongen til og med der kongen vil flytte blir truet av noen fiendtlig brikke. 
-        // Nummer 4 ignorerer vi, fordi det vil doble kompleksiteten til GenMoves.
-        List<Move> ret = new ArrayList<>();
-        if(c == WHITE){
-            if(wCastle.getY() && GetPiece(5, 7) ==  null && GetPiece(6, 7) == null){
-                ret.add(new Move(new Tuple(4, 7), new Tuple(6, 7))); //Hvit rokerer kort
-            }
-            if(wCastle.getX() && GetPiece(3, 7) ==  null && GetPiece(2, 7) == null && GetPiece(1, 7) ==  null){
-                ret.add(new Move(new Tuple(4, 7), new Tuple(2, 7))); //Hvit rokerer langt
-            }
-        }else if(c == BLACK){
-            if(bCastle.getY() && GetPiece(5, 0) ==  null && GetPiece(6, 0) == null){
-                ret.add(new Move(new Tuple(4, 0), new Tuple(6, 0))); //Svart rokerer kort
-            }
-            if(bCastle.getX() && GetPiece(3, 0) == null && GetPiece(2, 0) ==  null && GetPiece(1, 0) ==  null){
-                ret.add(new Move(new Tuple(4, 0), new Tuple(2, 0))); //Svart rokerer langt
-            }
-        }
         return ret;
     }
 
@@ -191,26 +165,21 @@ public class Board {
         //Sjekker om spillerens trekk er lovlig.
         // Tar hensyn til om trekket setter seg selv i sjakk.
         // Returnerer true om det er lov.
-        List<Move> availableMoves;
-        if (IsWhitesTurn()) availableMoves = GenMoves(WHITE);
-        else availableMoves = GenMoves(BLACK);
+        List<Move> availableMoves = GenMoves(GetColorToMove());
         Boolean ret = false;
         for (Move move : availableMoves) {
             if (move.equals(playerMove)) {
                 ret = true;
             }
         }
-
         //Om spillerens trekk er på listen, er det kanskje lovlig.
         //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
         //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
-        //Da er trekker ulovlig, og returnerer false;
+        //Da er trekket ulovlig, og returnerer false;
         if(ret) {
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
-            List<Move> counterMoves;
-            if (copy.isWhitesTurn) counterMoves = copy.GenMoves(WHITE);
-            else counterMoves = copy.GenMoves(BLACK);
+            List<Move> counterMoves = GenMoves(GetOppositeColorToMove());
             for (Move counter : counterMoves) {
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
                 if (target instanceof King) return false; //Om motstanderen kan ta kongen
@@ -221,26 +190,20 @@ public class Board {
     }
 
     public Boolean CheckCheckMate(){
+        //Sjekker om brettet er sjakkmatt.
+        //Returnerer true om det matt, null om det er patt (uavgjort) og false ellers.
         List<Move> originalList = GenMoves(GetColorToMove());
         List<Move> legals = new ArrayList<>();
         for(Move move : originalList){
             if(CheckPlayerMove(move)) legals.add(move);
         }
-        if(legals.size()>0) return false;
+        if(legals.size()>0) return false; //Om spilleren har lovlige trekk.
         else{
-            Tuple kingpos = null;
-            outer : for(int y=0; y<8; y++){
-                for(int x=0; x<8; x++){
-                    if(GetPiece(x, y) instanceof King){
-                        kingpos = new Tuple(x, y);
-                        break outer;
-                    }
-                }
-            }
             for(Move move : GenMoves(GetOppositeColorToMove())){
-                if(move.getY().equals(kingpos)) return true;
+                iPiece target = GetGrid()[move.getY().getX()][move.getY().getY()];
+                if(target instanceof King) return true; //Om spilleren har ingen lovlige trekk, og kongen blir truet
             }
-            return null;
+            return null; //Om spilleren ikke har noen lovlige trekk, men blir heller ikke truet. Da er det patt.
         }
     }
 
@@ -271,7 +234,7 @@ public class Board {
     public Board Copy()
     {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle, this.bCastle);
+        return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle.copy(), this.bCastle.copy());
     }
 
     public Boolean IsWhitesTurn(){ return this.isWhitesTurn; }
