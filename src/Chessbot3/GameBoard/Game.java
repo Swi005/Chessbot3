@@ -1,6 +1,7 @@
-package Chessbot3;
+package Chessbot3.GameBoard;
 
 import Chessbot3.GameBoard.Board;
+import Chessbot3.Move;
 import Pieces.WhiteBlack;
 import Pieces.iPiece;
 
@@ -12,9 +13,9 @@ import static Pieces.WhiteBlack.WHITE;
 
 public class Game {
 
-    private List<Board> previousBoards = new ArrayList<>();
+    private ArrayList<Board> previousBoards = new ArrayList<>();
     private Board currentBoard;
-    private List<Move> madeMoves = new ArrayList<>();
+    private ArrayList<Move> madeMoves = new ArrayList<>();
 
 
     public Game(){
@@ -26,24 +27,16 @@ public class Game {
     }
 
     public void goBack(){
-        //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerens nyeste trekk blir resatt. *insert King Crimson reference here*
-        int size = previousBoards.size();
-        if(size>2){
-            currentBoard = previousBoards.get(size-2);
-            previousBoards = previousBoards.subList(0, size-1);
-            madeMoves = madeMoves.subList(0, size-1);
-            paintPieces();
-        }
-            /*
-            //madeMoves.remove(madeMoves.size() - 1);
-            madeMoves.remove(madeMoves.size() - 1);
-            //previousBoards.remove(previousBoards.size()-1);
+        //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerenes nyeste trekk blir resatt. *insert Bites Za Dusto reference here*
+        if(previousBoards.size()>1){
             previousBoards.remove(previousBoards.size()-1);
-            currentBoard = previousBoards.get(previousBoards.size()-1);
+            previousBoards.remove(previousBoards.size()-1);
+            madeMoves.remove(madeMoves.size()-1);
+            madeMoves.remove(madeMoves.size()-1);
+            currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
+
             paintPieces();
         }
-
-             */
         else System.err.println("Can't go further back!");
     }
 
@@ -73,8 +66,8 @@ public class Game {
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også GUI.
         if(currentBoard.CheckPlayerMove(move)) {
-            previousBoards.add(currentBoard.Copy());
             currentBoard.MovePiece(move);
+            previousBoards.add(currentBoard.Copy());
             if(currentBoard.CheckCheckMate() == null) System.out.println("Draw!");
             else if(currentBoard.CheckCheckMate()) System.out.println("Checkmate!");
             madeMoves.add(move);
@@ -106,5 +99,11 @@ public class Game {
     public void printPieces() {
         WhiteBlack color = currentBoard.GetColorToMove();
         for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);
+    }
+
+    //Reverserer bretttet. Svart er nå nederst!
+    public void reverse() {
+        currentBoard.Reverse();
+        paintPieces();
     }
 }

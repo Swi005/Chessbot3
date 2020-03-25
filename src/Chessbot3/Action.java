@@ -81,6 +81,7 @@ public class Action extends KeyAdapter implements ActionListener {
                     break;
             }
         } catch (Exception a) {
+            a.printStackTrace();
             System.out.println("Unexpected key");
         }
     }
@@ -100,5 +101,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("turn")) game.printTurn();
         else if (usertext.equals("pieces")) game.printPieces();
         else if (usertext.equals("paint")) paintPieces();
+        else if (usertext.equals("reverse")) game.reverse();
     }
 }

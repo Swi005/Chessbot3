@@ -270,6 +270,7 @@ public class Board {
 
     public void Reverse()
     {
+        // TODO: 24.03.2020 Fiks! Denne gjør bare brettet speilvendt, istedet for å snu det opp-ned. 
         //Reverserer brettet. Nå er plutselig svart nederst!.
         for(int i = 0; i<grid.length/2; i++)
         {

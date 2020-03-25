@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import Chessbot3.GameBoard.Board;
+import Chessbot3.GameBoard.Game;
 import Pieces.iPiece;
 
 import javax.swing.*;
