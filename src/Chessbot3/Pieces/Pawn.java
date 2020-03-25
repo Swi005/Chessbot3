@@ -6,7 +6,7 @@ import Chessbot3.MiscResources.Tuple;
 
 import java.util.ArrayList;
 
-import static Chessbot3.GUIMain.Chess.*;
+import static Chessbot3.GuiMain.Chess.*;
 import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
 

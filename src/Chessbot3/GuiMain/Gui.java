@@ -1,7 +1,8 @@
-package Chessbot3.GUIMain;
+package Chessbot3.GuiMain;
 
 import Chessbot3.GameBoard.Game;
 import Chessbot3.MiscResources.Tuple;
+import Chessbot3.Pieces.WhiteBlack;
 import Chessbot3.Pieces.iPiece;
 
 import javax.swing.*;
@@ -10,7 +11,10 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class GUI {
+import static Chessbot3.Pieces.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.WhiteBlack.WHITE;
+
+public class Gui {
 
     //Selve vinduet som vises på skjermen.
     public static JPanel chessBoard;
@@ -30,7 +34,7 @@ public class GUI {
     public static JButton quit = new JButton("Quit Game");
     public static JTextField textField = new JTextField(20);
 
-    public GUI(){
+    public Gui(){
         game = new Game();
         JFrame frame = new JFrame("Chessbot3");
         frame.add(initializeGUI());
@@ -40,10 +44,12 @@ public class GUI {
         frame.setMinimumSize(frame.getSize());
         paintPieces();
         frame.setVisible(true);
+        chooseGamemode();
+        if(game.isBotTurn()) game.botMove(); //Starter botten om det er dens tur.
     }
 
     private static JPanel initializeGUI() {
-        //Lager selve vinduet i GUI-en.
+        //Lager selve vinduet i Gui-en.
         //Den oppretter alle knappene, tekstfeltet, samt rutene som brikkene skal stå på.
         JPanel gui = new JPanel(new BorderLayout(3, 3));
         gui.setBorder(new EmptyBorder(1, 1, 1, 1));
@@ -52,9 +58,9 @@ public class GUI {
         toolbar2.add(quit);
         toolbar2.add(neww);
         toolbar2.add(back);
-        quit.addActionListener(new Chessbot3.GUIMain.Action());
-        back.addActionListener(new Chessbot3.GUIMain.Action());
-        neww.addActionListener(new Chessbot3.GUIMain.Action());
+        quit.addActionListener(new Chessbot3.GuiMain.Action());
+        back.addActionListener(new Chessbot3.GuiMain.Action());
+        neww.addActionListener(new Chessbot3.GuiMain.Action());
         gui.add(toolbar2, BorderLayout.PAGE_START);
 
         JToolBar toolbar = new JToolBar();
@@ -62,10 +68,10 @@ public class GUI {
 
         JTextField text = new JTextField(20);
         textField = text; //Tekstfeltet støtter kun juksekoder, en komplett liste finnes i Action.enter().
-        textField.addKeyListener(new Chessbot3.GUIMain.Action());
+        textField.addKeyListener(new Chessbot3.GuiMain.Action());
         toolbar.add(text);
         toolbar.add(enter);
-        enter.addActionListener(new Chessbot3.GUIMain.Action());
+        enter.addActionListener(new Chessbot3.GuiMain.Action());
 
         chessBoard = new JPanel(new GridLayout(0, 8));
         chessBoard.setBorder(new LineBorder(Color.BLACK));
@@ -98,9 +104,33 @@ public class GUI {
             }
         }
     }
+    public static void chooseGamemode(){
+        //Velger hvilken spillmodus som skal brukes. Om spilleren ikke velger noe blir det PvP.
+        //Selve popup-vinduet. Endre denne på eget ansvar!
+        Object[] options = {"Player vs Player", "Player vs Bot", "Bot vs Bot"};
+        int n = JOptionPane.showOptionDialog(chessBoard, "Please choose a gamemode.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+
+        //n er indeksen til hvilken knapp brukeren trykket på. Dette legger til farger som botten skal styre.
+        // F. eks om du klikket Bot vs Bot blir både svart og hvit lagt til, og botten vil automatisk gjøre trekk for begge fargene.
+        if(n == 1){
+
+            //Om spilleren vil spille mot en bot må han få lov til å velge hvilken farge han vil spille som.
+            int m = JOptionPane.showOptionDialog(chessBoard, "Please pick a side.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, new String[]{"White", "Black"}, 0);
+            if(m == 1){
+                game.addBotColor(WHITE);
+                //game.reverse(); // TODO: 25.03.2020 Når reverse() er fikset kan vi fjerne kommentartegnet her.
+            }
+            else game.addBotColor(BLACK);
+        }
+        else if(n == 2){
+            game.addBotColor(BLACK);
+            game.addBotColor(WHITE);
+        }
+    }
     public static void paintPieces(){
-        /* Tegner alle brikkene på brettet, helt fra scratch.
-         */
+        //Tegner alle brikkene på brettet, helt fra scratch.
         iPiece[][] grid = game.getCurrentBoard().GetGrid();
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){

@@ -1,4 +1,4 @@
-package Chessbot3.GUIMain;
+package Chessbot3.GuiMain;
 
 import java.awt.image.BufferedImage;
 import java.util.Dictionary;
@@ -16,11 +16,11 @@ public class Chess {
     public static final Hashtable<String, BufferedImage> imageDict = Generator.makeImages();
 
     public static void main(String[] args) {
-        //Opprettet GUI, og alt som skal til for å spille.
-        //Når GUI er ferdig er det ingen kode som kjører, kun actionListeners i Action som venter på at du skal trykke noe.
+        //Opprettet Gui, og alt som skal til for å spille.
+        //Når Gui er ferdig er det ingen kode som kjører, kun actionListeners i Action som venter på at du skal trykke noe.
         //Hver gang spilleren gjør et trekk aktiverer det botten til den har gjort et trekk,
         //etter det er det ingen kode som kjører lenger, før spilleren gjør et nytt trekk.
-        GUI gui = new GUI();
+        new Gui();
 
     }
 }

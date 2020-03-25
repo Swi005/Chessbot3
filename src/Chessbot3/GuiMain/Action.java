@@ -1,4 +1,4 @@
-package Chessbot3.GUIMain;
+package Chessbot3.GuiMain;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import static Chessbot3.GUIMain.GUI.*;
+import static Chessbot3.GuiMain.Gui.*;
 
 public class Action extends KeyAdapter implements ActionListener {
 
@@ -65,7 +65,8 @@ public class Action extends KeyAdapter implements ActionListener {
                         if(game.playerMove(pressedMove)){
                             pressedMove = new Move(null, null);
                         }
-                        //Om trekket er ulovlig, vil pressedMove huske hvilken brikke spilleren ville flytte. Hvor han vil flytte til må velges på nytt.
+                        //Om trekket er ulovlig, vil pressedMove huske hvilken brikke spilleren ville flytte.
+                        //Hvor han vil flytte til må velges på nytt.
                         else pressedMove.setY(null);
                     }
                 }
@@ -104,5 +105,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("pieces")) game.printPieces();
         else if (usertext.equals("paint")) paintPieces();
         else if (usertext.equals("reverse")) game.reverse();
+        else if (usertext.equals("bot")) game.botMove();
     }
 }
