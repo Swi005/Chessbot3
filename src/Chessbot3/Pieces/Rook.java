@@ -1,9 +1,7 @@
-package Pieces;
+package Chessbot3.Pieces;
 
-import Chessbot3.GameBoard.Board;
-
-import static Chessbot3.Chess.imageDict;
-import static Pieces.WhiteBlack.WHITE;
+import static Chessbot3.GUIMain.Chess.imageDict;
+import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public class Rook extends SimplePiece {
     public Rook(WhiteBlack c) {

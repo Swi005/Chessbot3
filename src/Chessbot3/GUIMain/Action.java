@@ -1,15 +1,17 @@
-package Chessbot3;
+package Chessbot3.GUIMain;
 
 import Chessbot3.GameBoard.Board;
-import Pieces.WhiteBlack;
-import Pieces.iPiece;
+import Chessbot3.MiscResources.Move;
+import Chessbot3.MiscResources.Tuple;
+import Chessbot3.Pieces.WhiteBlack;
+import Chessbot3.Pieces.iPiece;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import static Chessbot3.Chess.*;
+import static Chessbot3.GUIMain.GUI.*;
 
 public class Action extends KeyAdapter implements ActionListener {
 

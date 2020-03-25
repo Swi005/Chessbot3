@@ -1,15 +1,15 @@
-package Pieces;
+package Chessbot3.Pieces;
 
 import Chessbot3.GameBoard.Board;
-import Chessbot3.Move;
-import Chessbot3.Tuple;
+import Chessbot3.MiscResources.Move;
+import Chessbot3.MiscResources.Tuple;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static Chessbot3.Chess.direcDict;
-import static Pieces.WhiteBlack.BLACK;
-import static Pieces.WhiteBlack.WHITE;
+import static Chessbot3.GUIMain.Chess.direcDict;
+import static Chessbot3.Pieces.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
     WhiteBlack color;

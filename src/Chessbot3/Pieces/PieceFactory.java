@@ -1,9 +1,7 @@
-package Pieces;
+package Chessbot3.Pieces;
 
-import Chessbot3.GameBoard.Board;
-
-import static Pieces.WhiteBlack.BLACK;
-import static Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public class PieceFactory 
 {

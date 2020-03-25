@@ -1,17 +1,17 @@
 package Chessbot3.GameBoard;
 
-import static Pieces.WhiteBlack.BLACK;
-import static Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import Chessbot3.Move;
-import Chessbot3.Tuple;
-import Pieces.King;
-import Pieces.PieceFactory;
-import Pieces.WhiteBlack;
-import Pieces.iPiece;
+import Chessbot3.MiscResources.Move;
+import Chessbot3.MiscResources.Tuple;
+import Chessbot3.Pieces.King;
+import Chessbot3.Pieces.PieceFactory;
+import Chessbot3.Pieces.WhiteBlack;
+import Chessbot3.Pieces.iPiece;
 
 /**
  * Board
@@ -179,7 +179,7 @@ public class Board {
         if(ret) {
             Board copy = this.Copy();
             copy.MovePiece(playerMove);
-            List<Move> counterMoves = GenMoves(GetOppositeColorToMove());
+            List<Move> counterMoves = copy.GenMoves(GetOppositeColorToMove());
             for (Move counter : counterMoves) {
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
                 if (target instanceof King) return false; //Om motstanderen kan ta kongen

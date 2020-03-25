@@ -1,4 +1,4 @@
-package Chessbot3;
+package Chessbot3.MiscResources;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -66,7 +66,7 @@ public class Generator {
                 "rook_white"
         }) {
             try {
-                File temp = new File("src\\Pieces\\PieceImages\\" + name + ".png");
+                File temp = new File("src\\Chessbot3\\Pieces\\PieceImages\\" + name + ".png");
                 BufferedImage img = ImageIO.read(temp);
                 imageTable.put(name, img);
             } catch (IOException e) {

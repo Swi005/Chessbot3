@@ -1,4 +1,4 @@
-package Chessbot3;
+package Chessbot3.MiscResources;
 
 public class Tuple<X, Y> {
     /*

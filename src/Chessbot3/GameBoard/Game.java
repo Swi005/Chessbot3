@@ -1,15 +1,12 @@
 package Chessbot3.GameBoard;
 
-import Chessbot3.GameBoard.Board;
-import Chessbot3.Move;
-import Pieces.WhiteBlack;
-import Pieces.iPiece;
+import Chessbot3.MiscResources.Move;
+import Chessbot3.Pieces.WhiteBlack;
+import Chessbot3.Pieces.iPiece;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static Chessbot3.Chess.paintPieces;
-import static Pieces.WhiteBlack.WHITE;
+import static Chessbot3.GUIMain.GUI.paintPieces;
 
 public class Game {
 
@@ -92,7 +89,9 @@ public class Game {
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
     public void printMoves() {
-        for(Move move : currentBoard.GenMoves(currentBoard.GetColorToMove())) System.out.println(move);;
+        for(Move move : currentBoard.GenMoves(currentBoard.GetColorToMove())){
+            if(currentBoard.CheckPlayerMove(move)) System.out.println(move);
+        };
     }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.

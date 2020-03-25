@@ -1,6 +1,6 @@
 package Chessbot3.bot.Simulate;
 
-import Chessbot3.Move;
+import Chessbot3.MiscResources.Move;
 import Chessbot3.GameBoard.Board;
 
 /**
