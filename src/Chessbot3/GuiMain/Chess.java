@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import Chessbot3.MiscResources.Generator;
 import Chessbot3.MiscResources.Tuple;
 
+import static Chessbot3.GuiMain.Gui.game;
+
 public class Chess {
 
     //Dict over hvilke retninger hver brikke kan gå.
@@ -23,7 +25,8 @@ public class Chess {
         //Når Gui er ferdig er det ingen kode som kjører, kun actionListeners i Action som venter på at du skal trykke noe.
         //Hver gang spilleren gjør et trekk aktiverer det botten til den har gjort et trekk,
         //etter det er det ingen kode som kjører lenger, før spilleren gjør et nytt trekk.
-        Gui gui = new Gui();
+        gui = new Gui();
+        if(game.isBotTurn()) game.botMove(); //Starter botten om det er dens tur.
 
     }
 }

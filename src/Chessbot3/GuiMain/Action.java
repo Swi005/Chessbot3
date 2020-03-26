@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
 
 public class Action extends KeyAdapter implements ActionListener {
@@ -40,7 +41,11 @@ public class Action extends KeyAdapter implements ActionListener {
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
                 if(e.getSource() == chessBoardSquares[x][y]) {
-                    Tuple pos = new Tuple(x, y);
+                    Tuple pos;
+                    if(!gui.reverse) pos = new Tuple(x, y);
+                    else pos = new Tuple(7-x, 7-y);
+
+
                     iPiece pressedPiece = bård.GetPiece(pos);
 
                     //Aktiveres når spilleren trykker på en av sine egne brikker.
@@ -103,8 +108,8 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("moves")) game.printMoveHistory();
         else if (usertext.equals("turn")) game.printTurn();
         else if (usertext.equals("pieces")) game.printPieces();
-        else if (usertext.equals("paint")) paintPieces();
-        else if (usertext.equals("reverse")) game.reverse();
+        else if (usertext.equals("paint")) gui.paintPieces();
+        else if (usertext.equals("reverse")) gui.reverse();
         else if (usertext.equals("bot")) game.botMove();
     }
 }

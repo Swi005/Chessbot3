@@ -1,8 +1,8 @@
 package Chessbot3.GuiMain;
 
+import Chessbot3.GameBoard.Board;
 import Chessbot3.GameBoard.Game;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.WhiteBlack;
 import Chessbot3.Pieces.iPiece;
 
 import javax.swing.*;
@@ -26,6 +26,8 @@ public class Gui {
     //Selve partiet.
     public static Game game;
 
+    public static Boolean reverse = false;
+
     //Knappene og tekstfeltet som vises på skjermen.
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
     public static JButton enter = new JButton("Enter");
@@ -45,10 +47,9 @@ public class Gui {
         paintPieces();
         frame.setVisible(true);
         chooseGamemode();
-        if(game.isBotTurn()) game.botMove(); //Starter botten om det er dens tur.
     }
 
-    private static JPanel initializeGUI() {
+    private JPanel initializeGUI() {
         //Lager selve vinduet i Gui-en.
         //Den oppretter alle knappene, tekstfeltet, samt rutene som brikkene skal stå på.
         JPanel gui = new JPanel(new BorderLayout(3, 3));
@@ -80,7 +81,7 @@ public class Gui {
 
         return gui;
     }
-    private static void makeButtons() {
+    private void makeButtons() {
         //Skaper alle rutene som brikkene skal stå på. Disse rutene er egentlig knapper.
         //Disse knappene får alle sammen et blankt ikon, som paintPieces() og repaintPiece tegner oppå.
 
@@ -104,7 +105,7 @@ public class Gui {
             }
         }
     }
-    public static void chooseGamemode(){
+    public void chooseGamemode(){
         //Velger hvilken spillmodus som skal brukes. Om spilleren ikke velger noe blir det PvP.
 
         //Klarerer listen over farger som botten skal styre.
@@ -127,7 +128,7 @@ public class Gui {
             if(m == 1){
                 //Om spilleren vil være svart.
                 game.addBotColor(WHITE);
-                //game.reverse(); // TODO: 25.03.2020 Når reverse() er fikset kan vi fjerne kommentartegnet her.
+                reverse();
             }
             //Om spilleren vil være hvit.
             else game.addBotColor(BLACK);
@@ -138,33 +139,35 @@ public class Gui {
             game.addBotColor(WHITE);
         }
     }
-    public static void displayMessage(String s){
+    public void displayMessage(String s) {
         // TODO: 26.03.2020 Finn ut av hvordan meldinger fint kan vises til skjermen.
         System.out.println(s); //Placeholder
     }
-    public static void paintPieces(){
-        // TODO: 26.03.2020 Legg til støtte for reverse() 
+
+    public void reverse() {
+        //Reverserer alt det visuelle på brettet.
+        //Knappene er fortsatt på samme plass, men de får nye bilder.
+        //Dette blir tatt hensyn til i findSquare() i Action.
+        reverse = true;
+        paintPieces();
+    }
+
+    public void paintPieces(){
         //Tegner alle brikkene på brettet, helt fra scratch.
-        iPiece[][] grid = game.getCurrentBoard().GetGrid();
+        Board bård = game.getCurrentBoard();
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
-                if(grid[x][y] != null) {
+                if(bård.GetPiece(x, y) != null) {
                     ImageIcon newIcon = new ImageIcon();
-                    newIcon.setImage(grid[x][y].getImage());
-                    chessBoardSquares[x][y].setIcon(newIcon);
-                }else chessBoardSquares[x][y].setIcon(new ImageIcon());
+                    newIcon.setImage(bård.GetPiece(x, y).getImage());
+
+                    //Reverse er kun om brettet skal være opp-ned, med svart nederst.
+                    if(!reverse) chessBoardSquares[x][y].setIcon(newIcon);
+                    else chessBoardSquares[7-x][7-y].setIcon(newIcon);
+                }
+                else if(!reverse) chessBoardSquares[x][y].setIcon(new ImageIcon());
+                else chessBoardSquares[7-x][7-y].setIcon(new ImageIcon());
             }
         }
-    }
-    public static void repaintPiece(Tuple<Integer, Integer> tuple){
-        //Tegner en bestemt rute på nytt.
-        //Denne må kalles opp for hver rute som blir rørt når noen gjør et trekk.
-        Integer x = tuple.getX();
-        Integer y = tuple.getY();
-        iPiece[][] grid = game.getCurrentBoard().GetGrid();
-        if(grid[x][y] != null) {
-            ImageIcon icon = (ImageIcon) chessBoardSquares[x][y].getIcon();
-            icon.setImage(grid[x][y].getImage());
-        }else chessBoardSquares[x][y].setIcon(new ImageIcon());
     }
 }

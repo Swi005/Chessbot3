@@ -1,6 +1,5 @@
 package Chessbot3.GameBoard;
 
-import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.WhiteBlack;
 import Chessbot3.Pieces.iPiece;
@@ -47,9 +46,9 @@ public class Game {
             madeMoves.remove(madeMoves.size()-1);
             madeMoves.remove(madeMoves.size()-1);
             currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
-            paintPieces();
+            gui.paintPieces();
         }
-        else displayMessage("Can't go further back!");
+        else gui.displayMessage("Can't go further back!");
     }
 
     public void newGame(){
@@ -59,8 +58,8 @@ public class Game {
         madeMoves.clear();
         currentBoard = new Board();
         previousBoards.add(currentBoard);
-        paintPieces();
-        chooseGamemode();
+        gui.paintPieces();
+        gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
         if(isBotTurn()) botMove();
     }
@@ -81,7 +80,7 @@ public class Game {
         currentBoard.MovePiece(move);
         previousBoards.add(currentBoard.Copy());
         madeMoves.add(move);
-        paintPieces();
+        gui.paintPieces();
         if(handleWinCondition()) return;
         else if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
     }
@@ -94,30 +93,29 @@ public class Game {
             currentBoard.MovePiece(move);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
-            paintPieces();
+            gui.paintPieces();
             if(handleWinCondition()) return true;
             else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
             return true;
         }else {
-            System.out.println(currentBoard.GetPassantPos());
-            displayMessage("Not a legal move!");
+            gui.displayMessage("Not a legal move!");
             return false;
         }
     }
     private Boolean handleWinCondition(){
-        //En funksjon som returnerer true om spillet er ferdig, false ellers.
+        //Returnerer true om spillet er ferdig, false ellers.
 
         //Sjekker om det er matt eller patt.
         Boolean check = currentBoard.CheckCheckMate();
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
         if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
-            displayMessage("Draw!");
+            gui.displayMessage("Draw!");
             return true;
         }
         //Sjekker om det er matt.
         if(check){
-            displayMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            gui.displayMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
             return true;
         }
         return false;
@@ -161,11 +159,5 @@ public class Game {
     public void printPieces() {
         WhiteBlack color = currentBoard.GetColorToMove();
         for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);
-    }
-
-    //Reverserer brettet. Svart er nå nederst!
-    public void reverse() {
-        reverse = !reverse;
-        paintPieces();
     }
 }
