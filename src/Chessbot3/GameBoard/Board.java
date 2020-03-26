@@ -45,7 +45,8 @@ public class Board {
 
     private int wScore;
     private int bScore;
-    private boolean isWhitesTurn = true;
+    private WhiteBlack colorToMove = WHITE;
+    //private boolean isWhitesTurn = true;
     public Tuple<Boolean, Boolean> wCastle;
     public Tuple<Boolean, Boolean> bCastle;
     private Tuple<Integer, Integer> passantPos;
@@ -66,12 +67,12 @@ public class Board {
         passantPos = new Tuple(-1, -1);
     }
 
-    public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos)
+    public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos)
     //En konstruktør som kun skal brukes for å opprette en kopi av et tidligere brett.
     //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
     {
         this.grid = customBoard;
-        this.isWhitesTurn = isWhite;
+        this.colorToMove = colorToMove;
         this.wCastle = wCastle;
         this.bCastle = bCastle;
         this.wScore = wScore;
@@ -153,7 +154,6 @@ public class Board {
                 grid[0][0] = null;
             }
         }
-        // TODO: 22.03.2020 Legg til score og sånt shit her?
 
         //Flytter faktisk brikken.
         grid[til.getX()][til.getY()] = pie;
@@ -171,12 +171,16 @@ public class Board {
                 passantPos.setX(fra.getX());
                 passantPos.setY((fra.getY()+til.getY())/2);
             }
+            //Promoterer bønder.
             else if(til.getY() == 0 || til.getY() == 7){
                 if(!isHumanPlayer) grid[til.getX()][til.getY()] = new Queen(pie.getColor());
                 else grid[til.getX()][til.getY()] = gui.promotePawn();
             }
         }
-        isWhitesTurn = !isWhitesTurn;
+        colorToMove = GetOppositeColor(colorToMove); //Bytter farge på hvem sin tur det er
+
+        // TODO: 26.03.2020 Legg til score eller noe sånt her? 
+
     }
 
     public Boolean CheckPlayerMove(Move playerMove) {
@@ -249,28 +253,20 @@ public class Board {
     public Board Copy()
     {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
+        return new Board(this.GetGrid(), this.colorToMove, this.wScore, this.bScore, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
     }
 
-    //Returnerer et bool om det er hvit sin tur eller ikke. Jeg anbefaler å istedet bruket GetColorToMove eller GetOppositeColorToMove.
-    public Boolean IsWhitesTurn(){ return this.isWhitesTurn; }
+    //Returnerer hvilken farge som skal flytte.
+    public WhiteBlack GetColorToMove(){ return colorToMove; }
 
-    public WhiteBlack GetColorToMove(){
-        //Returnerer hvilken farge som skal flytte.
-        if(isWhitesTurn) return WHITE;
-        else return BLACK;
-    }
-    public WhiteBlack GetOppositeColorToMove(){
-        //Returnerer den andre fargen, den fargen som ikke skal flytte.
-        if(isWhitesTurn) return BLACK;
-        else return WHITE;
-    }
+    //Returnerer den andre fargen, den fargen som ikke skal flytte.
+    public WhiteBlack GetOppositeColorToMove(){ return GetOppositeColor(colorToMove); }
+    
     public static WhiteBlack GetOppositeColor(WhiteBlack c){
         //Tar en farge, og returnerer den andre fargen.
-        //Dette er litt det samme som å sette et negation-tegn foran en farge.
+        //Dette er litt det samme som å sette et ikke-tegn foran en farge.
         if(c == WHITE) return BLACK;
-        else if(c == BLACK)return WHITE;
-        else return null;
+        else return WHITE;
     }
 
     public List<iPiece> GetPieceList(WhiteBlack c){
@@ -286,9 +282,7 @@ public class Board {
     }
     public Tuple<Integer, Integer> GetPassantPos(){ return passantPos; }
 
-    public iPiece GetPiece(Tuple<Integer, Integer> pos) {
-        return grid[pos.getX()][pos.getY()];
-    }
+    public iPiece GetPiece(Tuple<Integer, Integer> pos) { return grid[pos.getX()][pos.getY()]; }
 
     public iPiece GetPiece(int x, int y){ return grid[x][y]; }
 
