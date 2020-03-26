@@ -43,9 +43,7 @@ public class Pawn extends SimplePiece {
             iPiece mål = bård.GetPiece(tilPos);
 
             if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der, eller at den kan ta en passant.
-                if (mål != null && this.isOppositeColor(mål)) {
-                    ret.add(new Move(fraPos, tilPos));
-                } else if (tilPos.equals(passantPos)) {
+                if (mål != null && this.isOppositeColor(mål) || tilPos.equals(passantPos)) {
                     ret.add(new Move(fraPos, tilPos));
                 }
             }

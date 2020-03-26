@@ -58,6 +58,7 @@ public class Game {
         madeMoves.clear();
         currentBoard = new Board();
         previousBoards.add(currentBoard);
+        gui.reverse();
         gui.paintPieces();
         gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
@@ -74,15 +75,16 @@ public class Game {
 
     public void botMove(){
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
+        //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
         Move move = Tempbot.findRandomMove(currentBoard);
         if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
-        currentBoard.MovePiece(move);
+        currentBoard.MovePiece(move, false);
         previousBoards.add(currentBoard.Copy());
         madeMoves.add(move);
         gui.paintPieces();
         if(handleWinCondition()) return;
-        else if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
+        if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
     }
 
     public Boolean playerMove(Move move){
@@ -90,7 +92,7 @@ public class Game {
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
         if(currentBoard.CheckPlayerMove(move)) {
-            currentBoard.MovePiece(move);
+            currentBoard.MovePiece(move, true);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             gui.paintPieces();

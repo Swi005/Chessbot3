@@ -1,5 +1,6 @@
 package Chessbot3.GameBoard;
 
+import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
 import static java.lang.StrictMath.abs;
@@ -115,9 +116,12 @@ public class Board {
         else bScore += x;
     }
 
-    public void MovePiece(Move move) {
+    public void MovePiece(Move move, Boolean isHumanPlayer) {
         //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
         //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med checkPlayerMove/GenMoves.
+        //Om isHumanPlayer=true, og trekket er at en bonde blir flyttet til enden av brettet,
+        //vil denne lage et pupup-vindu om hvilken brikke bonden skal promoteres til.
+        //Hvis ikke, spawnes bare en dronning.
 
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
@@ -167,9 +171,11 @@ public class Board {
                 passantPos.setX(fra.getX());
                 passantPos.setY((fra.getY()+til.getY())/2);
             }
-            // TODO: 26.03.2020 Promotering
+            else if(til.getY() == 0 || til.getY() == 7){
+                if(!isHumanPlayer) grid[til.getX()][til.getY()] = new Queen(pie.getColor());
+                else grid[til.getX()][til.getY()] = gui.promotePawn();
+            }
         }
-
         isWhitesTurn = !isWhitesTurn;
     }
 
@@ -188,7 +194,7 @@ public class Board {
         //Da er trekket ulovlig, og returnerer false;
         if(ret) {
             Board copy = this.Copy();
-            copy.MovePiece(playerMove);
+            copy.MovePiece(playerMove, false);
             List<Move> counterMoves = copy.GenMoves(GetOppositeColorToMove());
             for (Move counter : counterMoves) {
                 iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];

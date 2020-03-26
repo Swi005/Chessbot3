@@ -3,7 +3,7 @@ package Chessbot3.GuiMain;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GameBoard.Game;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.iPiece;
+import Chessbot3.Pieces.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -139,6 +139,17 @@ public class Gui {
             game.addBotColor(WHITE);
         }
     }
+
+    public iPiece promotePawn(){
+        WhiteBlack color = game.getCurrentBoard().GetColorToMove();
+        int n = JOptionPane.showOptionDialog(chessBoard, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
+        if(n == 1) return new Rook(color);
+        else if(n == 2) return new Knight(color);
+        else if(n == 3) return new Bishop(color);
+        else return new Queen(color);
+    }
+
     public void displayMessage(String s) {
         // TODO: 26.03.2020 Finn ut av hvordan meldinger fint kan vises til skjermen.
         System.out.println(s); //Placeholder
