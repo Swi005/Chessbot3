@@ -2,16 +2,14 @@ package Chessbot3.GameBoard;
 
 import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import static java.lang.StrictMath.abs;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.King;
-import Chessbot3.Pieces.PieceFactory;
-import Chessbot3.Pieces.WhiteBlack;
-import Chessbot3.Pieces.iPiece;
+import Chessbot3.Pieces.*;
 
 /**
  * Board
@@ -49,6 +47,7 @@ public class Board {
     private boolean isWhitesTurn = true;
     public Tuple<Boolean, Boolean> wCastle;
     public Tuple<Boolean, Boolean> bCastle;
+    private Tuple<Integer, Integer> passantPos;
 
     public Board() {
         //Det initielle brettet. Plasserer brikker med hensyn på initialBoard.
@@ -63,10 +62,10 @@ public class Board {
         bCastle = new Tuple<>(true, true);
         wScore = 0;
         bScore = 0;
-
+        passantPos = new Tuple(-1, -1);
     }
 
-    public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle)
+    public Board(iPiece[][] customBoard, boolean isWhite, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos)
     //En konstruktør som kun skal brukes for å opprette en kopi av et tidligere brett.
     //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
     {
@@ -76,6 +75,7 @@ public class Board {
         this.bCastle = bCastle;
         this.wScore = wScore;
         this.bScore = bScore;
+        this.passantPos = passantPos;
     }
 
     public List<Move> GenMoves(WhiteBlack c){
@@ -86,7 +86,6 @@ public class Board {
         for(iPiece pie : list){
             ret.addAll(pie.getMoves(this));
         }
-        // TODO: 20.03.2020 Legg til passanttrekk 
         return ret;
     }
 
@@ -122,6 +121,8 @@ public class Board {
 
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
+        iPiece pie = GetPiece(fra);
+        iPiece target = GetPiece(til);
 
         //Oppdaterer rokadebetingelser
         if(fra.equals(A1) || til.equals(A1)) wCastle.setX(false); //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
@@ -133,7 +134,7 @@ public class Board {
         else if(fra.equals(E8)) bCastle = new Tuple(false, false);
 
         //Flytter tårnet, om kongen rokerer.
-        if(GetPiece(fra) instanceof King){
+        if(pie instanceof King){
             if(fra.equals(E1) && til.equals(G1)){
                 grid[5][7] = grid[7][7]; //Flytter tårnet når hvit rokerer kort.
                 grid[7][7] = null;
@@ -149,29 +150,39 @@ public class Board {
             }
         }
         // TODO: 22.03.2020 Legg til score og sånt shit her?
-        iPiece target = grid[til.getX()][til.getY()];
 
         //Flytter faktisk brikken.
-        grid[til.getX()][til.getY()] = grid[fra.getX()][fra.getY()];
+        grid[til.getX()][til.getY()] = pie;
         grid[fra.getX()][fra.getY()] = null;
-        // TODO: 14.03.2020 En passant
+
+        //Dreper en bonde, om trekket er en passant.
+        if(til.equals(passantPos)){
+            if(til.getY() == 2) grid[til.getX()][3] = null;
+            else grid[til.getX()][4] = null;
+        }
+        //oppdaterer passantbetingelser.
+        if(passantPos.getX() != -1) passantPos.setX(-1);
+        if(pie instanceof Pawn){
+            if(abs(fra.getY()-til.getY()) == 2){
+                passantPos.setX(fra.getX());
+                passantPos.setY((fra.getY()+til.getY())/2);
+            }
+            // TODO: 26.03.2020 Promotering
+        }
 
         isWhitesTurn = !isWhitesTurn;
     }
 
-    public Boolean CheckPlayerMove(Move playerMove)
-    {
+    public Boolean CheckPlayerMove(Move playerMove) {
         //Sjekker om spillerens trekk er lovlig.
         // Tar hensyn til om trekket setter seg selv i sjakk.
         // Returnerer true om det er lov.
-        List<Move> availableMoves = GenMoves(GetColorToMove());
-        Boolean ret = false;
-        for (Move move : availableMoves) {
+        boolean ret = false;
+        for (Move move : GenMoves(GetColorToMove())) {
             if (move.equals(playerMove)) {
                 ret = true;
             }
-        }
-        //Om spillerens trekk er på listen, er det kanskje lovlig.
+        }//Om spillerens trekk er på listen, er det kanskje lovlig.
         //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
         //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
         //Da er trekket ulovlig, og returnerer false;
@@ -191,16 +202,15 @@ public class Board {
     public Boolean CheckCheckMate(){
         //Sjekker om brettet er sjakkmatt.
         //Returnerer true om det matt, null om det er patt (uavgjort) og false ellers.
-        List<Move> originalList = GenMoves(GetColorToMove());
         List<Move> legals = new ArrayList<>();
-        for(Move move : originalList){
+        for(Move move : GenMoves(GetColorToMove())){
             if(CheckPlayerMove(move)) legals.add(move);
         }
         if(legals.size()>0) return false; //Om spilleren har lovlige trekk.
         else{
             for(Move move : GenMoves(GetOppositeColorToMove())){
                 iPiece target = GetGrid()[move.getY().getX()][move.getY().getY()];
-                if(target instanceof King) return true; //Om spilleren har ingen lovlige trekk, og kongen blir truet
+                if(target instanceof King) return true; //Om spilleren ikke har noen lovlige trekk, og kongen blir truet.
             }
             return null; //Om spilleren ikke har noen lovlige trekk, men blir heller ikke truet. Da er det patt.
         }
@@ -233,9 +243,10 @@ public class Board {
     public Board Copy()
     {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle.copy(), this.bCastle.copy());
+        return new Board(this.GetGrid(), this.isWhitesTurn, this.wScore, this.bScore, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
     }
 
+    //Returnerer et bool om det er hvit sin tur eller ikke. Jeg anbefaler å istedet bruket GetColorToMove eller GetOppositeColorToMove.
     public Boolean IsWhitesTurn(){ return this.isWhitesTurn; }
 
     public WhiteBlack GetColorToMove(){
@@ -267,6 +278,7 @@ public class Board {
         }
         return ret;
     }
+    public Tuple<Integer, Integer> GetPassantPos(){ return passantPos; }
 
     public iPiece GetPiece(Tuple<Integer, Integer> pos) {
         return grid[pos.getX()][pos.getY()];
@@ -274,17 +286,7 @@ public class Board {
 
     public iPiece GetPiece(int x, int y){ return grid[x][y]; }
 
-    public void Reverse()
-    {
-        // TODO: 24.03.2020 Fiks! Denne gjør bare brettet speilvendt, istedet for å snu det opp-ned. 
-        //Reverserer brettet. Nå er plutselig svart nederst!.
-        for(int i = 0; i<grid.length/2; i++)
-        {
-            iPiece[] temp = grid[i];
-            grid[i] = grid[grid.length - i - 1];
-            grid[grid.length - i - 1] = temp;
-        }
-    }
+    @Override
     public String toString(){
         String ret = "";
         for(int y=0; y<8; y++){

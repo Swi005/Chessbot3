@@ -143,6 +143,7 @@ public class Gui {
         System.out.println(s); //Placeholder
     }
     public static void paintPieces(){
+        // TODO: 26.03.2020 Legg til støtte for reverse() 
         //Tegner alle brikkene på brettet, helt fra scratch.
         iPiece[][] grid = game.getCurrentBoard().GetGrid();
         for(int x=0; x<8; x++){

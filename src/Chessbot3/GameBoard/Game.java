@@ -30,6 +30,8 @@ public class Game {
     //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
     public volatile Boolean stop = false;
 
+    public Boolean reverse = false;
+
     public Game(){
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
         //For å starte på nytt kan du bruke newGame(), som resetter alt i dette objektet.
@@ -97,6 +99,7 @@ public class Game {
             else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
             return true;
         }else {
+            System.out.println(currentBoard.GetPassantPos());
             displayMessage("Not a legal move!");
             return false;
         }
@@ -107,7 +110,7 @@ public class Game {
         //Sjekker om det er matt eller patt.
         Boolean check = currentBoard.CheckCheckMate();
 
-        //Sjekker om det er patt, eller at begge spillerene har nøyaktig én brikke igjen.
+        //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
         if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
             displayMessage("Draw!");
             return true;
@@ -162,7 +165,7 @@ public class Game {
 
     //Reverserer brettet. Svart er nå nederst!
     public void reverse() {
-        currentBoard.Reverse();
+        reverse = !reverse;
         paintPieces();
     }
 }

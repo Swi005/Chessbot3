@@ -23,6 +23,7 @@ public class Pawn extends SimplePiece {
     }
     @Override
     public ArrayList<Move> getMoves(Board bård){
+        Tuple<Integer, Integer> passantPos = bård.GetPassantPos();
         ArrayList<Move> ret = new ArrayList<>();
         Tuple[] directions;
         if(color == WHITE){
@@ -31,20 +32,29 @@ public class Pawn extends SimplePiece {
 
         Integer fraX = getX(bård);
         Integer fraY = getY(bård);
+        Tuple<Integer, Integer> fraPos = new Tuple<>(fraX, fraY);
+
         for(Tuple<Integer, Integer> direc : directions){ //Looper igjennom alle retningene den kan gå.
             Integer tilX = fraX+direc.getX();
             Integer tilY = fraY+direc.getY();
-            if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den holder på å gå utenfor brettet.
-            iPiece mål = bård.GetGrid()[tilX][tilY];
+            Tuple<Integer, Integer> tilPos = new Tuple(tilX, tilY);
 
-            if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der.
-                if(mål != null && this.isOppositeColor(mål)) ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY)));
+            if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den holder på å gå utenfor brettet.
+            iPiece mål = bård.GetPiece(tilPos);
+
+            if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der, eller at den kan ta en passant.
+                if (mål != null && this.isOppositeColor(mål)) {
+                    ret.add(new Move(fraPos, tilPos));
+                } else if (tilPos.equals(passantPos)) {
+                    ret.add(new Move(fraPos, tilPos));
+                }
             }
             if(direc.getX() == 0 && mål == null){ //Om den prøver å gå rett frem, må målet være en åpen rute.
-                ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY)));
+                ret.add(new Move(fraPos, tilPos));
+
                 //Om den klarer å gå et skritt, og det er første gang den flytter, kan den prøve om det er lov å gå et skritt til.
-                if((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK) && bård.GetGrid()[tilX][tilY+direc.getY()] == null){
-                    ret.add(new Move(new Tuple(fraX, fraY), new Tuple(tilX, tilY+direc.getY()))); //Om den får lov til å gå to skritt.
+                if((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK) && bård.GetPiece(tilX, tilY+direc.getY()) == null){
+                    ret.add(new Move(fraPos, new Tuple(tilX, tilY+direc.getY()))); //Om den får lov til å gå to skritt.
                 }
             }
         }

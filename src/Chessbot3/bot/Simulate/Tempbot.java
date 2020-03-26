@@ -18,7 +18,7 @@ public class Tempbot {
 
         try
         {
-            Thread.sleep(15); //Sover i et kvart sekund, for å gi en illusjon om at den tenker.
+            Thread.sleep(10); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
         }
         catch(InterruptedException ex)
         {
