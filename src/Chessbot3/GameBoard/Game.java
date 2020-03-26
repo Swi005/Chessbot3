@@ -1,5 +1,6 @@
 package Chessbot3.GameBoard;
 
+import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.WhiteBlack;
 import Chessbot3.Pieces.iPiece;
@@ -7,6 +8,7 @@ import Chessbot3.bot.Simulate.Tempbot;
 
 import java.util.ArrayList;
 
+import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
 
 public class Game {
@@ -25,7 +27,8 @@ public class Game {
     //Om denne er tom spiller spilleren mot seg selv.
     private ArrayList<WhiteBlack> bots = new ArrayList<>(2);
 
-    public Boolean stop = false;
+    //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
+    public volatile Boolean stop = false;
 
     public Game(){
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
@@ -44,19 +47,20 @@ public class Game {
             currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
             paintPieces();
         }
-        else System.err.println("Can't go further back!");
+        else displayMessage("Can't go further back!");
     }
 
     public void newGame(){
         //Starter et nytt parti.
-        stop = true;
+        stop = true; //Ber botten om stoppe, om den gjør noe.
         previousBoards.clear();
         madeMoves.clear();
         currentBoard = new Board();
         previousBoards.add(currentBoard);
         paintPieces();
         chooseGamemode();
-        stop = false;
+        stop = false; //Gir botter tilatelse til å gjøre ting igjen.
+        if(isBotTurn()) botMove();
     }
 
     //Printer alle trekkene som har blitt gjort.
@@ -70,14 +74,13 @@ public class Game {
     public void botMove(){
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Botten kan lett byttes ut ved å endre på første linje.
-        if(stop) return;
         Move move = Tempbot.findRandomMove(currentBoard);
+        if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
         currentBoard.MovePiece(move);
         previousBoards.add(currentBoard.Copy());
         madeMoves.add(move);
         paintPieces();
-        if(currentBoard.CheckCheckMate() == null) System.out.println("Draw!");
-        else if(currentBoard.CheckCheckMate()) System.out.println("Checkmate!");
+        if(handleWinCondition()) return;
         else if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
     }
 
@@ -90,17 +93,36 @@ public class Game {
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             paintPieces();
-            if(currentBoard.CheckCheckMate() == null) System.out.println("Draw!");
-            else if(currentBoard.CheckCheckMate()) System.out.println("Checkmate!");
-            else if(isBotTurn()) botMove();
+            if(handleWinCondition()) return true;
+            else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
             return true;
         }else {
-            System.err.println("Not a legal move!");
+            displayMessage("Not a legal move!");
             return false;
         }
     }
+    private Boolean handleWinCondition(){
+        //En funksjon som returnerer true om spillet er ferdig, false ellers.
+
+        //Sjekker om det er matt eller patt.
+        Boolean check = currentBoard.CheckCheckMate();
+
+        //Sjekker om det er patt, eller at begge spillerene har nøyaktig én brikke igjen.
+        if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
+            displayMessage("Draw!");
+            return true;
+        }
+        //Sjekker om det er matt.
+        if(check){
+            displayMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            return true;
+        }
+        return false;
+    }
+
     public Boolean isBotTurn(){
-        //Returnerer true om det er botten som skal gjøre ett trekk akkurat nå, false ellers.
+        //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
+        //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
         return !stop && bots.contains(currentBoard.GetColorToMove());
     }
 
@@ -129,7 +151,7 @@ public class Game {
     public void printMoves() {
         for(Move move : currentBoard.GenMoves(currentBoard.GetColorToMove())){
             if(currentBoard.CheckPlayerMove(move)) System.out.println(move);
-        };
+        }
     }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
@@ -138,7 +160,7 @@ public class Game {
         for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);
     }
 
-    //Reverserer bretttet. Svart er nå nederst!
+    //Reverserer brettet. Svart er nå nederst!
     public void reverse() {
         currentBoard.Reverse();
         paintPieces();

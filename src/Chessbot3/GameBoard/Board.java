@@ -86,7 +86,6 @@ public class Board {
         for(iPiece pie : list){
             ret.addAll(pie.getMoves(this));
         }
-        //ret.addAll(GetCastleMoves(c)); //Legger til rokadetrekk
         // TODO: 20.03.2020 Legg til passanttrekk 
         return ret;
     }
@@ -245,9 +244,16 @@ public class Board {
         else return BLACK;
     }
     public WhiteBlack GetOppositeColorToMove(){
-        //Retrunerer den andre fargen, den fargen som ikke skal flytte.
+        //Returnerer den andre fargen, den fargen som ikke skal flytte.
         if(isWhitesTurn) return BLACK;
         else return WHITE;
+    }
+    public static WhiteBlack GetOppositeColor(WhiteBlack c){
+        //Tar en farge, og returnerer den andre fargen.
+        //Dette er litt det samme som å sette et negation-tegn foran en farge.
+        if(c == WHITE) return BLACK;
+        else if(c == BLACK)return WHITE;
+        else return null;
     }
 
     public List<iPiece> GetPieceList(WhiteBlack c){

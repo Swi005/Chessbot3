@@ -26,8 +26,7 @@ public class King extends SimplePiece {
     public ArrayList<Move> getMoves(Board bård){
         //En konges lovlige trekk kan regnes ut på samme måte som i supermetoden, men i tillegg skal den ha opptil 2 lovlige rokadetrekk.
         //Disse sjekkes og legges til av getCastleMoves.
-        ArrayList<Move> ret =  new ArrayList<>();
-        ret.addAll(super.getMoves(bård));
+        ArrayList<Move> ret = super.getMoves(bård);
         ret.addAll(getCastleMoves(bård));
         return ret;
     }

@@ -106,6 +106,10 @@ public class Gui {
     }
     public static void chooseGamemode(){
         //Velger hvilken spillmodus som skal brukes. Om spilleren ikke velger noe blir det PvP.
+
+        //Klarerer listen over farger som botten skal styre.
+        game.clearBotColors();
+
         //Selve popup-vinduet. Endre denne på eget ansvar!
         Object[] options = {"Player vs Player", "Player vs Bot", "Bot vs Bot"};
         int n = JOptionPane.showOptionDialog(chessBoard, "Please choose a gamemode.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
@@ -113,21 +117,30 @@ public class Gui {
 
         //n er indeksen til hvilken knapp brukeren trykket på. Dette legger til farger som botten skal styre.
         // F. eks om du klikket Bot vs Bot blir både svart og hvit lagt til, og botten vil automatisk gjøre trekk for begge fargene.
+
+        //Om spilleren vil spille mot botten, da skal han få velge farge.
         if(n == 1){
 
             //Om spilleren vil spille mot en bot må han få lov til å velge hvilken farge han vil spille som.
             int m = JOptionPane.showOptionDialog(chessBoard, "Please pick a side.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, new String[]{"White", "Black"}, 0);
             if(m == 1){
+                //Om spilleren vil være svart.
                 game.addBotColor(WHITE);
                 //game.reverse(); // TODO: 25.03.2020 Når reverse() er fikset kan vi fjerne kommentartegnet her.
             }
+            //Om spilleren vil være hvit.
             else game.addBotColor(BLACK);
         }
+        //Om botten skal spille mot seg selv.
         else if(n == 2){
             game.addBotColor(BLACK);
             game.addBotColor(WHITE);
         }
+    }
+    public static void displayMessage(String s){
+        // TODO: 26.03.2020 Finn ut av hvordan meldinger fint kan vises til skjermen.
+        System.out.println(s); //Placeholder
     }
     public static void paintPieces(){
         //Tegner alle brikkene på brettet, helt fra scratch.
