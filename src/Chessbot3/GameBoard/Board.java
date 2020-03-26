@@ -83,9 +83,8 @@ public class Board {
     public List<Move> GenMoves(WhiteBlack c){
         //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå,
         // inkludert rokader og en passant.
-        List<iPiece> list = GetPieceList(c);
         ArrayList<Move> ret = new ArrayList();
-        for(iPiece pie : list){
+        for(iPiece pie : GetPieceList(c)){
             ret.addAll(pie.getMoves(this));
         }
         return ret;
@@ -130,7 +129,8 @@ public class Board {
         iPiece target = GetPiece(til);
 
         //Oppdaterer rokadebetingelser
-        if(fra.equals(A1) || til.equals(A1)) wCastle.setX(false); //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
+        //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
+        if(fra.equals(A1) || til.equals(A1)) wCastle.setX(false);
         else if(fra.equals(H1) || til.equals(H1)) wCastle.setY(false);
         else if(fra.equals(A8) || til.equals(A8)) bCastle.setX(false);
         else if(fra.equals(H8) || til.equals(H8)) bCastle.setY(false);
@@ -177,7 +177,7 @@ public class Board {
                 else grid[til.getX()][til.getY()] = gui.promotePawn();
             }
         }
-        colorToMove = GetOppositeColor(colorToMove); //Bytter farge på hvem sin tur det er
+        colorToMove = GetOppositeColor(colorToMove); //Bytter farge på hvem sin tur det er.
 
         // TODO: 26.03.2020 Legg til score eller noe sånt her? 
 
@@ -222,7 +222,7 @@ public class Board {
                 iPiece target = GetGrid()[move.getY().getX()][move.getY().getY()];
                 if(target instanceof King) return true; //Om spilleren ikke har noen lovlige trekk, og kongen blir truet.
             }
-            return null; //Om spilleren ikke har noen lovlige trekk, men blir heller ikke truet. Da er det patt.
+            return null; //Om spilleren ikke har noen lovlige trekk, men heller ikke blir truet. Da er det patt.
         }
     }
 

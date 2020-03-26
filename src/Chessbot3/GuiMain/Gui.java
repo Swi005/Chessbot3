@@ -159,7 +159,12 @@ public class Gui {
         //Reverserer alt det visuelle på brettet.
         //Knappene er fortsatt på samme plass, men de får nye bilder.
         //Dette blir tatt hensyn til i findSquare() i Action.
-        reverse = true;
+        reverse = !reverse;
+        paintPieces();
+    }
+    public void reset(){
+        //Resetter orienteringen, slik at hvit er nederst, og maler brikkene på nytt.
+        reverse = false;
         paintPieces();
     }
 

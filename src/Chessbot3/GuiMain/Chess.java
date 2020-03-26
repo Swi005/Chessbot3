@@ -22,9 +22,8 @@ public class Chess {
 
     public static void main(String[] args) {
         //Opprettet Gui, og alt som skal til for å spille.
-        //Når Gui er ferdig er det ingen kode som kjører, kun actionListeners i Action som venter på at du skal trykke noe.
-        //Hver gang spilleren gjør et trekk aktiverer det botten til den har gjort et trekk,
-        //etter det er det ingen kode som kjører lenger, før spilleren gjør et nytt trekk.
+        //Om det er botten sin tur startes den også.
+        //Ellers er det ingen kode som kjører, kun actionListeners som venter på at brukeren skal trykke på knapper.
         gui = new Gui();
         if(game.isBotTurn()) game.botMove(); //Starter botten om det er dens tur.
 

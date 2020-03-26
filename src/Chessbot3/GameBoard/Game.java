@@ -58,8 +58,7 @@ public class Game {
         madeMoves.clear();
         currentBoard = new Board();
         previousBoards.add(currentBoard);
-        gui.reverse();
-        gui.paintPieces();
+        gui.reset();
         gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
         if(isBotTurn()) botMove();
@@ -129,15 +128,11 @@ public class Game {
         return !stop && bots.contains(currentBoard.GetColorToMove());
     }
 
-    public void addBotColor(WhiteBlack c){
-        //Legger til en farge som bottens skal styre.
-        bots.add(c);
-    }
+    //Legger til en farge som bottens skal styre.
+    public void addBotColor(WhiteBlack c){ bots.add(c); }
 
-    public void clearBotColors(){
-        //Klarerer listen over farger som botten skal gjøre trekk for, og lar heller noen skitne mennesker ta seg av tenkingen.
-        bots.clear();
-    }
+    //Klarerer listen over farger som botten skal gjøre trekk for, og lar heller noen skitne mennesker ta seg av tenkingen.
+    public void clearBotColors(){ bots.clear(); }
 
     //printer det nåværende brettet til konsollen.
     public void printBoard() { System.out.println(currentBoard); }
@@ -146,9 +141,7 @@ public class Game {
     public Board getCurrentBoard(){ return currentBoard; }
 
     //Printer hvilken farge som skal flytte.
-    public void printTurn() {
-        System.out.println(currentBoard.GetColorToMove() + " to move");
-    }
+    public void printTurn() { System.out.println(currentBoard.GetColorToMove() + " to move"); }
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
     public void printMoves() {
