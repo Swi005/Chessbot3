@@ -56,18 +56,17 @@ public class Action extends KeyAdapter implements ActionListener {
                         gui.makeButtonsGrey();
                         gui.lightUpButtons(pos);
                         pressedMove.setX(pos);
+                        gui.clearTextField();
                     }
-
                     //Aktiveres når spilleren allerede har valgt en brikke han vil flytte.
                     else if(pressedMove.getX() != null){
 
-                        //Når spilleren vil flytte til en tom rute
-                        if(pressedPiece == null) pressedMove.setY(pos);
-
-                        //Når spilleren vil ta en fiendtlig brikke.
-                        else if(pressedPiece.getColor() != colorToMove) pressedMove.setY(pos);
+                        //Når spilleren vil flytte til en tom rute, eller ta en fiendtlig brikke. (Eller begge, i en passant)
+                        if(pressedPiece == null || pressedPiece.getColor() != colorToMove){
+                            gui.clearTextField();
+                            pressedMove.setY(pos);
+                        }
                     }
-
                     //Når spilleren har valgt både en brikke å flytte, og en rute å flytte til, blir denne aktivert.
                     if(pressedMove.getY() != null) {
 
@@ -103,8 +102,7 @@ public class Action extends KeyAdapter implements ActionListener {
     private void enter(){
         //Hva som skjer hver gang brukeren trykker på enter enten på tastaturet eller skjermen.
         //Her finner vi også er komplett liste over juksekoder.
-        usertext = textField.getText();
-        textField.setText("");
+        usertext = gui.getTextField();
         if (usertext.equals("quit")) System.exit(0);
         else if (usertext.equals("back")) game.goBack();
         else if (usertext.equals("new")) game.newGame();

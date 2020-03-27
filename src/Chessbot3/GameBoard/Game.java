@@ -47,7 +47,7 @@ public class Game {
             currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
             gui.paintPieces();
         }
-        else gui.displayMessage("Can't go further back!");
+        else gui.displayTextFieldMessage("Can't go further back!");
     }
 
     public void newGame(){
@@ -98,7 +98,7 @@ public class Game {
             else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
             return true;
         }else {
-            gui.displayMessage("Not a legal move!");
+            gui.displayTextFieldMessage("Not a legal move!");
             return false;
         }
     }
@@ -110,13 +110,13 @@ public class Game {
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
         if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
-            gui.displayMessage("Draw!");
+            gui.displayPopupMessage("Draw!");
             stop = true;
             return true;
         }
         //Sjekker om det er matt.
         if(check){
-            gui.displayMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
             stop = true;
             return true;
         }

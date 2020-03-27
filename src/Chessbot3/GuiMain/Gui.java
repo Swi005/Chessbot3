@@ -36,6 +36,7 @@ public class Gui {
     //Denne blir oppdatert av lightUpButtons() og makeButtonsGrey().
     private static ArrayList<Tuple<Integer, Integer>> litSquares = new ArrayList();
 
+    //Fargene på alle rutene.
     private static Color darkSquareColor = Color.DARK_GRAY;
     private static Color lightSquareColor = Color.GRAY;
     private static Color litUpColor = Color.LIGHT_GRAY;
@@ -46,7 +47,7 @@ public class Gui {
     public static JButton back = new JButton("Go Back");
     public static JButton neww = new JButton("New Game");
     public static JButton quit = new JButton("Quit Game");
-    public static JTextField textField = new JTextField(20);
+    private JTextField textField = new JTextField(20);
 
     public Gui(){
         game = new Game();
@@ -181,6 +182,8 @@ public class Gui {
     }
 
     public iPiece promotePawn(){
+        //Lager et popup-vindu og spør hvilken brikke en spiller vil promotere til, og returnerer den brikken.
+        //Tar utgangspunkt i at alle vil ha en dronning uansett.
         WhiteBlack color = game.getCurrentBoard().GetColorToMove();
         int n = JOptionPane.showOptionDialog(chessBoard, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
@@ -190,9 +193,20 @@ public class Gui {
         else return new Queen(color);
     }
 
-    public void displayMessage(String s) {
-        // TODO: 26.03.2020 Finn ut av hvordan meldinger fint kan vises til skjermen.
-        System.out.println(s); //Placeholder
+    public void displayTextFieldMessage(String s) {
+        textField.setText(s);
+    }
+
+    public void displayPopupMessage(String s){
+        JOptionPane.showMessageDialog(chessBoard, s);
+    }
+
+    public void clearTextField(){ textField.setText(""); }
+
+    public String getTextField(){
+        String ret = textField.getText();
+        textField.setText("");
+        return ret;
     }
 
     public void reverse() {
