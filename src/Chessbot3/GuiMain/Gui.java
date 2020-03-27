@@ -119,17 +119,21 @@ public class Gui {
     }
     public void lightUpButtons(Tuple initpos){
         //Tar en brikke, finner alle rutene den kan gå til, og lyser dem opp.
-        List<Move> legals = new ArrayList<>();
         Board bård = game.getCurrentBoard();
         iPiece pie = bård.GetPiece(initpos);
-        for(Move move : pie.getMoves(bård)) {
-            if(bård.CheckPlayerMove(move)) legals.add(move);
-        }
+        List<Move> legals = bård.GenCompletelyLegalMoves();
         for(Move move : legals){
-            int X = move.getY().getX();
-            int Y = move.getY().getY();
-            chessBoardSquares[X][Y].setBackground(litUpColor);
-            litSquares.add(new Tuple(X, Y));
+            if(bård.GetPiece(move.getX()) == pie) {
+                int X = move.getY().getX();
+                int Y = move.getY().getY();
+                if(!reverse) {
+                    chessBoardSquares[X][Y].setBackground(litUpColor);
+                    litSquares.add(new Tuple(X, Y));
+                }else{
+                    chessBoardSquares[7-X][7-Y].setBackground(litUpColor);
+                    litSquares.add(new Tuple(7-X, 7-Y));
+                }
+            }
         }
     }
     public void makeButtonsGrey(){

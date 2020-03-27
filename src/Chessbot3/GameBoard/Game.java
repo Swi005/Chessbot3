@@ -111,11 +111,13 @@ public class Game {
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
         if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
             gui.displayMessage("Draw!");
+            stop = true;
             return true;
         }
         //Sjekker om det er matt.
         if(check){
             gui.displayMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            stop = true;
             return true;
         }
         return false;
