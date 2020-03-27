@@ -10,15 +10,12 @@ import java.util.List;
 public class Tempbot {
     public static Move findRandomMove(Board bård){
         //Tar et brett, og returnerer et helt tilfeldig, men lovlig, trekk.
-        List<Move> legals = new ArrayList<>();
-        for(Move move : bård.GenMoves(bård.GetColorToMove())){
-            if(bård.CheckPlayerMove(move)) legals.add(move);
-        }
+        List<Move> legals = bård.GenCompletelyLegalMoves();
         Collections.shuffle(legals);
 
         try
         {
-            Thread.sleep(10); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
+            Thread.sleep(0); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
         }
         catch(InterruptedException ex)
         {

@@ -80,13 +80,26 @@ public class Board {
         this.passantPos = passantPos;
     }
 
-    public List<Move> GenMoves(WhiteBlack c){
+    //Lager en liste over nesten-lovlige trekk som kan gjøres akkurat nå.
+    //Denne tar IKKE hensyn til om trekket setter kongen i sjakk.
+    public List<Move> GenMoves(){ return GenMoves(colorToMove); }
+
+    public List<Move> GenMoves(WhiteBlack color){
         //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå,
-        // inkludert rokader og en passant.
+        //inkludert rokader og en passant.
         ArrayList<Move> ret = new ArrayList();
-        for(iPiece pie : GetPieceList(c)){
+        for(iPiece pie : GetPieceList(color)){
             ret.addAll(pie.getMoves(this));
         }
+        return ret;
+    }
+
+    //Returnerer en liste over helt lovlige trekk. Denne er mye mer kompleks enn GenMoves, og bør ikke brukes av botten.
+    public List<Move> GenCompletelyLegalMoves(){ return GenCompletelyLegalMoves(colorToMove); }
+
+    public List<Move> GenCompletelyLegalMoves(WhiteBlack color){
+        List<Move> ret = new ArrayList<>();
+        for(Move move : GenMoves(color)) if(CheckPlayerMove(move)) ret.add(move);
         return ret;
     }
 
@@ -97,7 +110,7 @@ public class Board {
             iPiece[] subRow = grid[i];
             for (int j = 0; j < subRow.length; j++) {
                 if (subRow[j] == piece)
-                    return new Tuple<Integer, Integer>(i, j);
+                    return new Tuple(i, j);
             }
         }
         throw new IllegalArgumentException("Fant ikke brikken!");
@@ -118,7 +131,7 @@ public class Board {
 
     public void MovePiece(Move move, Boolean isHumanPlayer) {
         //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
-        //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med checkPlayerMove/GenMoves.
+        //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med CheckPlayerMove/GenMoves.
         //Om isHumanPlayer=true, og trekket er at en bonde blir flyttet til enden av brettet,
         //vil denne lage et pupup-vindu om hvilken brikke bonden skal promoteres til.
         //Hvis ikke, spawnes bare en dronning.
@@ -212,20 +225,16 @@ public class Board {
     public Boolean CheckCheckMate(){
         //Sjekker om brettet er sjakkmatt.
         //Returnerer true om det matt, null om det er patt (uavgjort) og false ellers.
-        List<Move> legals = new ArrayList<>();
-        for(Move move : GenMoves(GetColorToMove())){
-            if(CheckPlayerMove(move)) legals.add(move);
-        }
+        List<Move> legals = GenCompletelyLegalMoves();
         if(legals.size()>0) return false; //Om spilleren har lovlige trekk.
         else{
             for(Move move : GenMoves(GetOppositeColorToMove())){
-                iPiece target = GetGrid()[move.getY().getX()][move.getY().getY()];
+                iPiece target = grid[move.getY().getX()][move.getY().getY()];
                 if(target instanceof King) return true; //Om spilleren ikke har noen lovlige trekk, og kongen blir truet.
             }
             return null; //Om spilleren ikke har noen lovlige trekk, men heller ikke blir truet. Da er det patt.
         }
     }
-
     public int GetScore(boolean isWhite)
     {
         if (isWhite)
@@ -268,6 +277,7 @@ public class Board {
         if(c == WHITE) return BLACK;
         else return WHITE;
     }
+    public List<iPiece> GetPieceList(){ return GetPieceList(colorToMove); }
 
     public List<iPiece> GetPieceList(WhiteBlack c){
         //Lager en liste over alle brikkene til en farge.

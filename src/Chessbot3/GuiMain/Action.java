@@ -20,12 +20,11 @@ import static Chessbot3.GuiMain.Gui.*;
 public class Action extends KeyAdapter implements ActionListener {
 
     //Hver gang brukeren trykker på skjermen eller på tastaturet, blir det inni tekstfeltet sendt til denne variabelen.
-    String usertext = "";
+    private static String usertext = "";
 
-    //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert. Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
+    //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
+    //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
     private static Move pressedMove = new Move(null, null);
-
-    private static ArrayList<Tuple<Integer, Integer>> litSquares = new ArrayList();
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -54,8 +53,8 @@ public class Action extends KeyAdapter implements ActionListener {
 
                     //Aktiveres når spilleren trykker på en av sine egne brikker.
                     if(pressedPiece != null && colorToMove == pressedPiece.getColor()){
-                        makeButtonsGrey();
-                        lightUpButtons(pos);
+                        gui.makeButtonsGrey();
+                        gui.lightUpButtons(pos);
                         pressedMove.setX(pos);
                     }
 
@@ -74,7 +73,7 @@ public class Action extends KeyAdapter implements ActionListener {
 
                         //Hvis trekket var lovlig.
                         if(game.playerMove(pressedMove)){
-                            makeButtonsGrey();
+                            gui.makeButtonsGrey();
                             pressedMove = new Move(null, null);
                         }
                         //Om trekket er ulovlig, vil pressedMove huske hvilken brikke spilleren ville flytte.
@@ -83,30 +82,6 @@ public class Action extends KeyAdapter implements ActionListener {
                     }
                 }
             }
-        }
-    }
-    private void lightUpButtons(Tuple initpos){
-        //Tar en brikke, finner alle rutene den kan gå til, og lyser dem opp.
-        List<Move> legals = new ArrayList<>();
-        Board bård = game.getCurrentBoard();
-        iPiece pie = bård.GetPiece(initpos);
-        for(Move move : pie.getMoves(bård)) {
-            if(bård.CheckPlayerMove(move)) legals.add(move);
-        }
-        for(Move move : legals){
-            int X = move.getY().getX();
-            int Y = move.getY().getY();
-            chessBoardSquares[X][Y].setBackground(Color.YELLOW);
-            litSquares.add(new Tuple(X, Y));
-        }
-    }
-    private void makeButtonsGrey(){
-        //Gjør alle ruter grå igjen. Denne må kalles opp før lightUpButtons, så bare de riktige knappene lyses opp.
-        for(Tuple<Integer, Integer> pos : litSquares){
-            int x = pos. getX();
-            int y = pos.getY();
-            if((y % 2 == 1 && x % 2 == 1) || (y % 2 == 0 && x % 2 == 0)) chessBoardSquares[x][y].setBackground(Color.LIGHT_GRAY);
-            else chessBoardSquares[x][y].setBackground(Color.gray);
         }
     }
 

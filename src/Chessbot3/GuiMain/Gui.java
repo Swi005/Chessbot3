@@ -2,6 +2,7 @@ package Chessbot3.GuiMain;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GameBoard.Game;
+import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.*;
 
@@ -10,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
@@ -26,7 +29,16 @@ public class Gui {
     //Selve partiet.
     public static Game game;
 
+    //Ombrettet er rotert eller ikke.
     public static Boolean reverse = false;
+
+    //listen over ruter som er lyst opp akkurat nå.
+    //Denne blir oppdatert av lightUpButtons() og makeButtonsGrey().
+    private static ArrayList<Tuple<Integer, Integer>> litSquares = new ArrayList();
+
+    private static Color darkSquareColor = Color.DARK_GRAY;
+    private static Color lightSquareColor = Color.GRAY;
+    private static Color litUpColor = Color.LIGHT_GRAY;
 
     //Knappene og tekstfeltet som vises på skjermen.
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
@@ -93,8 +105,8 @@ public class Gui {
                 butt.setMargin(buttonMargin);
                 ImageIcon icon = new ImageIcon(new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB));
                 butt.setIcon(icon);
-                if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) butt.setBackground(Color.LIGHT_GRAY);
-                else butt.setBackground(Color.gray);
+                if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) butt.setBackground(lightSquareColor);
+                else butt.setBackground(darkSquareColor);
                 butt.addActionListener(new Action());
                 chessBoardSquares[jj][ii] = butt;
             }
@@ -103,6 +115,30 @@ public class Gui {
             for (int jj = 0; jj < 8; jj++) {
                 chessBoard.add(chessBoardSquares[jj][ii]);
             }
+        }
+    }
+    public void lightUpButtons(Tuple initpos){
+        //Tar en brikke, finner alle rutene den kan gå til, og lyser dem opp.
+        List<Move> legals = new ArrayList<>();
+        Board bård = game.getCurrentBoard();
+        iPiece pie = bård.GetPiece(initpos);
+        for(Move move : pie.getMoves(bård)) {
+            if(bård.CheckPlayerMove(move)) legals.add(move);
+        }
+        for(Move move : legals){
+            int X = move.getY().getX();
+            int Y = move.getY().getY();
+            chessBoardSquares[X][Y].setBackground(litUpColor);
+            litSquares.add(new Tuple(X, Y));
+        }
+    }
+    public void makeButtonsGrey(){
+        //Gjør alle ruter grå igjen. Denne må kalles opp før lightUpButtons, så bare de riktige knappene lyses opp.
+        for(Tuple<Integer, Integer> pos : litSquares){
+            int x = pos. getX();
+            int y = pos.getY();
+            if((y % 2 == 1 && x % 2 == 1) || (y % 2 == 0 && x % 2 == 0)) chessBoardSquares[x][y].setBackground(lightSquareColor);
+            else chessBoardSquares[x][y].setBackground(darkSquareColor);
         }
     }
     public void chooseGamemode(){

@@ -8,7 +8,6 @@ import Chessbot3.bot.Simulate.Tempbot;
 import java.util.ArrayList;
 
 import static Chessbot3.GuiMain.Chess.gui;
-import static Chessbot3.GuiMain.Gui.*;
 
 public class Game {
 
@@ -144,15 +143,8 @@ public class Game {
     public void printTurn() { System.out.println(currentBoard.GetColorToMove() + " to move"); }
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
-    public void printMoves() {
-        for(Move move : currentBoard.GenMoves(currentBoard.GetColorToMove())){
-            if(currentBoard.CheckPlayerMove(move)) System.out.println(move);
-        }
-    }
+    public void printMoves() { for(Move move : currentBoard.GenCompletelyLegalMoves()) System.out.println(move); }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
-    public void printPieces() {
-        WhiteBlack color = currentBoard.GetColorToMove();
-        for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);
-    }
+    public void printPieces() { for(iPiece pie : currentBoard.GetPieceList()) System.out.println(pie); }
 }
