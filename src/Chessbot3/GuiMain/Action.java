@@ -20,7 +20,7 @@ import static Chessbot3.GuiMain.Gui.*;
 public class Action extends KeyAdapter implements ActionListener {
 
     //Hver gang brukeren trykker på skjermen eller på tastaturet, blir det inni tekstfeltet sendt til denne variabelen.
-    private static String usertext = "";
+    private String usertext = "";
 
     //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
     //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
@@ -115,5 +115,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("paint")) gui.paintPieces();
         else if (usertext.equals("reverse")) gui.reverse();
         else if (usertext.equals("bot")) game.botMove();
+        else gui.displayPopupMessage("Unrecognized command");
     }
 }
