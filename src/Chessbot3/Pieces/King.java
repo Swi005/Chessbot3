@@ -14,6 +14,17 @@ import static Chessbot3.Pieces.WhiteBlack.WHITE;
 public class King extends SimplePiece {
     public King(WhiteBlack c) {
         super(c);
+        posValue = new int[][] 
+        {
+            new int[] {4,  54,  47, -99, -99,  60,  83, -62},
+            new int[] {-32,  10,  55,  56,  56,  55,  10,   3},
+            new int[] {-62,  12, -57,  44, -67,  28,  37, -31},
+            new int[] {-55,  50,  11,  -4, -19,  13,   0, -49},
+            new int[] {-55, -43, -52, -28, -51, -47,  -8, -50},
+            new int[] {-47, -42, -43, -79, -64, -32, -29, -32},
+            new int[] {-4,   3, -14, -50, -57, -18,  13,   4},
+            new int[] {17,  30,  -3, -14,   6,  -1,  40,  18}
+        };
         canSprint = false;
         value = 69420; //Nice.
         symbol = 'K';

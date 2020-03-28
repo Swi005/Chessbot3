@@ -12,6 +12,7 @@ import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
+    int[][] posValue;
     WhiteBlack color;
     int value;
     Character symbol;
@@ -41,7 +42,22 @@ public abstract class SimplePiece implements iPiece {
 
     public int getValue() { return value; }
     public Character getSymbol(){ return symbol; }
-    public BufferedImage getImage(){ return image; }
+
+    public BufferedImage getImage() 
+    {
+        return image;
+    }
+    
+    @Override
+    public int GetValueAt(Tuple<Integer, Integer> XY, boolean isWhite) 
+    {
+        if (isWhite)
+            return posValue[XY.getX()][XY.getY()];
+        else
+        {
+            return posValue[7 - XY.getX()][7 - XY.getY()];
+        }
+    }
 
     public ArrayList<Move> getMoves(Board bård){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå.

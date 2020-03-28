@@ -14,6 +14,17 @@ public class Pawn extends SimplePiece {
 
     public Pawn(WhiteBlack c) {
         super(c);
+        posValue = new int[][] 
+        {
+            new int[] {100,   100,   100,   100,   100,   100,   100,  100,},//100 causce get new good piece right?
+            new int[] { 78,  83,  86,  73, 102,  82,  85,  90},
+            new int[] {7,  29,  21,  44,  40,  31,  44,   7},
+            new int[] {-17,  16,  -2,  15,  14,   0,  15, -13},
+            new int[] {-26,   3,  10,   9,   6,   1,   0, -23},
+            new int[] {-22,   9,   5, -11, -10,  -2,   3, -19},
+            new int[] { -31,   8,  -7, -37, -36, -14,   3, -31},
+            new int[] {0,   0,   0,   0,   0,   0,   0,  0}
+        };
         canSprint = false;
         value = 100;
         symbol = 'P';
