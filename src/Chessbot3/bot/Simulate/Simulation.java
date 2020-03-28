@@ -15,6 +15,6 @@ public class Simulation
     }
     public void simulateMove( Move move)
     {
-        board.MovePiece(move);
+        board.MovePiece(move, false);
     }
 }

@@ -12,12 +12,12 @@ import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
-    int[][] posValue;
-    WhiteBlack color;
-    int value;
-    Character symbol;
-    Boolean canSprint;
-    BufferedImage image;
+    protected int[][] posValue;
+    protected WhiteBlack color;
+    protected int value;
+    protected Character symbol;
+    protected Boolean canSprint;
+    protected BufferedImage image;
 
     public SimplePiece(WhiteBlack c){
         //Det eneste som er felles for alle brikker er hvordan fargen blir assignert.

@@ -8,7 +8,6 @@ import Chessbot3.bot.Simulate.Tempbot;
 import java.util.ArrayList;
 
 import static Chessbot3.GuiMain.Chess.gui;
-import static Chessbot3.GuiMain.Gui.*;
 
 public class Game {
 
@@ -48,7 +47,7 @@ public class Game {
             currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
             gui.paintPieces();
         }
-        else gui.displayMessage("Can't go further back!");
+        else gui.displayTextFieldMessage("Can't go further back!");
     }
 
     public void newGame(){
@@ -58,7 +57,7 @@ public class Game {
         madeMoves.clear();
         currentBoard = new Board();
         previousBoards.add(currentBoard);
-        gui.paintPieces();
+        gui.reset();
         gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
         if(isBotTurn()) botMove();
@@ -74,15 +73,16 @@ public class Game {
 
     public void botMove(){
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
+        //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
         Move move = Tempbot.findRandomMove(currentBoard);
         if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
-        currentBoard.MovePiece(move);
+        currentBoard.MovePiece(move, false);
         previousBoards.add(currentBoard.Copy());
         madeMoves.add(move);
         gui.paintPieces();
         if(handleWinCondition()) return;
-        else if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
+        if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
     }
 
     public Boolean playerMove(Move move){
@@ -90,7 +90,7 @@ public class Game {
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
         if(currentBoard.CheckPlayerMove(move)) {
-            currentBoard.MovePiece(move);
+            currentBoard.MovePiece(move, true);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             gui.paintPieces();
@@ -98,7 +98,7 @@ public class Game {
             else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
             return true;
         }else {
-            gui.displayMessage("Not a legal move!");
+            gui.displayTextFieldMessage("Not a legal move!");
             return false;
         }
     }
@@ -110,12 +110,14 @@ public class Game {
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
         if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
-            gui.displayMessage("Draw!");
+            gui.displayPopupMessage("Draw!");
+            stop = true;
             return true;
         }
         //Sjekker om det er matt.
         if(check){
-            gui.displayMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            stop = true;
             return true;
         }
         return false;
@@ -127,15 +129,11 @@ public class Game {
         return !stop && bots.contains(currentBoard.GetColorToMove());
     }
 
-    public void addBotColor(WhiteBlack c){
-        //Legger til en farge som bottens skal styre.
-        bots.add(c);
-    }
+    //Legger til en farge som bottens skal styre.
+    public void addBotColor(WhiteBlack c){ bots.add(c); }
 
-    public void clearBotColors(){
-        //Klarerer listen over farger som botten skal gjøre trekk for, og lar heller noen skitne mennesker ta seg av tenkingen.
-        bots.clear();
-    }
+    //Klarerer listen over farger som botten skal gjøre trekk for, og lar heller noen skitne mennesker ta seg av tenkingen.
+    public void clearBotColors(){ bots.clear(); }
 
     //printer det nåværende brettet til konsollen.
     public void printBoard() { System.out.println(currentBoard); }
@@ -144,20 +142,11 @@ public class Game {
     public Board getCurrentBoard(){ return currentBoard; }
 
     //Printer hvilken farge som skal flytte.
-    public void printTurn() {
-        System.out.println(currentBoard.GetColorToMove() + " to move");
-    }
+    public void printTurn() { System.out.println(currentBoard.GetColorToMove() + " to move"); }
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
-    public void printMoves() {
-        for(Move move : currentBoard.GenMoves(currentBoard.GetColorToMove())){
-            if(currentBoard.CheckPlayerMove(move)) System.out.println(move);
-        }
-    }
+    public void printMoves() { for(Move move : currentBoard.GenCompletelyLegalMoves()) System.out.println(move); }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
-    public void printPieces() {
-        WhiteBlack color = currentBoard.GetColorToMove();
-        for(iPiece pie : currentBoard.GetPieceList(color)) System.out.println(pie);
-    }
+    public void printPieces() { for(iPiece pie : currentBoard.GetPieceList()) System.out.println(pie); }
 }

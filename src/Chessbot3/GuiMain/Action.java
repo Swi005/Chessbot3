@@ -6,10 +6,13 @@ import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.WhiteBlack;
 import Chessbot3.Pieces.iPiece;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
@@ -17,9 +20,10 @@ import static Chessbot3.GuiMain.Gui.*;
 public class Action extends KeyAdapter implements ActionListener {
 
     //Hver gang brukeren trykker på skjermen eller på tastaturet, blir det inni tekstfeltet sendt til denne variabelen.
-    String usertext = "";
+    private static String usertext = "";
 
-    //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert. Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
+    //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
+    //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
     private static Move pressedMove = new Move(null, null);
 
     @Override
@@ -45,29 +49,30 @@ public class Action extends KeyAdapter implements ActionListener {
                     if(!gui.reverse) pos = new Tuple(x, y);
                     else pos = new Tuple(7-x, 7-y);
 
-
                     iPiece pressedPiece = bård.GetPiece(pos);
 
                     //Aktiveres når spilleren trykker på en av sine egne brikker.
                     if(pressedPiece != null && colorToMove == pressedPiece.getColor()){
+                        gui.makeButtonsGrey();
+                        gui.lightUpButtons(pos);
                         pressedMove.setX(pos);
+                        gui.clearTextField();
                     }
-
                     //Aktiveres når spilleren allerede har valgt en brikke han vil flytte.
                     else if(pressedMove.getX() != null){
 
-                        //Når spilleren vil flytte til en tom rute
-                        if(pressedPiece == null) pressedMove.setY(pos);
-
-                        //Når spilleren vil ta en fiendtlig brikke.
-                        else if(pressedPiece.getColor() != colorToMove) pressedMove.setY(pos);
+                        //Når spilleren vil flytte til en tom rute, eller ta en fiendtlig brikke. (Eller begge, i en passant)
+                        if(pressedPiece == null || pressedPiece.getColor() != colorToMove){
+                            gui.clearTextField();
+                            pressedMove.setY(pos);
+                        }
                     }
-
                     //Når spilleren har valgt både en brikke å flytte, og en rute å flytte til, blir denne aktivert.
                     if(pressedMove.getY() != null) {
 
                         //Hvis trekket var lovlig.
                         if(game.playerMove(pressedMove)){
+                            gui.makeButtonsGrey();
                             pressedMove = new Move(null, null);
                         }
                         //Om trekket er ulovlig, vil pressedMove huske hvilken brikke spilleren ville flytte.
@@ -97,8 +102,7 @@ public class Action extends KeyAdapter implements ActionListener {
     private void enter(){
         //Hva som skjer hver gang brukeren trykker på enter enten på tastaturet eller skjermen.
         //Her finner vi også er komplett liste over juksekoder.
-        usertext = textField.getText();
-        textField.setText("");
+        usertext = gui.getTextField();
         if (usertext.equals("quit")) System.exit(0);
         else if (usertext.equals("back")) game.goBack();
         else if (usertext.equals("new")) game.newGame();

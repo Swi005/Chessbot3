@@ -2,14 +2,17 @@ package Chessbot3.GuiMain;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GameBoard.Game;
+import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.iPiece;
+import Chessbot3.Pieces.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
@@ -26,7 +29,17 @@ public class Gui {
     //Selve partiet.
     public static Game game;
 
+    //Ombrettet er rotert eller ikke.
     public static Boolean reverse = false;
+
+    //listen over ruter som er lyst opp akkurat nå.
+    //Denne blir oppdatert av lightUpButtons() og makeButtonsGrey().
+    private static ArrayList<Tuple<Integer, Integer>> litSquares = new ArrayList();
+
+    //Fargene på alle rutene.
+    private static Color darkSquareColor = Color.DARK_GRAY;
+    private static Color lightSquareColor = Color.GRAY;
+    private static Color litUpColor = Color.LIGHT_GRAY;
 
     //Knappene og tekstfeltet som vises på skjermen.
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
@@ -34,7 +47,7 @@ public class Gui {
     public static JButton back = new JButton("Go Back");
     public static JButton neww = new JButton("New Game");
     public static JButton quit = new JButton("Quit Game");
-    public static JTextField textField = new JTextField(20);
+    private JTextField textField = new JTextField(20);
 
     public Gui(){
         game = new Game();
@@ -93,8 +106,8 @@ public class Gui {
                 butt.setMargin(buttonMargin);
                 ImageIcon icon = new ImageIcon(new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB));
                 butt.setIcon(icon);
-                if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) butt.setBackground(Color.LIGHT_GRAY);
-                else butt.setBackground(Color.gray);
+                if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) butt.setBackground(lightSquareColor);
+                else butt.setBackground(darkSquareColor);
                 butt.addActionListener(new Action());
                 chessBoardSquares[jj][ii] = butt;
             }
@@ -103,6 +116,34 @@ public class Gui {
             for (int jj = 0; jj < 8; jj++) {
                 chessBoard.add(chessBoardSquares[jj][ii]);
             }
+        }
+    }
+    public void lightUpButtons(Tuple initpos){
+        //Tar en brikke, finner alle rutene den kan gå til, og lyser dem opp.
+        Board bård = game.getCurrentBoard();
+        iPiece pie = bård.GetPiece(initpos);
+        List<Move> legals = bård.GenCompletelyLegalMoves();
+        for(Move move : legals){
+            if(bård.GetPiece(move.getX()) == pie) {
+                int X = move.getY().getX();
+                int Y = move.getY().getY();
+                if(!reverse) {
+                    chessBoardSquares[X][Y].setBackground(litUpColor);
+                    litSquares.add(new Tuple(X, Y));
+                }else{
+                    chessBoardSquares[7-X][7-Y].setBackground(litUpColor);
+                    litSquares.add(new Tuple(7-X, 7-Y));
+                }
+            }
+        }
+    }
+    public void makeButtonsGrey(){
+        //Gjør alle ruter grå igjen. Denne må kalles opp før lightUpButtons, så bare de riktige knappene lyses opp.
+        for(Tuple<Integer, Integer> pos : litSquares){
+            int x = pos. getX();
+            int y = pos.getY();
+            if((y % 2 == 1 && x % 2 == 1) || (y % 2 == 0 && x % 2 == 0)) chessBoardSquares[x][y].setBackground(lightSquareColor);
+            else chessBoardSquares[x][y].setBackground(darkSquareColor);
         }
     }
     public void chooseGamemode(){
@@ -139,16 +180,45 @@ public class Gui {
             game.addBotColor(WHITE);
         }
     }
-    public void displayMessage(String s) {
-        // TODO: 26.03.2020 Finn ut av hvordan meldinger fint kan vises til skjermen.
-        System.out.println(s); //Placeholder
+
+    public iPiece promotePawn(){
+        //Lager et popup-vindu og spør hvilken brikke en spiller vil promotere til, og returnerer den brikken.
+        //Tar utgangspunkt i at alle vil ha en dronning uansett.
+        WhiteBlack color = game.getCurrentBoard().GetColorToMove();
+        int n = JOptionPane.showOptionDialog(chessBoard, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
+        if(n == 1) return new Rook(color);
+        else if(n == 2) return new Knight(color);
+        else if(n == 3) return new Bishop(color);
+        else return new Queen(color);
+    }
+
+    public void displayTextFieldMessage(String s) {
+        textField.setText(s);
+    }
+
+    public void displayPopupMessage(String s){
+        JOptionPane.showMessageDialog(chessBoard, s);
+    }
+
+    public void clearTextField(){ textField.setText(""); }
+
+    public String getTextField(){
+        String ret = textField.getText();
+        textField.setText("");
+        return ret;
     }
 
     public void reverse() {
         //Reverserer alt det visuelle på brettet.
         //Knappene er fortsatt på samme plass, men de får nye bilder.
         //Dette blir tatt hensyn til i findSquare() i Action.
-        reverse = true;
+        reverse = !reverse;
+        paintPieces();
+    }
+    public void reset(){
+        //Resetter orienteringen, slik at hvit er nederst, og maler brikkene på nytt.
+        reverse = false;
         paintPieces();
     }
 
