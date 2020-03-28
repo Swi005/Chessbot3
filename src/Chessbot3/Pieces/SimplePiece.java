@@ -49,9 +49,9 @@ public abstract class SimplePiece implements iPiece {
     }
     
     @Override
-    public int GetValueAt(Tuple<Integer, Integer> XY, boolean isWhite) 
+    public int GetValueAt(Tuple<Integer, Integer> XY)
     {
-        if (isWhite)
+        if (color == WHITE)
             return posValue[XY.getX()][XY.getY()];
         else
         {

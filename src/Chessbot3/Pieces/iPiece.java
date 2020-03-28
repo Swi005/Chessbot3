@@ -15,7 +15,7 @@ public interface iPiece {
 
     public Boolean canSprint();
 
-    public int GetValueAt(Tuple<Integer, Integer> XY, boolean isWhite);
+    public int GetValueAt(Tuple<Integer, Integer> XY);
     public Integer getX(Board bård);
     public Integer getY(Board bård);
     public Tuple<Integer, Integer> getCoords(Board bård);
