@@ -8,11 +8,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static Chessbot3.GuiMain.Chess.direcDict;
+import static Chessbot3.GuiMain.Chess.posValueDict;
 import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
-    protected int[][] posValue;
+    //protected int[][] posValue;
     protected WhiteBlack color;
     protected int inherentValue;
     protected Character symbol;
@@ -54,17 +55,10 @@ public abstract class SimplePiece implements iPiece {
     //Returnerer den innebygde verdien til denne brikken. Bønder er 100, dronning er 900, osv.
     public int getInherentValue() { return inherentValue; }
 
-    public int getValueAt(Tuple<Integer, Integer> XY)
-            //Returnerer hvor bra det generelt er å stå for denne brikken på denne posisjonen.
-    {
-        if (color == WHITE)
-        {
-            return posValue[XY.getY()][XY.getX()];
-        }
-        else
-        {
-            return posValue[7 - XY.getY()][7 - XY.getX()];
-        }
+    public int getValueAt(Tuple<Integer, Integer> pos){
+        //Returnerer et tall for hvor bra det generelt er å stå for denne brikken på den posisjonen.
+        if(color == WHITE) return posValueDict.get(symbol)[pos.getY()][pos.getX()];
+        else return posValueDict.get(symbol)[7-pos.getY()][7-pos.getX()];
     }
 
     public ArrayList<Move> getMoves(Board bård){

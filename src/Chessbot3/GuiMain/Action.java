@@ -6,32 +6,28 @@ import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.WhiteBlack;
 import Chessbot3.Pieces.iPiece;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
 
 public class Action extends KeyAdapter implements ActionListener {
 
-    //Hver gang brukeren trykker på skjermen eller på tastaturet, blir det inni tekstfeltet sendt til denne variabelen.
-    //private String usertext = "";
-
     //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
     //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
     private static Move pressedMove = new Move(null, null);
 
+    //Hjelpestrenger, for å kunne parse det brukeren skriver inn til trekk.
     private static String chars = "abcdefgh";
     private static String nums = "12345678";
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //Hver gang du trykker på en virtuell knapp blir denne kalt opp. Den forsøker å finne knappen og handle deretter.
+        //Hver gang du trykker på en virtuell knapp blir denne kalt opp.
+        //Den forsøker å finne knappen og handle deretter.
         if(e.getSource() == quit) System.exit(0);
         else if(e.getSource() == enter) enter();
         else if(e.getSource() == back) game.goBack();
@@ -95,7 +91,7 @@ public class Action extends KeyAdapter implements ActionListener {
                 case KeyEvent.VK_ENTER:
                     enter();
                     break;
-                default:
+                default: //Sørger for at alle feilmeldinger i tekstfeltet forsvinner når brukeren trykker på en hvilken som helst knapp.
                     if(gui.hasErrorInTextField()) gui.clearTextField();
             }
         } catch (Exception a) {

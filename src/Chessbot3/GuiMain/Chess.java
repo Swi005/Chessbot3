@@ -17,6 +17,8 @@ public class Chess {
     //Dict over bildet som hører til hver enkelt brikke.
     public static final Hashtable<String, BufferedImage> imageDict = Generator.makeImages();
 
+    public static final Dictionary<Character, Integer[][]> posValueDict = Generator.makePosValueDict();
+
     //Selve Gui-en.
     public static Gui gui;
 

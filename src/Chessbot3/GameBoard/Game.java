@@ -23,7 +23,7 @@ public class Game {
     //En liste over hvilke farger botten skal styre.
     //Om denne kun inneholder BLACK betyr det at botten styrer svart, mens spilleren styrer hvit.
     //Om denne er tom spiller spilleren mot seg selv.
-    private ArrayList<WhiteBlack> bots = new ArrayList<>(2);
+    private ArrayList<WhiteBlack> bots = new ArrayList<>(1);
 
     //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
     public volatile Boolean stop = false;
