@@ -62,8 +62,8 @@ public class Pawn extends SimplePiece {
                 ret.add(new Move(fraPos, tilPos));
 
                 //Om den klarer å gå et skritt, og det er første gang den flytter, kan den prøve om det er lov å gå et skritt til.
-                if((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK) && bård.GetPiece(tilX, tilY+direc.getY()) == null){
-                    ret.add(new Move(fraPos, new Tuple(tilX, tilY+direc.getY()))); //Om den får lov til å gå to skritt.
+                if(((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK)) && bård.GetPiece(tilX, tilY+direc.getY()) ==  null){
+                    ret.add(new Move(fraPos, new Tuple(tilX, tilY + direc.getY()))); //Om det er en åpen rute, kan den gå to skritt.
                 }
             }
         }
