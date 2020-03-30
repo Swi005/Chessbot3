@@ -20,6 +20,7 @@ public interface iPiece {
     public Tuple<Integer, Integer> getCoords(Board bård);
     public BufferedImage getImage();
 
+    int getValueAt(int x, int y);
     int getCombinedValue(Tuple<Integer, Integer> XY);
     public int getValueAt(Tuple<Integer, Integer> XY);
     public int getInherentValue();

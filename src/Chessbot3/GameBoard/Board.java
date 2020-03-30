@@ -141,16 +141,21 @@ public class Board {
 
         //Flytter tårnet, om kongen rokerer.
         if(pie instanceof King){
+            iPiece tempRook = new Rook(pie.getColor()); //Et midldertidig tårn kun for å regne ut verdien av å flytte et tårn når kongen rokererer.
             if(fra.equals(E1) && til.equals(G1)){
+                AddScore(tempRook.getValueAt(5, 7) - tempRook.getValueAt(7, 7));
                 grid[5][7] = grid[7][7]; //Flytter tårnet når hvit rokerer kort.
                 grid[7][7] = null;
             }else if(fra.equals(E1) && til.equals(C1)){
+                AddScore(tempRook.getValueAt(3, 7) - tempRook.getValueAt(0, 7));
                 grid[3][7] = grid[0][7]; //Flytter tårnet når hvit rokerer langt.
                 grid[0][7] = null;
             }else if(fra.equals(E8) && til.equals(G8)){
+                AddScore(tempRook.getValueAt(5, 0) - tempRook.getValueAt(7, 0));
                 grid[5][0] = grid[7][0]; //Flytter tårnet når svart rokerer kort.
                 grid[7][0] = null;
             }else if(fra.equals(E8) && til.equals(C8)){
+                AddScore(tempRook.getValueAt(3, 0) - tempRook.getValueAt(0, 0));
                 grid[3][0] = grid[0][0]; //Flytter tårnet når svart rokerer langt.
                 grid[0][0] = null;
             }

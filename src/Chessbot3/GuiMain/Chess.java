@@ -17,13 +17,14 @@ public class Chess {
     //Dict over bildet som hører til hver enkelt brikke.
     public static final Hashtable<String, BufferedImage> imageDict = Generator.makeImages();
 
+    //Dict over hvor det generelt er bra å stå for de forskjellige brikkene.
     public static final Dictionary<Character, Integer[][]> posValueDict = Generator.makePosValueDict();
 
     //Selve Gui-en.
     public static Gui gui;
 
     public static void main(String[] args) {
-        //Opprettet Gui, og alt som skal til for å spille.
+        //Oppretter Gui, og alt som skal til for å spille.
         //Om det er botten sin tur startes den også.
         //Ellers er det ingen kode som kjører, kun actionListeners som venter på at brukeren skal trykke på knapper.
         gui = new Gui();

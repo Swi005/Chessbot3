@@ -13,7 +13,6 @@ import static Chessbot3.Pieces.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
-    //protected int[][] posValue;
     protected WhiteBlack color;
     protected int inherentValue;
     protected Character symbol;
@@ -54,6 +53,8 @@ public abstract class SimplePiece implements iPiece {
 
     //Returnerer den innebygde verdien til denne brikken. Bønder er 100, dronning er 900, osv.
     public int getInherentValue() { return inherentValue; }
+
+    public int getValueAt(int x, int y){ return getValueAt(new Tuple(x, y)); }
 
     public int getValueAt(Tuple<Integer, Integer> pos){
         //Returnerer et tall for hvor bra det generelt er å stå for denne brikken på den posisjonen.
