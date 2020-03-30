@@ -18,7 +18,7 @@ public class Knight extends SimplePiece {
             new int[] {-74, -23, -26, -24, -19, -35, -22, -69}
         };
         canSprint = false;
-        value = 280;
+        inherentValue = 280;
         symbol = 'N';
         if(c == WHITE){
             image = imageDict.get("horse_white");

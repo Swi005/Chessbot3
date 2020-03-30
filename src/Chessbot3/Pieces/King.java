@@ -26,7 +26,7 @@ public class King extends SimplePiece {
             new int[] {17,  30,  -3, -14,   6,  -1,  40,  18}
         };
         canSprint = false;
-        value = 69420; //Nice.
+        inherentValue = 69420; //Nice.
         symbol = 'K';
         if (c == WHITE) {
             image = imageDict.get("king_white");

@@ -18,7 +18,7 @@ public class Bishop extends SimplePiece {
             new int[] { -7,   2, -15, -12, -14, -15, -10, -10}
         };
         canSprint = true;
-        value = 320;
+        inherentValue = 320;
         symbol = 'B';
         if(c == WHITE){
             image = imageDict.get("bishop_white");

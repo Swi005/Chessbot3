@@ -115,6 +115,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("paint")) gui.paintPieces();
         else if (usertext.equals("reverse")) gui.reverse();
         else if (usertext.equals("bot")) game.botMove();
+        else if (usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
         else gui.displayPopupMessage("Unrecognized command");
     }
 }

@@ -39,7 +39,7 @@ public class Game {
 
     public void goBack(){
         //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerenes nyeste trekk blir resatt. *insert Bites Za Dusto reference here*
-        if(previousBoards.size()>1){
+        if(previousBoards.size()>2){
             previousBoards.remove(previousBoards.size()-1);
             previousBoards.remove(previousBoards.size()-1);
             madeMoves.remove(madeMoves.size()-1);
@@ -96,6 +96,7 @@ public class Game {
             gui.paintPieces();
             if(handleWinCondition()) return true;
             else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
+            System.out.println(currentBoard.GetScore());
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");

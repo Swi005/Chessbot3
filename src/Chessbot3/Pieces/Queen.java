@@ -18,7 +18,7 @@ public class Queen extends SimplePiece {
             new int[] {-39, -30, -31, -13, -31, -36, -34, -42}
         };
         canSprint = true;
-        value = 929;
+        inherentValue = 929;
         symbol = 'Q';
         if(c == WHITE){
             image = imageDict.get("queen_white");

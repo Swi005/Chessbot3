@@ -14,7 +14,7 @@ import static Chessbot3.Pieces.WhiteBlack.WHITE;
 public abstract class SimplePiece implements iPiece {
     protected int[][] posValue;
     protected WhiteBlack color;
-    protected int value;
+    protected int inherentValue;
     protected Character symbol;
     protected Boolean canSprint;
     protected BufferedImage image;
@@ -40,22 +40,30 @@ public abstract class SimplePiece implements iPiece {
     public Integer getY(Board bård){ return getCoords(bård).getY(); }
     public Tuple<Integer, Integer> getCoords(Board bård) { return bård.GetCoordsOfPiece(this); }
 
-    public int getValue() { return value; }
     public Character getSymbol(){ return symbol; }
 
     public BufferedImage getImage() 
     {
         return image;
     }
-    
-    @Override
-    public int GetValueAt(Tuple<Integer, Integer> XY)
+
+    //Returnerer både den innebgyde verdien, og verdien til hvor godt plassert brikken er.
+    //Denne brukes gjerne når du dreper en brikke og vil ha score for det.
+    public int getCombinedValue(Tuple<Integer, Integer> pos) { return getValueAt(pos) + inherentValue; }
+
+    //Returnerer den innebygde verdien til denne brikken. Bønder er 100, dronning er 900, osv.
+    public int getInherentValue() { return inherentValue; }
+
+    public int getValueAt(Tuple<Integer, Integer> XY)
+            //Returnerer hvor bra det generelt er å stå for denne brikken på denne posisjonen.
     {
         if (color == WHITE)
-            return posValue[XY.getX()][XY.getY()];
+        {
+            return posValue[XY.getY()][XY.getX()];
+        }
         else
         {
-            return posValue[7 - XY.getX()][7 - XY.getY()];
+            return posValue[7 - XY.getY()][7 - XY.getX()];
         }
     }
 

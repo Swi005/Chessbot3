@@ -15,14 +15,17 @@ public interface iPiece {
 
     public Boolean canSprint();
 
-    public int GetValueAt(Tuple<Integer, Integer> XY);
     public Integer getX(Board bård);
     public Integer getY(Board bård);
     public Tuple<Integer, Integer> getCoords(Board bård);
     public BufferedImage getImage();
 
-    public int getValue();
+    int getCombinedValue(Tuple<Integer, Integer> XY);
+    public int getValueAt(Tuple<Integer, Integer> XY);
+    public int getInherentValue();
+
     public Character getSymbol();
+
     public String toString();
 
     ArrayList<Move> getMoves(Board bård);

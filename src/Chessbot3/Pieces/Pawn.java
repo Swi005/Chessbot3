@@ -26,7 +26,7 @@ public class Pawn extends SimplePiece {
             new int[] {0,   0,   0,   0,   0,   0,   0,  0}
         };
         canSprint = false;
-        value = 100;
+        inherentValue = 100;
         symbol = 'P';
         if(c == WHITE){
             image = imageDict.get("pawn_white");

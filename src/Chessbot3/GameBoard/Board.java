@@ -43,8 +43,7 @@ public class Board {
 
     iPiece[][] grid;
 
-    private int wScore;
-    private int bScore;
+    private int score;
     private WhiteBlack colorToMove = WHITE;
     //private boolean isWhitesTurn = true;
     public Tuple<Boolean, Boolean> wCastle;
@@ -62,12 +61,11 @@ public class Board {
         }
         wCastle = new Tuple<>(true, true);
         bCastle = new Tuple<>(true, true);
-        wScore = 0;
-        bScore = 0;
+        score = 0;
         passantPos = new Tuple(-1, -1);
     }
 
-    public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int wScore, int bScore, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos)
+    public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int score, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos)
     //En konstruktør som kun skal brukes for å opprette en kopi av et tidligere brett.
     //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
     {
@@ -75,8 +73,7 @@ public class Board {
         this.colorToMove = colorToMove;
         this.wCastle = wCastle;
         this.bCastle = bCastle;
-        this.wScore = wScore;
-        this.bScore = bScore;
+        this.score = score;
         this.passantPos = passantPos;
     }
 
@@ -116,17 +113,9 @@ public class Board {
         throw new IllegalArgumentException("Fant ikke brikken!");
     }
 
-    public int AddScore(iPiece piece) {
-        if(piece == null) return 0;
-        if (piece.getColor() == WHITE)
-            bScore += piece.getValue();
-        else
-            wScore += piece.getValue();
-        return piece.getValue();
-    }
-    public void AddScore(Integer x, WhiteBlack c){
-        if(c == WHITE) wScore += x;
-        else bScore += x;
+    private void AddScore(int x){
+        if(colorToMove == WHITE) score += x;
+        else score -= x;
     }
 
     public void MovePiece(Move move, Boolean isHumanPlayer) {
@@ -174,8 +163,18 @@ public class Board {
 
         //Dreper en bonde, om trekket er en passant.
         if(til.equals(passantPos)){
-            if(til.getY() == 2) grid[til.getX()][3] = null;
-            else grid[til.getX()][4] = null;
+            Tuple<Integer, Integer> tempPos;
+
+            //Finner hvor den drepte brikken er.
+            //Dette er mer komplisert enn vanlig, siden en passant gjør at du kan drepe en brikke uten å ta på den.
+            if(til.getY() == 2){
+                tempPos = new Tuple(til.getX(), 3);
+            }
+            else{
+                tempPos = new Tuple(til.getX(), 4);
+            }
+            AddScore(GetPiece(tempPos).getCombinedValue(tempPos)); //Legger til score for den drepte brikken.
+            grid[tempPos.getX()][tempPos.getY()] = null; //Dreper faktisk brikken.
         }
         //oppdaterer passantbetingelser.
         if(passantPos.getX() != -1) passantPos.setX(-1);
@@ -186,14 +185,19 @@ public class Board {
             }
             //Promoterer bønder.
             else if(til.getY() == 0 || til.getY() == 7){
-                if(!isHumanPlayer) grid[til.getX()][til.getY()] = new Queen(pie.getColor());
-                else grid[til.getX()][til.getY()] = gui.promotePawn();
+                if(!isHumanPlayer) grid[til.getX()][til.getY()] = new Queen(pie.getColor()); //Botten får alltid en dronning.
+                else grid[til.getX()][til.getY()] = gui.promotePawn(); //Lager et popup-vindu for å promotere.
+                AddScore(GetPiece(til).getCombinedValue(til)); //Legger til bonusscore for å få en ny brikke.
             }
         }
-        colorToMove = GetOppositeColor(colorToMove); //Bytter farge på hvem sin tur det er.
+        //Legger til score for å flytte til en bedre posisjon.
+        AddScore(pie.getValueAt(til)-pie.getValueAt(fra));
 
-        // TODO: 26.03.2020 Legg til score eller noe sånt her? 
+        //Legger til score når du tar en brikke.
+        if(target != null) AddScore(target.getCombinedValue(til));
 
+        //Bytter farge på hvem sin tur det er.
+        colorToMove = GetOppositeColor(colorToMove);
     }
 
     public Boolean CheckPlayerMove(Move playerMove) {
@@ -235,18 +239,8 @@ public class Board {
             return null; //Om spilleren ikke har noen lovlige trekk, men heller ikke blir truet. Da er det patt.
         }
     }
-    public int GetScore(boolean isWhite)
-    {
-        if (isWhite)
-            return wScore;
-        else
-            return bScore;
-    }
-    public int GetScore(WhiteBlack color){
-        //Returnerer scoren til en farge.
-        if(color == WHITE) return wScore;
-        else return bScore;
-    }
+    public int GetScore() { return score; }
+
     public iPiece[][] GetGrid()
     {
         //Returnerer en kopi av selve rutenettet av brikker.
@@ -262,7 +256,7 @@ public class Board {
     public Board Copy()
     {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.GetGrid(), this.colorToMove, this.wScore, this.bScore, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
+        return new Board(this.GetGrid(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
     }
 
     //Returnerer hvilken farge som skal flytte.
@@ -310,7 +304,7 @@ public class Board {
             }
             ret += rekke + "\n";
         }
-        ret += "White: " + wScore + " Black: " + bScore;
+        ret += "Score: " + score;
         return ret;
     }
 }

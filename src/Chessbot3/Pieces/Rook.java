@@ -18,7 +18,7 @@ public class Rook extends SimplePiece {
             new int[] {-30, -24, -18,   5,  -2, -18, -31, -32}
         };
         canSprint = true;
-        value = 479;
+        inherentValue = 479;
         symbol = 'R';
         if(c == WHITE){
             image = imageDict.get("rook_white");
