@@ -75,7 +75,7 @@ public class Game {
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
-        Move move = Tempbot.findRandomMove(currentBoard);
+        Move move = Tempbot.temporaryMoveFinder(currentBoard);
         if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
         currentBoard.MovePiece(move, false);
         previousBoards.add(currentBoard.Copy());

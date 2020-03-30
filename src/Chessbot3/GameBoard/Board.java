@@ -289,9 +289,9 @@ public class Board {
 
     public iPiece GetPiece(int x, int y){ return grid[x][y]; }
 
-    public int compareTo(Board other){
+    public int compareTo(Object other){
         Integer thisscore = this.GetScore();
-        Integer otherscore = other.GetScore();
+        Integer otherscore = ((Board)other).GetScore();
         return thisscore.compareTo(otherscore);
     }
 

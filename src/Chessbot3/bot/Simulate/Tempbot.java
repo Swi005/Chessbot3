@@ -2,36 +2,34 @@ package Chessbot3.bot.Simulate;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
+import Chessbot3.Pieces.WhiteBlack;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static Chessbot3.Pieces.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.WhiteBlack.WHITE;
+
 public class Tempbot {
-    public static Move findRandomMove(Board bård){
-        //Tar et brett, og returnerer et helt tilfeldig, men lovlig, trekk.
-        List<Move> legals = bård.GenCompletelyLegalMoves();
+    public static Move temporaryMoveFinder(Board bård){
+        //Gir verdi til hvert enkelt Move, og sorterer dem.
+        WhiteBlack myColor = bård.GetColorToMove();
+        List<Move> legals = bård.GenMoves();
         for(Move move : legals){
             Board copy = bård.Copy();
             copy.MovePiece(move, false);
             move.addWeight(copy.GetScore());
         }
-        Collections.sort(legals);
+        if(myColor == BLACK) Collections.sort(legals);
+        else Collections.sort(legals, Collections.reverseOrder());
 
-
-        //Fjern kommentartegnet her for å få et tilfeldig trekk
-        Collections.shuffle(legals);
-
-        try
-        {
-            Thread.sleep(0); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
-        }
-        catch(InterruptedException ex)
-        {
+        try {
+            Thread.sleep(15); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
+        } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
 
         return legals.get(0);
     }
-
 }
