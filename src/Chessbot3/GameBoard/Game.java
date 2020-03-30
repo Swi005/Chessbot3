@@ -96,7 +96,6 @@ public class Game {
             gui.paintPieces();
             if(handleWinCondition()) return true;
             else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
-            System.out.println(currentBoard.GetScore());
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");

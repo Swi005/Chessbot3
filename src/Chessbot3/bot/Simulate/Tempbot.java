@@ -11,11 +11,20 @@ public class Tempbot {
     public static Move findRandomMove(Board bård){
         //Tar et brett, og returnerer et helt tilfeldig, men lovlig, trekk.
         List<Move> legals = bård.GenCompletelyLegalMoves();
+        for(Move move : legals){
+            Board copy = bård.Copy();
+            copy.MovePiece(move, false);
+            move.addWeight(copy.GetScore());
+        }
+        Collections.sort(legals);
+
+
+        //Fjern kommentartegnet her for å få et tilfeldig trekk
         Collections.shuffle(legals);
 
         try
         {
-            Thread.sleep(15); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
+            Thread.sleep(0); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
         }
         catch(InterruptedException ex)
         {

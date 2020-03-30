@@ -43,9 +43,8 @@ public class Board {
 
     iPiece[][] grid;
 
-    private int score;
+    private Integer score;
     private WhiteBlack colorToMove = WHITE;
-    //private boolean isWhitesTurn = true;
     public Tuple<Boolean, Boolean> wCastle;
     public Tuple<Boolean, Boolean> bCastle;
     private Tuple<Integer, Integer> passantPos;
@@ -239,7 +238,7 @@ public class Board {
             return null; //Om spilleren ikke har noen lovlige trekk, men heller ikke blir truet. Da er det patt.
         }
     }
-    public int GetScore() { return score; }
+    public Integer GetScore() { return score; }
 
     public iPiece[][] GetGrid()
     {
@@ -289,6 +288,12 @@ public class Board {
     public iPiece GetPiece(Tuple<Integer, Integer> pos) { return grid[pos.getX()][pos.getY()]; }
 
     public iPiece GetPiece(int x, int y){ return grid[x][y]; }
+
+    public int compareTo(Board other){
+        Integer thisscore = this.GetScore();
+        Integer otherscore = other.GetScore();
+        return thisscore.compareTo(otherscore);
+    }
 
     @Override
     public String toString(){
