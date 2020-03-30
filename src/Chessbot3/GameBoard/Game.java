@@ -28,8 +28,6 @@ public class Game {
     //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
     public volatile Boolean stop = false;
 
-    public Boolean reverse = false;
-
     public Game(){
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
         //For å starte på nytt kan du bruke newGame(), som resetter alt i dette objektet.

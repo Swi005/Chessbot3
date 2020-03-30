@@ -20,11 +20,14 @@ import static Chessbot3.GuiMain.Gui.*;
 public class Action extends KeyAdapter implements ActionListener {
 
     //Hver gang brukeren trykker på skjermen eller på tastaturet, blir det inni tekstfeltet sendt til denne variabelen.
-    private String usertext = "";
+    //private String usertext = "";
 
     //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
     //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
     private static Move pressedMove = new Move(null, null);
+
+    private static String chars = "abcdefgh";
+    private static String nums = "12345678";
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -92,6 +95,8 @@ public class Action extends KeyAdapter implements ActionListener {
                 case KeyEvent.VK_ENTER:
                     enter();
                     break;
+                default:
+                    if(gui.hasErrorInTextField()) gui.clearTextField();
             }
         } catch (Exception a) {
             a.printStackTrace();
@@ -102,7 +107,7 @@ public class Action extends KeyAdapter implements ActionListener {
     private void enter(){
         //Hva som skjer hver gang brukeren trykker på enter enten på tastaturet eller skjermen.
         //Her finner vi også er komplett liste over juksekoder.
-        usertext = gui.getTextField();
+        String usertext = gui.getTextField();
         if (usertext.equals("quit")) System.exit(0);
         else if (usertext.equals("back")) game.goBack();
         else if (usertext.equals("new")) game.newGame();
@@ -116,6 +121,33 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("reverse")) gui.reverse();
         else if (usertext.equals("bot")) game.botMove();
         else if (usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
+
+        else if (isAMove(usertext)) game.playerMove(parse(usertext));
+
         else gui.displayPopupMessage("Unrecognized command");
+    }
+
+    private Move parse(String input) {
+        //Tar en streng fra brukeren og oversetter det til et trekk.
+        //f. eks 'e2 e4' blir til new Move((4, 6) (4, 4)).
+        input = input.replace(" ", "").toLowerCase();
+        Tuple fra = new Tuple(-1, -1);
+        fra.setX(chars.indexOf(input.charAt(0)));
+        fra.setY(7 - nums.indexOf(input.charAt(1)));
+
+        Tuple til = new Tuple(-1, -1);
+        til.setX(chars.indexOf(input.charAt(2)));
+        til.setY(7 - nums.indexOf(input.charAt(3)));
+
+        System.out.println(fra + " " + til);
+        return new Move(fra, til);
+    }
+
+    private boolean isAMove(String input) {
+        //Sjekker om det brukeren skrev kan tolkes som et trekk eller ikke.
+        //f. eks 'e2 e4' returnerer true, 'tcfvyguy76ftviyubv7ughbij' returnerer false.
+        input = input.replace(" ", "").toLowerCase();
+        return (chars.contains(input.substring(0, 1)) && nums.contains(input.substring(1, 2))
+                && chars.contains(input.substring(2, 3)) && nums.contains(input.substring(3, 4)));
     }
 }

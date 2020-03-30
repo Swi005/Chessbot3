@@ -30,7 +30,9 @@ public class Gui {
     public static Game game;
 
     //Ombrettet er rotert eller ikke.
-    public static Boolean reverse = false;
+    protected static Boolean reverse = false;
+
+    private static Boolean errorInChat = false;
 
     //listen over ruter som er lyst opp akkurat nå.
     //Denne blir oppdatert av lightUpButtons() og makeButtonsGrey().
@@ -43,10 +45,10 @@ public class Gui {
 
     //Knappene og tekstfeltet som vises på skjermen.
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
-    public static JButton enter = new JButton("Enter");
-    public static JButton back = new JButton("Go Back");
-    public static JButton neww = new JButton("New Game");
-    public static JButton quit = new JButton("Quit Game");
+    protected static JButton enter = new JButton("Enter");
+    protected static JButton back = new JButton("Go Back");
+    protected static JButton neww = new JButton("New Game");
+    protected static JButton quit = new JButton("Quit Game");
     private JTextField textField = new JTextField(20);
 
     public Gui(){
@@ -72,9 +74,9 @@ public class Gui {
         toolbar2.add(quit);
         toolbar2.add(neww);
         toolbar2.add(back);
-        quit.addActionListener(new Chessbot3.GuiMain.Action());
-        back.addActionListener(new Chessbot3.GuiMain.Action());
-        neww.addActionListener(new Chessbot3.GuiMain.Action());
+        quit.addActionListener(new Action());
+        back.addActionListener(new Action());
+        neww.addActionListener(new Action());
         gui.add(toolbar2, BorderLayout.PAGE_START);
 
         JToolBar toolbar = new JToolBar();
@@ -118,7 +120,7 @@ public class Gui {
             }
         }
     }
-    public void lightUpButtons(Tuple initpos){
+    protected void lightUpButtons(Tuple initpos){
         //Tar en brikke, finner alle rutene den kan gå til, og lyser dem opp.
         Board bård = game.getCurrentBoard();
         iPiece pie = bård.GetPiece(initpos);
@@ -137,7 +139,7 @@ public class Gui {
             }
         }
     }
-    public void makeButtonsGrey(){
+    protected void makeButtonsGrey(){
         //Gjør alle ruter grå igjen. Denne må kalles opp før lightUpButtons, så bare de riktige knappene lyses opp.
         for(Tuple<Integer, Integer> pos : litSquares){
             int x = pos. getX();
@@ -193,23 +195,32 @@ public class Gui {
         else return new Queen(color);
     }
 
+    //Sender en streng til tekstfeltet. Denne er for mindre alvorlige meldinger, som ikke trenger et popup.
     public void displayTextFieldMessage(String s) {
         textField.setText(s);
+        errorInChat = true;
     }
 
-    public void displayPopupMessage(String s){
-        JOptionPane.showMessageDialog(chessBoard, s);
-    }
+    //Lager et popup-felt med valgfri melding.
+    public void displayPopupMessage(String s){ JOptionPane.showMessageDialog(chessBoard, s); }
 
-    public void clearTextField(){ textField.setText(""); }
+    //Sjekker om det nylig er blitt printet en feilmelding i tekstfeltet.
+    protected Boolean hasErrorInTextField(){ return errorInChat; }
 
-    public String getTextField(){
-        String ret = textField.getText();
+    protected void clearTextField(){
+        //Klarerer tekstfeltet.
         textField.setText("");
+        errorInChat = false;
+    }
+
+    protected String getTextField(){
+        //Fjerner og returnerer det som står i tekstfeltet.
+        String ret = textField.getText();
+        clearTextField();
         return ret;
     }
 
-    public void reverse() {
+    protected void reverse() {
         //Reverserer alt det visuelle på brettet.
         //Knappene er fortsatt på samme plass, men de får nye bilder.
         //Dette blir tatt hensyn til i findSquare() i Action.
