@@ -40,20 +40,22 @@ public class King extends SimplePiece {
         // 2: Tårnet på den valgte siden ikke har flyttet seg ennå (og lever fortsatt)
         // 3: Alle rutene imellom kongen og det valgte tårnet er åpne
         // 4: Ingen av rutene fra og med kongen til og med der kongen vil flytte blir truet av noen fiendtlig brikke.
-        // Nummer 4 ignorerer vi, fordi det vil doble kompleksiteten til GenMoves.
+        // Nummer 4 ignorerer vi, fordi det ville mangedoblet kompleksiteten.
         List<Move> ret = new ArrayList<>();
+        Tuple<Boolean, Boolean> wCastle = bård.GetWhiteCastle();
+        Tuple<Boolean, Boolean> bCastle = bård.GetBlackCastle();
         if(color == WHITE){
-            if(bård.wCastle.getY() && bård.GetPiece(5, 7) ==  null && bård.GetPiece(6, 7) == null){
+            if(wCastle.getY() && bård.GetPiece(5, 7) ==  null && bård.GetPiece(6, 7) == null){
                 ret.add(new Move(new Tuple(4, 7), new Tuple(6, 7))); //Hvit rokerer kort
             }
-            if(bård.wCastle.getX() && bård.GetPiece(3, 7) ==  null && bård.GetPiece(2, 7) == null && bård.GetPiece(1, 7) ==  null){
+            if(wCastle.getX() && bård.GetPiece(3, 7) ==  null && bård.GetPiece(2, 7) == null && bård.GetPiece(1, 7) ==  null){
                 ret.add(new Move(new Tuple(4, 7), new Tuple(2, 7))); //Hvit rokerer langt
             }
         }else if(color == BLACK){
-            if(bård.bCastle.getY() && bård.GetPiece(5, 0) ==  null && bård.GetPiece(6, 0) == null){
+            if(bCastle.getY() && bård.GetPiece(5, 0) ==  null && bård.GetPiece(6, 0) == null){
                 ret.add(new Move(new Tuple(4, 0), new Tuple(6, 0))); //Svart rokerer kort
             }
-            if(bård.bCastle.getX() && bård.GetPiece(3, 0) == null && bård.GetPiece(2, 0) ==  null && bård.GetPiece(1, 0) ==  null){
+            if(bCastle.getX() && bård.GetPiece(3, 0) == null && bård.GetPiece(2, 0) ==  null && bård.GetPiece(1, 0) ==  null){
                 ret.add(new Move(new Tuple(4, 0), new Tuple(2, 0))); //Svart rokerer langt
             }
         }

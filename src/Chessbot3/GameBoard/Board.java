@@ -59,10 +59,10 @@ public class Board {
     private WhiteBlack colorToMove = WHITE;
 
     //Hvor hvit kan rokere.
-    public Tuple<Boolean, Boolean> wCastle;
+    private Tuple<Boolean, Boolean> wCastle;
 
     //Hvor svart kan rokere.
-    public Tuple<Boolean, Boolean> bCastle;
+    private Tuple<Boolean, Boolean> bCastle;
 
     //Hvor det er lov til å ta ne passant.
     //Denne er vanligvis (-1, -1), som er utenfor brettet, men blir endret når en bonde flytter to skritt frem.
@@ -132,6 +132,26 @@ public class Board {
         }
         throw new IllegalArgumentException("Fant ikke brikken!");
     }
+    public int GetValue(Move move){
+        //Regner ut den umiddelbare verdien av et trekk.
+        //Denne gir høy score om du tar en brikke eller flytter til en bedre posisjon,
+        //og lav score om du flytter til en dårligere posisjon.
+        //Denne ignorerer helt hva motstanderen kan gjøre, så om trekket ditt er å ofre en dronning for å ta en bonde,
+        //mener denne funksjonen fortsatt at det er et bra trekk.
+
+        //Gir score for å flytte til en bedre posisjon.
+        iPiece pie = GetPiece(move.getX());
+        int ret = pie.getValueAt(move.getY()) - pie.getValueAt(move.getX());
+
+        //Gir score for å ta en brikke på normalt vis.
+        iPiece target = GetPiece(move.getY());
+        if(target != null) ret += target.getCombinedValue(move.getY());
+
+        //Gir score for å ta en passant.
+        if(move.getY() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien til å ta den brikken.
+
+        return ret;
+    }
 
     private void AddScore(int x){
         //Legger til score.
@@ -139,6 +159,7 @@ public class Board {
         if(colorToMove == WHITE) score += x;
         else score -= x;
     }
+    public void MovePiece(Move move){ MovePiece(move, false); }
 
     public void MovePiece(Move move, Boolean isHumanPlayer) {
         //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
@@ -311,6 +332,10 @@ public class Board {
         }
         return ret;
     }
+    public Tuple<Boolean, Boolean> GetWhiteCastle(){ return wCastle; }
+
+    public Tuple<Boolean, Boolean> GetBlackCastle(){ return bCastle; }
+
     //Returnerer posisjonen hvor det er greit å ta en passant.
     public Tuple<Integer, Integer> GetPassantPos(){ return passantPos; }
 
