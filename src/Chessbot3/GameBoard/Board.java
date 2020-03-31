@@ -1,8 +1,8 @@
 package Chessbot3.GameBoard;
 
 import static Chessbot3.GuiMain.Chess.gui;
-import static Chessbot3.Pieces.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 import static java.lang.StrictMath.abs;
 
 import java.util.ArrayList;
@@ -10,13 +10,20 @@ import java.util.List;
 
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.*;
+import Chessbot3.Pieces.PieceResources.PieceFactory;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.iPiece;
+import Chessbot3.Pieces.Types.King;
+import Chessbot3.Pieces.Types.Pawn;
+import Chessbot3.Pieces.Types.Queen;
+import Chessbot3.Pieces.Types.Rook;
 
 /**
  * Board
  */
 public class Board {
 
+    //Det initielle brettet. Denne kan endres på for å debugge ting litt fortere.
     private static final char[][] initialBoard = new char[][]{
             new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
@@ -28,11 +35,13 @@ public class Board {
             new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
+    //Hjørneindekser
     private static final Tuple A8 = new Tuple(0,0);
     private static final Tuple H8 = new Tuple(7,0);
     private static final Tuple A1 = new Tuple(0,7);
     private static final Tuple H1 = new Tuple(7,7);
 
+    //Andre nyttige indekser
     private static final Tuple E1 = new Tuple(4,7);
     private static final Tuple E8 = new Tuple(4,0);
     private static final Tuple G1 = new Tuple(6,7);
@@ -40,13 +49,23 @@ public class Board {
     private static final Tuple G8 = new Tuple(6,0);
     private static final Tuple C8 = new Tuple(2,0);
 
-
+    //Rutenettet av brikker
     iPiece[][] grid;
 
+    //'Verdien' til brettet. Positivt tall er bra for hvit, negativt er bra for svart.
     private Integer score;
+
+    //Hvem sin tur det er. Begynner alltid med hvit #SexismInVideoGames
     private WhiteBlack colorToMove = WHITE;
+
+    //Hvor hvit kan rokere.
     public Tuple<Boolean, Boolean> wCastle;
+
+    //Hvor svart kan rokere.
     public Tuple<Boolean, Boolean> bCastle;
+
+    //Hvor det er lov til å ta ne passant.
+    //Denne er vanligvis (-1, -1), som er utenfor brettet, men blir endret når en bonde flytter to skritt frem.
     private Tuple<Integer, Integer> passantPos;
 
     public Board() {
@@ -93,6 +112,8 @@ public class Board {
     //Returnerer en liste over helt lovlige trekk. Denne er mye mer kompleks enn GenMoves, og bør ikke brukes av botten.
     public List<Move> GenCompletelyLegalMoves(){ return GenCompletelyLegalMoves(colorToMove); }
 
+    //Alternativ versjon, om du vil finne de teoritiske lovlige trekkene til en spesifikk farge,
+    //selv om det ikke nødvendigvis er den sin tur.
     public List<Move> GenCompletelyLegalMoves(WhiteBlack color){
         List<Move> ret = new ArrayList<>();
         for(Move move : GenMoves(color)) if(CheckPlayerMove(move)) ret.add(move);
@@ -113,6 +134,8 @@ public class Board {
     }
 
     private void AddScore(int x){
+        //Legger til score.
+        //Holder selv styr på hvem sin tur det er, og dermed også om den skal legge til eller trekke fra score.
         if(colorToMove == WHITE) score += x;
         else score -= x;
     }
@@ -136,7 +159,8 @@ public class Board {
         else if(fra.equals(A8) || til.equals(A8)) bCastle.setX(false);
         else if(fra.equals(H8) || til.equals(H8)) bCastle.setY(false);
 
-        else if(fra.equals(E1)) wCastle = new Tuple(false, false); //Om kongen flytter seg, kan den aldri rokere.
+        //Om kongen flytter seg, kan den aldri rokere.
+        else if(fra.equals(E1)) wCastle = new Tuple(false, false);
         else if(fra.equals(E8)) bCastle = new Tuple(false, false);
 
         //Flytter tårnet, om kongen rokerer.
@@ -171,12 +195,9 @@ public class Board {
 
             //Finner hvor den drepte brikken er.
             //Dette er mer komplisert enn vanlig, siden en passant gjør at du kan drepe en brikke uten å ta på den.
-            if(til.getY() == 2){
-                tempPos = new Tuple(til.getX(), 3);
-            }
-            else{
-                tempPos = new Tuple(til.getX(), 4);
-            }
+            if(til.getY() == 2) tempPos = new Tuple(til.getX(), 3);
+            else tempPos = new Tuple(til.getX(), 4);
+
             AddScore(GetPiece(tempPos).getCombinedValue(tempPos)); //Legger til score for den drepte brikken.
             grid[tempPos.getX()][tempPos.getY()] = null; //Dreper faktisk brikken.
         }
@@ -220,10 +241,9 @@ public class Board {
         if(ret) {
             Board copy = this.Copy();
             copy.MovePiece(playerMove, false);
-            List<Move> counterMoves = copy.GenMoves(GetOppositeColorToMove());
-            for (Move counter : counterMoves) {
-                iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()];
-                if (target instanceof King) return false; //Om motstanderen kan ta kongen
+            for (Move counter : copy.GenMoves(GetOppositeColorToMove())) {
+                iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
+                if (target instanceof King) return false; //Om motstanderen kan ta kongen.
             }
             return true; //Om motstanderen ikke har noen trekk som kan ta kongen
         }
@@ -243,15 +263,16 @@ public class Board {
             return null; //Om spilleren ikke har noen lovlige trekk, men heller ikke blir truet. Da er det patt.
         }
     }
+    //Returnerer score. positivt er bra for hvit, negativt er bra for svart.
     public Integer GetScore() { return score; }
 
     public iPiece[][] GetGrid()
     {
         //Returnerer en kopi av selve rutenettet av brikker.
         iPiece[][] retgrid = new iPiece[8][8];
-        for(int y=0; y<8; y++){
-            for(int x=0; x<8; x++){
-                retgrid[y][x] = grid[y][x];
+        for(int x=0; x<8; x++){
+            for(int y=0; y<8; y++){
+                retgrid[x][y] = grid[x][y];
             }
         }
         return retgrid;
@@ -275,10 +296,12 @@ public class Board {
         if(c == WHITE) return BLACK;
         else return WHITE;
     }
+    //Returnerer en liste over brikker som tilhører den som skal flytte.
+    //Nyttig for å generere trekk.
     public List<iPiece> GetPieceList(){ return GetPieceList(colorToMove); }
 
     public List<iPiece> GetPieceList(WhiteBlack c){
-        //Lager en liste over alle brikkene til en farge.
+        //Lager en liste over alle brikkene til en spesifikk farge.
         List<iPiece> ret = new ArrayList<>();
         for(int y=0; y<8; y++){
             for(int x=0; x<8; x++){
@@ -288,20 +311,23 @@ public class Board {
         }
         return ret;
     }
+    //Returnerer posisjonen hvor det er greit å ta en passant.
     public Tuple<Integer, Integer> GetPassantPos(){ return passantPos; }
 
+    //Returnerer hvilke brikke som befinner seg i en posisjon.
     public iPiece GetPiece(Tuple<Integer, Integer> pos) { return grid[pos.getX()][pos.getY()]; }
 
+    //Samme som over, men med x,y-koordinater istedet.
     public iPiece GetPiece(int x, int y){ return grid[x][y]; }
 
-    public int compareTo(Object other){
-        Integer thisscore = this.GetScore();
-        Integer otherscore = ((Board)other).GetScore();
-        return thisscore.compareTo(otherscore);
-    }
+    //Sammenligner brett med hensyn på score.
+    //Om botten skal sortere brett etter verdi må den være klar over om den skal sortere baklengs eller ikke,
+    //avhengig av fargen den spiller som.
+    public int compareTo(Object other){ return this.GetScore().compareTo(((Board) other).GetScore()); }
 
     @Override
     public String toString(){
+        //Lager en streng av brettet, og printer score nederst.
         String ret = "";
         for(int y=0; y<8; y++){
             String rekke = "";

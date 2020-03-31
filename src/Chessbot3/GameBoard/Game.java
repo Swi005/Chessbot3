@@ -1,8 +1,8 @@
 package Chessbot3.GameBoard;
 
 import Chessbot3.MiscResources.Move;
-import Chessbot3.Pieces.WhiteBlack;
-import Chessbot3.Pieces.iPiece;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.bot.Simulate.Tempbot;
 
 import java.util.ArrayList;
@@ -73,12 +73,14 @@ public class Game {
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
+        gui.displayTextFieldMessage("Thinking....");
         Move move = Tempbot.temporaryMoveFinder(currentBoard);
         if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
         currentBoard.MovePiece(move, false);
         previousBoards.add(currentBoard.Copy());
         madeMoves.add(move);
         gui.paintPieces();
+        gui.clearTextField();
         if(handleWinCondition()) return;
         if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
     }

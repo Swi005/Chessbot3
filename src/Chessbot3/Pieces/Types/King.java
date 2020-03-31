@@ -1,15 +1,17 @@
-package Chessbot3.Pieces;
+package Chessbot3.Pieces.Types;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
+import Chessbot3.Pieces.PieceResources.SimplePiece;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static Chessbot3.GuiMain.Chess.imageDict;
-import static Chessbot3.Pieces.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class King extends SimplePiece {
     public King(WhiteBlack c) {

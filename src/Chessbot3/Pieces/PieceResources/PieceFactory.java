@@ -1,7 +1,9 @@
-package Chessbot3.Pieces;
+package Chessbot3.Pieces.PieceResources;
 
-import static Chessbot3.Pieces.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import Chessbot3.Pieces.Types.*;
+
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class PieceFactory 
 {

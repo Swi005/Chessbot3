@@ -1,4 +1,4 @@
-package Chessbot3.Pieces;
+package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;

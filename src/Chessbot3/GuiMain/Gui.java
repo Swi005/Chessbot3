@@ -4,7 +4,12 @@ import Chessbot3.GameBoard.Board;
 import Chessbot3.GameBoard.Game;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.*;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.iPiece;
+import Chessbot3.Pieces.Types.Bishop;
+import Chessbot3.Pieces.Types.Knight;
+import Chessbot3.Pieces.Types.Queen;
+import Chessbot3.Pieces.Types.Rook;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,8 +19,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Chessbot3.Pieces.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Gui {
 
@@ -151,7 +156,7 @@ public class Gui {
     public void chooseGamemode(){
         //Velger hvilken spillmodus som skal brukes. Om spilleren ikke velger noe blir det PvP.
 
-        //Klarerer listen over farger som botten skal styre.
+        //Klarerer listen over farger som botten skal styre, så den kan legge til riktige farger på nytt.
         game.clearBotColors();
 
         //Selve popup-vinduet. Endre denne på eget ansvar!
@@ -195,7 +200,8 @@ public class Gui {
         else return new Queen(color);
     }
 
-    //Sender en streng til tekstfeltet. Denne er for mindre alvorlige meldinger, som ikke trenger et popup.
+    //Sender en streng til tekstfeltet.
+    //Denne er for mindre alvorlige meldinger, som ikke trenger et popup.
     public void displayTextFieldMessage(String s) {
         textField.setText(s);
         errorInChat = true;
@@ -207,7 +213,7 @@ public class Gui {
     //Sjekker om det nylig er blitt printet en feilmelding i tekstfeltet.
     protected Boolean hasErrorInTextField(){ return errorInChat; }
 
-    protected void clearTextField(){
+    public void clearTextField(){
         //Klarerer tekstfeltet.
         textField.setText("");
         errorInChat = false;
@@ -239,13 +245,15 @@ public class Gui {
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
                 if(bård.GetPiece(x, y) != null) {
-                    ImageIcon newIcon = new ImageIcon();
-                    newIcon.setImage(bård.GetPiece(x, y).getImage());
+                    ImageIcon newIcon = new ImageIcon(); //Oppretteter et nytt ikon
+                    newIcon.setImage(bård.GetPiece(x, y).getImage()); //Legger til et bilde på ikonet, hentet fra iPiece.getImage()
 
+                    //Setter ikonet på ruten.
                     //Reverse er kun om brettet skal være opp-ned, med svart nederst.
                     if(!reverse) chessBoardSquares[x][y].setIcon(newIcon);
                     else chessBoardSquares[7-x][7-y].setIcon(newIcon);
                 }
+                //Om en rute ikke har noen brikke, får den et gjennomsiktig ikon.
                 else if(!reverse) chessBoardSquares[x][y].setIcon(new ImageIcon());
                 else chessBoardSquares[7-x][7-y].setIcon(new ImageIcon());
             }

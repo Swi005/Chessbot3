@@ -3,8 +3,8 @@ package Chessbot3.GuiMain;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.WhiteBlack;
-import Chessbot3.Pieces.iPiece;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.iPiece;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

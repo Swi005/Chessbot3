@@ -1,4 +1,4 @@
-package Chessbot3.Pieces;
+package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 import static Chessbot3.GuiMain.Chess.direcDict;
 import static Chessbot3.GuiMain.Chess.posValueDict;
-import static Chessbot3.Pieces.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
     protected WhiteBlack color;

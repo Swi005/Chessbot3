@@ -2,14 +2,12 @@ package Chessbot3.bot.Simulate;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
-import Chessbot3.Pieces.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static Chessbot3.Pieces.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.WhiteBlack.WHITE;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 
 public class Tempbot {
     public static Move temporaryMoveFinder(Board bård){
