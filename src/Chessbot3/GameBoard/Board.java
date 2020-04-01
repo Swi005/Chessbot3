@@ -21,7 +21,7 @@ import Chessbot3.Pieces.Types.Rook;
 /**
  * Board
  */
-public class Board {
+public class Board implements Comparable {
 
     //Det initielle brettet. Denne kan endres på for å debugge ting litt fortere.
     private static final char[][] initialBoard = new char[][]{
