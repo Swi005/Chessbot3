@@ -12,7 +12,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import static Chessbot3.GuiMain.Chess.gui;
-import static Chessbot3.GuiMain.Gui.*;
+import static Chessbot3.GuiMain.Gui2.*;
 
 public class Action extends KeyAdapter implements ActionListener {
 
@@ -135,7 +135,6 @@ public class Action extends KeyAdapter implements ActionListener {
         til.setX(chars.indexOf(input.charAt(2)));
         til.setY(7 - nums.indexOf(input.charAt(3)));
 
-        System.out.println(fra + " " + til);
         return new Move(fra, til);
     }
 

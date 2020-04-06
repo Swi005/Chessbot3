@@ -64,7 +64,7 @@ public class Board {
     //Hvor svart kan rokere.
     private Tuple<Boolean, Boolean> bCastle;
 
-    //Hvor det er lov til å ta ne passant.
+    //Hvor det er lov til å ta en passant.
     //Denne er vanligvis (-1, -1), som er utenfor brettet, men blir endret når en bonde flytter to skritt frem.
     private Tuple<Integer, Integer> passantPos;
 
@@ -150,6 +150,8 @@ public class Board {
         //Gir score for å ta en passant.
         if(move.getY() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien til å ta den brikken.
 
+        // TODO: 31.03.2020 Legg til rokadepoeng 
+        
         return ret;
     }
 

@@ -15,7 +15,7 @@ public class Tempbot {
     public static Move temporaryMoveFinder(Board bård){
         //Gir verdi til hvert enkelt Move, og sorterer dem.
         WhiteBlack myColor = bård.GetColorToMove();
-        List<Move> legals = bård.GenMoves();
+        List<Move> legals = bård.GenCompletelyLegalMoves(); //bruker den kompliserte metoden første gangen, og standard GenMoves alle de andre gangene.
         for(Move move : legals){
             Board copy = bård.Copy();
             copy.MovePiece(move, false);
