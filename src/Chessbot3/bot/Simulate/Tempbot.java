@@ -12,7 +12,7 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Tempbot {
-    public static Move temporaryMoveFinder(Board bård){
+    public static Move findMove(Board bård){
         //Gir verdi til hvert enkelt Move, og sorterer dem.
         WhiteBlack myColor = bård.GetColorToMove();
         List<Move> legals = bård.GenCompletelyLegalMoves(); //bruker den kompliserte metoden første gangen, og standard GenMoves alle de andre gangene.

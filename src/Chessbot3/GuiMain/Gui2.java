@@ -177,7 +177,7 @@ public class Gui2 extends JFrame {
         }
         validate();
     }
-    protected void makeButtonsGrey(){
+    public void makeButtonsGrey(){
         //Gjør alle ruter grå igjen. Denne må kalles opp før lightUpButtons, så bare de riktige knappene lyses opp.
         for(Tuple<Integer, Integer> pos : litSquares){
             int x = pos. getX();
@@ -246,21 +246,16 @@ public class Gui2 extends JFrame {
                 else butt = chessBoardSquares[7-x][7-y];
 
                 if(bård.GetPiece(x, y) != null) {
-                    ImageIcon newIcon = new ImageIcon(); //Oppretteter et nytt ikon
+                    ImageIcon newIcon = new ImageIcon(); //Oppretter et nytt ikon
                     newIcon.setImage(bård.GetPiece(x, y).getImage()); //Legger til et bilde på ikonet, hentet fra iPiece.getImage()
                     butt.setIcon(newIcon);
-                    butt.validate();
-                    butt.updateUI();
-                    butt.revalidate();
-                    butt.repaint();
                 }
-                else {
-                    butt.setIcon(new ImageIcon());
-                    butt.validate();
-                    butt.updateUI();
-                    butt.revalidate();
-                    butt.repaint();
-                }
+                else butt.setIcon(new ImageIcon()); //Legger til et nytt og blankt ikon. Det gir samme effekt som at det ikke er noe ikon der i det hele tatt.
+
+                butt.validate();
+                butt.updateUI();
+                butt.revalidate();
+                butt.repaint();
             }
         }
         validate();

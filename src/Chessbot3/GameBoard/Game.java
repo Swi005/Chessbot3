@@ -3,6 +3,7 @@ package Chessbot3.GameBoard;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
+import Chessbot3.bot.Simulate.Randbot;
 import Chessbot3.bot.Simulate.Tempbot;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class Game {
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
-        Move move = Tempbot.temporaryMoveFinder(currentBoard);
+        Move move = Randbot.findMove(currentBoard);
         if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
         currentBoard.MovePiece(move, false);
         previousBoards.add(currentBoard.Copy());
@@ -109,12 +110,14 @@ public class Game {
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
         if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
+            gui.makeButtonsGrey();
             gui.displayPopupMessage("Draw!");
             stop = true;
             return true;
         }
         //Sjekker om det er matt.
         if(check){
+            gui.makeButtonsGrey();
             gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
             stop = true;
             return true;

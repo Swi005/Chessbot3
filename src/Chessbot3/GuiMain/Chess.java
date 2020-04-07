@@ -31,6 +31,7 @@ public class Chess {
         //Ellers er det ingen kode som kjører, kun actionListeners som venter på at brukeren skal trykke på knapper.
         gui = new Gui2();
         if(game.isBotTurn()) game.botMove(); //Starter botten om det er dens tur.
+        //while(game.isBotTurn()) game.botMove();
 
     }
 }
