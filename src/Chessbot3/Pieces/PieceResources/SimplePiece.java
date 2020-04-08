@@ -1,14 +1,14 @@
 package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
+import Chessbot3.GuiMain.Chess;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static Chessbot3.GuiMain.Chess.direcDict;
-import static Chessbot3.GuiMain.Chess.posValueDict;
+import static Chessbot3.GuiMain.Chess.*;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
@@ -17,7 +17,8 @@ public abstract class SimplePiece implements iPiece {
     protected int inherentValue;
     protected Character symbol;
     protected Boolean canSprint;
-    protected BufferedImage image;
+    //protected BufferedImage image;
+    protected String imageKey;
 
     public SimplePiece(WhiteBlack c){
         //Det eneste som er felles for alle brikker er hvordan fargen blir assignert.
@@ -42,10 +43,8 @@ public abstract class SimplePiece implements iPiece {
 
     public Character getSymbol(){ return symbol; }
 
-    public BufferedImage getImage() 
-    {
-        return image;
-    }
+    //Returnerer bildet som representerer brikken.
+    public BufferedImage getImage() { return imageDict.get(imageKey); }
 
     //Returnerer både den innebgyde verdien, og verdien til hvor godt plassert brikken er.
     //Denne brukes gjerne når du dreper en brikke og vil ha score for det.

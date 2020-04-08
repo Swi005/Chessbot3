@@ -12,8 +12,7 @@ public class Bishop extends SimplePiece {
         canSprint = true;
         inherentValue = 320;
         symbol = 'B';
-        if(c == WHITE){
-            image = imageDict.get("bishop_white");
-        }else image = imageDict.get("bishop_black");
+        if(c == WHITE)imageKey = "Bw";
+        else imageKey = "Bb";
     }
 }

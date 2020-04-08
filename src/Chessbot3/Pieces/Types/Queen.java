@@ -12,8 +12,7 @@ public class Queen extends SimplePiece {
         canSprint = true;
         inherentValue = 929;
         symbol = 'Q';
-        if(c == WHITE){
-            image = imageDict.get("queen_white");
-        }else image = imageDict.get("queen_black");
+        if(c == WHITE)imageKey = "Qw";
+        else imageKey = "Qb";
     }
 }

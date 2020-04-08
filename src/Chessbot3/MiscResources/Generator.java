@@ -117,18 +117,18 @@ public class Generator {
 
         Hashtable<String, BufferedImage> imageTable = new Hashtable<>();
         for (String name : new String[] {
-                "bishop_black",
-                "bishop_white",
-                "horse_black",
-                "horse_white",
-                "king_black",
-                "king_white",
-                "pawn_black",
-                "pawn_white",
-                "queen_black",
-                "queen_white",
-                "rook_black",
-                "rook_white"
+                "Bb",
+                "Bw",
+                "Nb",
+                "Nw",
+                "Kb",
+                "Kw",
+                "Pb",
+                "Pw",
+                "Qb",
+                "Qw",
+                "Rb",
+                "Rw"
         }) {
             try {
                 File temp = new File("src\\Chessbot3\\Pieces\\PieceImages\\" + name + ".png");

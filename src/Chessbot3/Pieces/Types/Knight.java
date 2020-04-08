@@ -12,8 +12,7 @@ public class Knight extends SimplePiece {
         canSprint = false;
         inherentValue = 280;
         symbol = 'N';
-        if(c == WHITE){
-            image = imageDict.get("horse_white");
-        }else image = imageDict.get("horse_black");
+        if(c == WHITE) imageKey = "Nw";
+        else imageKey = "Nb";
     }
 }

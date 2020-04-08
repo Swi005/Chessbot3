@@ -360,7 +360,7 @@ public class Board implements Comparable {
             String rekke = "";
             for(int x=0; x<8; x++){
                 iPiece pie = GetPiece(x, y);
-                if(pie == null) rekke += ".";
+                if(pie == null) rekke += "."; // TODO: 08.04.2020 Fiks lowercase her etter at symbol/image er oppdatert for alle brikker
                 else if(pie.isWhite()) rekke += pie.getSymbol();
                 else rekke += Character.toLowerCase(pie.getSymbol());
                 rekke += "";

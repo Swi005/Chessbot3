@@ -12,8 +12,7 @@ public class Rook extends SimplePiece {
         canSprint = true;
         inherentValue = 479;
         symbol = 'R';
-        if(c == WHITE){
-            image = imageDict.get("rook_white");
-        }else image = imageDict.get("rook_black");
+        if(c == WHITE) imageKey = "Rw";
+        else imageKey = "Rb";
     }
 }

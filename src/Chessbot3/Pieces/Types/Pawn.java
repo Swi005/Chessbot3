@@ -20,9 +20,8 @@ public class Pawn extends SimplePiece {
         canSprint = false;
         inherentValue = 100;
         symbol = 'P';
-        if(c == WHITE){
-            image = imageDict.get("pawn_white");
-        }else image = imageDict.get("pawn_black");
+        if(c == WHITE) imageKey = "Pw";
+        else imageKey = "Pb";
     }
     @Override
     public ArrayList<Move> getMoves(Board bård){

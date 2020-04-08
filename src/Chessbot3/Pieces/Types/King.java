@@ -19,10 +19,8 @@ public class King extends SimplePiece {
         canSprint = false;
         inherentValue = 69420; //Nice.
         symbol = 'K';
-        if (c == WHITE) {
-            image = imageDict.get("king_white");
-        } else
-            image = imageDict.get("king_black");
+        if (c == WHITE) imageKey = "Kw";
+        else imageKey = "Kb";
     }
     @Override
     public ArrayList<Move> getMoves(Board bård){
