@@ -118,6 +118,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("bot")) game.botMove();
         else if (usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
 
+        //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if (isAMove(usertext)) game.playerMove(parse(usertext));
 
         else gui.displayPopupMessage("Unrecognized command");

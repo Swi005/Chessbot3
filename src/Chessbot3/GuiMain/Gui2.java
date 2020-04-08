@@ -69,7 +69,6 @@ public class Gui2 extends JFrame {
         paintPieces();
         setVisible(true);
         chooseGamemode();
-
     }
 
 

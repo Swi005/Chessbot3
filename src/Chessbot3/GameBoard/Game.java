@@ -1,5 +1,6 @@
 package Chessbot3.GameBoard;
 
+import Chessbot3.GuiMain.Chess;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
@@ -59,13 +60,10 @@ public class Game {
         gui.reset();
         gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
-        if(isBotTurn()) botMove();
     }
 
     //Printer alle trekkene som har blitt gjort.
-    public void printMoveHistory(){
-        for(Move move : madeMoves) System.out.println(move);
-    }
+    public void printMoveHistory(){ for(Move move : madeMoves) System.out.println(move); }
 
     //Printer alle tidligere brett.
     public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
@@ -82,7 +80,6 @@ public class Game {
         gui.paintPieces();
         gui.clearTextField();
         if(handleWinCondition()) return;
-        if(isBotTurn()) botMove(); //Om botten spiller mot seg selv. Da må den aktivere seg selv på nytt til noen har vunnet.
     }
 
     public Boolean playerMove(Move move){
@@ -95,7 +92,6 @@ public class Game {
             madeMoves.add(move);
             gui.paintPieces();
             if(handleWinCondition()) return true;
-            else if(isBotTurn()) botMove(); //Aktiverer botten, om spilleren spiller mot en bot.
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");

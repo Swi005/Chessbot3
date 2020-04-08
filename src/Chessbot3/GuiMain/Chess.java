@@ -1,5 +1,6 @@
 package Chessbot3.GuiMain;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -7,6 +8,7 @@ import java.util.Hashtable;
 import Chessbot3.MiscResources.Generator;
 import Chessbot3.MiscResources.Tuple;
 
+import static Chessbot3.GuiMain.Gui2.chessBoardSquares;
 import static Chessbot3.GuiMain.Gui2.game;
 
 //import static Chessbot3.GuiMain.Gui.game;
@@ -27,11 +29,16 @@ public class Chess {
 
     public static void main(String[] args) {
         //Oppretter Gui, og alt som skal til for å spille.
-        //Om det er botten sin tur startes den også.
-        //Ellers er det ingen kode som kjører, kun actionListeners som venter på at brukeren skal trykke på knapper.
+        //Starter en uendelig loop.
+        //Gui har en haug med actionlisteners, som gjør at brukeren kan spille ved å trykke på knappene på skjermen,
+        //selv om loopen kjører på siden.
         gui = new Gui2();
-        if(game.isBotTurn()) game.botMove(); //Starter botten om det er dens tur.
-        //while(game.isBotTurn()) game.botMove();
 
+        while(true){
+            try{
+                Thread.sleep(15);
+                if(game.isBotTurn()) game.botMove();
+            }catch(InterruptedException x){ }
+        }
     }
 }
