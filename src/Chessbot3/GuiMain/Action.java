@@ -28,9 +28,11 @@ public class Action extends KeyAdapter implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         //Hver gang du trykker på en virtuell knapp blir denne kalt opp.
         //Den forsøker å finne knappen og handle deretter.
+        if(gui.hasErrorInTextField()) gui.clearTextField();
         if(e.getSource() == quit) System.exit(0);
         else if(e.getSource() == enter) enter();
         else if(e.getSource() == back) game.goBack();
+        else if(e.getSource() == forward) game.goForward();
         else if(e.getSource() == neww) game.newGame();
         else if(e.getSource() == botstop) game.pauseTheBot();
         else findSquare(e);
@@ -118,6 +120,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (usertext.equals("reverse")) gui.reverse();
         else if (usertext.equals("bot")) game.botMove();
         else if (usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
+        else if (usertext.equals("index")) game.printBoardIndex();
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if (isAMove(usertext)) game.playerMove(parse(usertext));

@@ -6,16 +6,21 @@ import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Simulators.Randbot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static Chessbot3.GuiMain.Chess.gui;
 
 public class Game {
 
     //Liste over tidligere brett. Denne brukes nå du f. eks. vil angre på et trekk.
-    private ArrayList<Board> previousBoards = new ArrayList<>();
+    private List<Board> previousBoards = new ArrayList<>();
 
     //En liste over trekkene som er gjort.
-    private ArrayList<Move> madeMoves = new ArrayList<>();
+    private List<Move> madeMoves = new ArrayList<>();
+
+    //Hvor på listen over tidligere brett det nåværende brettet er.
+    //Vanligvis på slutten, men om brukeren har trykket Go Back eller Go Forward trenger vi denne.
+    private int boardIndex = 0;
 
     //Det nåværende brettet.
     private Board currentBoard;
@@ -35,6 +40,7 @@ public class Game {
         previousBoards.add(currentBoard.Copy());
     }
 
+    /*
     public void goBack(){
         //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerenes nyeste trekk blir resatt. *insert Bites Za Dusto reference here*
         if(previousBoards.size()>2){
@@ -48,23 +54,48 @@ public class Game {
         else gui.displayTextFieldMessage("Can't go further back!");
     }
 
+     */
+    public void goBack(){
+        //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
+        int delta;
+        if(bots.size() == 1)delta = 2;
+        else delta = 1;
+
+        if(boardIndex - delta >= 0){
+            boardIndex -= delta;
+            currentBoard = previousBoards.get(boardIndex).Copy();
+            gui.paintPieces();
+        }
+        else gui.displayTextFieldMessage("Can't go further back!");
+    }
+
+    public void goForward(){
+        //Går fremover igjen ett trekk, og angrer på anringen til goBack().
+        //Om du spiller mot botten går den frem to trekk.
+        int delta;
+        if(bots.size() == 1) delta = 2;
+        else delta = 1;
+
+        if(boardIndex + delta < previousBoards.size()){
+            boardIndex += delta;
+            currentBoard = previousBoards.get(boardIndex).Copy();
+            gui.paintPieces();
+        }
+        else gui.displayTextFieldMessage("Can't go further forward!");
+    }
+
     public void newGame(){
         //Starter et nytt parti.
         stop = true; //Ber botten om stoppe, om den gjør noe.
         previousBoards.clear();
         madeMoves.clear();
         currentBoard = new Board();
-        previousBoards.add(currentBoard);
+        previousBoards.add(currentBoard.Copy());
+        boardIndex = 0;
         gui.reset();
         gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
     }
-
-    //Printer alle trekkene som har blitt gjort.
-    public void printMoveHistory(){ for(Move move : madeMoves) System.out.println(move); }
-
-    //Printer alle tidligere brett.
-    public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
 
     public void botMove(){
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
@@ -74,8 +105,11 @@ public class Game {
             Move move = Randbot.findMove(currentBoard);
             if (stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
             currentBoard.MovePiece(move, false);
+            previousBoards = previousBoards.subList(0, boardIndex+1);
+            madeMoves = madeMoves.subList(0, boardIndex);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
+            boardIndex += 1;
             gui.paintPieces();
             gui.clearTextField();
             if (handleWinCondition()) return;
@@ -88,8 +122,11 @@ public class Game {
         //Oppdaterer også Gui.
         if(currentBoard.CheckPlayerMove(move)) {
             currentBoard.MovePiece(move, true);
+            previousBoards = previousBoards.subList(0, boardIndex+1);
+            madeMoves = madeMoves.subList(0, boardIndex);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
+            boardIndex += 1;
             gui.paintPieces();
             if(handleWinCondition()) return true;
             return true;
@@ -120,12 +157,9 @@ public class Game {
         }
         return false;
     }
-
-    public Boolean isBotTurn(){
-        //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
-        //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
-        return !stop && bots.contains(currentBoard.GetColorToMove());
-    }
+    //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
+    //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
+    public Boolean isBotTurn(){ return !stop && bots.contains(currentBoard.GetColorToMove()); }
 
     //Legger til en farge som bottens skal styre.
     public void addBotColor(WhiteBlack c){ bots.add(c); }
@@ -150,4 +184,12 @@ public class Game {
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
     public void printPieces() { for(iPiece pie : currentBoard.GetPieceList()) System.out.println(pie); }
+
+    public void printBoardIndex(){ System.out.println(boardIndex); }
+
+    //Printer alle trekkene som har blitt gjort.
+    public void printMoveHistory(){ for(Move move : madeMoves) System.out.println(move); }
+
+    //Printer alle tidligere brett.
+    public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
 }

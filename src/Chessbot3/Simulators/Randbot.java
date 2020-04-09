@@ -14,7 +14,7 @@ public class Randbot {
         Collections.shuffle(possibles);
 
         try {
-            Thread.sleep(1); //Sover litt, gir en illusjon om at den tenker hardt
+            Thread.sleep(15); //Sover litt, gir en illusjon om at den tenker hardt
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

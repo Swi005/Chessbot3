@@ -52,6 +52,7 @@ public class Gui2 extends JFrame {
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
     protected static JButton enter = new JButton("Enter");
     protected static JButton back = new JButton("Go Back");
+    protected static JButton forward = new JButton("Go Forward");
     protected static JButton neww = new JButton("New Game");
     protected static JButton quit = new JButton("Quit Game");
     protected static JButton botstop = new JButton("Pause Bot");
@@ -72,7 +73,6 @@ public class Gui2 extends JFrame {
         chooseGamemode();
     }
 
-
     private JPanel initializeGUI() {
         //Lager selve vinduet i Gui-en.
         //Den oppretter alle knappene, tekstfeltet, samt rutene som brikkene skal stå på.
@@ -83,9 +83,12 @@ public class Gui2 extends JFrame {
         toolbar2.add(quit);
         toolbar2.add(neww);
         toolbar2.add(back);
+        toolbar2.add(forward);
+        toolbar2.addSeparator();
         toolbar2.add(botstop);
         quit.addActionListener(new Action());
         back.addActionListener(new Action());
+        forward.addActionListener(new Action());
         neww.addActionListener(new Action());
         botstop.addActionListener(new Action());
         botstop.setVisible(false);
