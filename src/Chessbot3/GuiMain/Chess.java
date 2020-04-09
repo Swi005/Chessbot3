@@ -1,6 +1,5 @@
 package Chessbot3.GuiMain;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -8,10 +7,7 @@ import java.util.Hashtable;
 import Chessbot3.MiscResources.Generator;
 import Chessbot3.MiscResources.Tuple;
 
-import static Chessbot3.GuiMain.Gui2.chessBoardSquares;
 import static Chessbot3.GuiMain.Gui2.game;
-
-//import static Chessbot3.GuiMain.Gui.game;
 
 public class Chess {
 
@@ -25,20 +21,18 @@ public class Chess {
     public static final Dictionary<Character, Integer[][]> posValueDict = Generator.makePosValueDict();
 
     //Selve Gui-en.
-    public static Gui2 gui;
+    public static Gui2 gui = new Gui2();
 
     public static void main(String[] args) {
         //Oppretter Gui, og alt som skal til for å spille.
-        //Starter en uendelig loop.
-        //Gui har en haug med actionlisteners, som gjør at brukeren kan spille ved å trykke på knappene på skjermen,
+        //Starter en uendelig loop. Gui har en haug med actionlisteners,
+        //som gjør at brukeren kan spille ved å trykke på knappene på skjermen,
         //selv om loopen kjører på siden.
-        gui = new Gui2();
-
-        while(true){
-            try{
-                Thread.sleep(15);
-                if(game.isBotTurn()) game.botMove();
-            }catch(InterruptedException x){ }
+        while (true) {
+            try {
+                Thread.sleep(50);
+                if (game.isBotTurn()) game.botMove();
+            } catch (Exception x) { }
         }
     }
 }

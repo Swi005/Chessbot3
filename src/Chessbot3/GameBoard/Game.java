@@ -1,11 +1,9 @@
 package Chessbot3.GameBoard;
 
-import Chessbot3.GuiMain.Chess;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
-import Chessbot3.bot.Simulate.Randbot;
-import Chessbot3.bot.Simulate.Tempbot;
+import Chessbot3.Simulators.Randbot;
 
 import java.util.ArrayList;
 
@@ -72,14 +70,16 @@ public class Game {
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
-        Move move = Randbot.findMove(currentBoard);
-        if(stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
-        currentBoard.MovePiece(move, false);
-        previousBoards.add(currentBoard.Copy());
-        madeMoves.add(move);
-        gui.paintPieces();
-        gui.clearTextField();
-        if(handleWinCondition()) return;
+        try {
+            Move move = Randbot.findMove(currentBoard);
+            if (stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
+            currentBoard.MovePiece(move, false);
+            previousBoards.add(currentBoard.Copy());
+            madeMoves.add(move);
+            gui.paintPieces();
+            gui.clearTextField();
+            if (handleWinCondition()) return;
+        }catch(IllegalStateException x){ }
     }
 
     public Boolean playerMove(Move move){
@@ -129,6 +129,9 @@ public class Game {
 
     //Legger til en farge som bottens skal styre.
     public void addBotColor(WhiteBlack c){ bots.add(c); }
+
+    //Pauser botten. Til bruk i EvE.
+    public void pauseTheBot(){ stop = !stop; }
 
     //Klarerer listen over farger som botten skal gjøre trekk for, og lar heller noen skitne mennesker ta seg av tenkingen.
     public void clearBotColors(){ bots.clear(); }

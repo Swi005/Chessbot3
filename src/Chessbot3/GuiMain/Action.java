@@ -32,6 +32,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(e.getSource() == enter) enter();
         else if(e.getSource() == back) game.goBack();
         else if(e.getSource() == neww) game.newGame();
+        else if(e.getSource() == botstop) game.pauseTheBot();
         else findSquare(e);
     }
 

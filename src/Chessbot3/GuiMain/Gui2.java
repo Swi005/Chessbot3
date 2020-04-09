@@ -54,6 +54,7 @@ public class Gui2 extends JFrame {
     protected static JButton back = new JButton("Go Back");
     protected static JButton neww = new JButton("New Game");
     protected static JButton quit = new JButton("Quit Game");
+    protected static JButton botstop = new JButton("Pause Bot");
 
     //Tekstfeltet.
     private JTextField textField = new JTextField(20);
@@ -82,9 +83,12 @@ public class Gui2 extends JFrame {
         toolbar2.add(quit);
         toolbar2.add(neww);
         toolbar2.add(back);
+        toolbar2.add(botstop);
         quit.addActionListener(new Action());
         back.addActionListener(new Action());
         neww.addActionListener(new Action());
+        botstop.addActionListener(new Action());
+        botstop.setVisible(false);
         gui.add(toolbar2, BorderLayout.PAGE_START);
 
         JToolBar toolbar = new JToolBar();
@@ -203,6 +207,7 @@ public class Gui2 extends JFrame {
 
         //Om spilleren vil spille mot botten, da skal han få velge farge.
         if(n == 1){
+            botstop.setVisible(false);
 
             //Om spilleren vil spille mot en bot må han få lov til å velge hvilken farge han vil spille som.
             int m = JOptionPane.showOptionDialog(chessBoard, "Please pick a side.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
@@ -219,7 +224,9 @@ public class Gui2 extends JFrame {
         else if(n == 2){
             game.addBotColor(BLACK);
             game.addBotColor(WHITE);
+            botstop.setVisible(true);
         }
+        else botstop.setVisible(false);
     }
 
     public void reverse() {

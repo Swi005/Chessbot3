@@ -17,7 +17,6 @@ public abstract class SimplePiece implements iPiece {
     protected int inherentValue;
     protected Character symbol;
     protected Boolean canSprint;
-    //protected BufferedImage image;
     protected String imageKey;
 
     public SimplePiece(WhiteBlack c){
