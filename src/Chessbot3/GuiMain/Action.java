@@ -12,9 +12,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import static Chessbot3.GuiMain.Chess.gui;
-import static Chessbot3.GuiMain.Gui2.*;
+import static Chessbot3.GuiMain.Gui.*;
 
 public class Action extends KeyAdapter implements ActionListener {
+    //Action har som jobb å ta imot input fra brukeren, og oversette det til kommandoer til Gui og Game.
 
     //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
     //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
@@ -26,9 +27,9 @@ public class Action extends KeyAdapter implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //Hver gang du trykker på en virtuell knapp blir denne kalt opp.
+        //Hver gang du trykker på en virtuell knapp(inkludert knappene i rutenettet) blir denne kalt opp.
         //Den forsøker å finne knappen og handle deretter.
-        if(gui.hasErrorInTextField()) gui.clearTextField();
+        gui.removeErrorsFromTextField();
         if(e.getSource() == quit) System.exit(0);
         else if(e.getSource() == enter) enter();
         else if(e.getSource() == back) game.goBack();
@@ -95,7 +96,7 @@ public class Action extends KeyAdapter implements ActionListener {
                     enter();
                     break;
                 default: //Sørger for at alle feilmeldinger i tekstfeltet forsvinner når brukeren trykker på en hvilken som helst knapp.
-                    if(gui.hasErrorInTextField()) gui.clearTextField();
+                    gui.removeErrorsFromTextField();
             }
         } catch (Exception a) {
             a.printStackTrace();
@@ -108,22 +109,27 @@ public class Action extends KeyAdapter implements ActionListener {
         //Her finner vi også er komplett liste over juksekoder.
         String usertext = gui.getTextField();
         if (usertext.equals("quit")) System.exit(0);
-        else if (usertext.equals("back")) game.goBack();
-        else if (usertext.equals("new")) game.newGame();
-        else if (usertext.equals("board")) game.printBoard();
-        else if (usertext.equals("boards")) game.printBoardHistory();
-        else if (usertext.equals("move")) game.printMoves();
-        else if (usertext.equals("moves")) game.printMoveHistory();
-        else if (usertext.equals("turn")) game.printTurn();
-        else if (usertext.equals("pieces")) game.printPieces();
-        else if (usertext.equals("paint")) gui.paintPieces();
-        else if (usertext.equals("reverse")) gui.reverse();
-        else if (usertext.equals("bot")) game.botMove();
-        else if (usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
-        else if (usertext.equals("index")) game.printBoardIndex();
+        else if(usertext.equals("back")) game.goBack();
+        else if(usertext.equals("forward")) game.goForward();
+        else if(usertext.equals("new")) game.newGame();
+        else if(usertext.equals("board")) game.printBoard();
+        else if(usertext.equals("boards")) game.printBoardHistory();
+        else if(usertext.equals("move")) game.printMoves();
+        else if(usertext.equals("moves")) game.printMoveHistory();
+        else if(usertext.equals("turn")) game.printTurn();
+        else if(usertext.equals("pieces")) game.printPieces();
+        else if(usertext.equals("paint")) gui.paintPieces();
+        else if(usertext.equals("reverse")) gui.reverse();
+        else if(usertext.equals("bot")) game.botMove();
+        else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
+        else if(usertext.equals("index")) game.printBoardIndex();
+        else if(usertext.equals("start")) game.stop = false;
+        else if(usertext.equals("stop")) game.stop = true;
+        else if(usertext.equals("pause")) game.pauseTheBot();
+        else if(usertext.equals("gamemode")) gui.chooseGamemode();
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
-        else if (isAMove(usertext)) game.playerMove(parse(usertext));
+        else if(isAMove(usertext)) game.playerMove(parse(usertext));
 
         else gui.displayPopupMessage("Unrecognized command");
     }
@@ -145,8 +151,10 @@ public class Action extends KeyAdapter implements ActionListener {
 
     private boolean isAMove(String input) {
         //Sjekker om det brukeren skrev kan tolkes som et trekk eller ikke.
+        //Standard sjakknotasjon (som Nf3) fungerer ikke, man må skrive to koordinater etter hverandre (som g1f3).
         //f. eks 'e2 e4' returnerer true, 'tcfvyguy76ftviyubv7ughbij' returnerer false.
         input = input.replace(" ", "").toLowerCase();
+        if(input.length() < 4) return false;
         return (chars.contains(input.substring(0, 1)) && nums.contains(input.substring(1, 2))
                 && chars.contains(input.substring(2, 3)) && nums.contains(input.substring(3, 4)));
     }

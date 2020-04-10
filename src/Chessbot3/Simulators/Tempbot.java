@@ -34,7 +34,7 @@ public class Tempbot {
         else Collections.sort(legals, Collections.reverseOrder());
 
         try {
-            Thread.sleep(15); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
+            Thread.sleep(0); //Tar seg en høneblund, for å skape en illusjon om at den tenker.
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

@@ -7,7 +7,7 @@ import java.util.Hashtable;
 import Chessbot3.MiscResources.Generator;
 import Chessbot3.MiscResources.Tuple;
 
-import static Chessbot3.GuiMain.Gui2.game;
+import static Chessbot3.GuiMain.Gui.game;
 
 public class Chess {
 
@@ -21,7 +21,7 @@ public class Chess {
     public static final Dictionary<Character, Integer[][]> posValueDict = Generator.makePosValueDict();
 
     //Selve Gui-en.
-    public static Gui2 gui = new Gui2();
+    public static Gui gui = new Gui();
 
     public static void main(String[] args) {
         //Oppretter Gui, og alt som skal til for å spille.
@@ -30,9 +30,9 @@ public class Chess {
         //selv om loopen kjører på siden.
         while (true) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(0);
                 if (game.isBotTurn()) game.botMove();
-            } catch (Exception x) { }
+            } catch (InterruptedException x) { }
         }
     }
 }
