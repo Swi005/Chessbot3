@@ -116,7 +116,7 @@ public class Board implements Comparable {
     //selv om det ikke nødvendigvis er den sin tur.
     public List<Move> GenCompletelyLegalMoves(WhiteBlack color){
         List<Move> ret = new ArrayList<>();
-        for(Move move : GenMoves(color)) if(CheckPlayerMove(move)) ret.add(move);
+        for(Move move : GenMoves(color)) if(CheckMoveLegality(move)) ret.add(move);
         return ret;
     }
 
@@ -151,8 +151,8 @@ public class Board implements Comparable {
         if(move.getY() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien til å ta den brikken.
 
         // TODO: 31.03.2020 Legg til rokadepoeng 
-        
-        return ret;
+        if(colorToMove == WHITE) return ret;
+        else return -ret;
     }
 
     private void AddScore(int x){
@@ -248,7 +248,7 @@ public class Board implements Comparable {
         colorToMove = GetOppositeColor(colorToMove);
     }
 
-    public Boolean CheckPlayerMove(Move playerMove) {
+    public Boolean CheckMoveLegality(Move playerMove) {
         //Sjekker om spillerens trekk er lovlig.
         // Tar hensyn til om trekket setter seg selv i sjakk.
         // Returnerer true om det er lov.

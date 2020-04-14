@@ -3,7 +3,7 @@ package Chessbot3.GameBoard;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
-import Chessbot3.Simulators.Randbot;
+import Chessbot3.Simulators.Copybot;
 import Chessbot3.Simulators.Tempbot;
 
 import java.util.ArrayList;
@@ -43,6 +43,7 @@ public class Game {
 
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
+        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1)delta = 2;
         else delta = 1;
@@ -58,6 +59,7 @@ public class Game {
     public void goForward(){
         //Går fremover igjen ett trekk, og angrer på anringen til goBack().
         //Om du spiller mot botten går den frem to trekk.
+        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1) delta = 2;
         else delta = 1;
@@ -72,6 +74,7 @@ public class Game {
 
     public void newGame(){
         //Starter et nytt parti.
+        gui.makeButtonsGrey();
         stop = true; //Ber botten om stoppe, om den gjør noe.
         previousBoards.clear();
         madeMoves.clear();
@@ -88,7 +91,8 @@ public class Game {
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
         try {
-            Move move = Tempbot.findMove(currentBoard);
+            if(bots.size() != 2) gui.displayTextFieldMessage("Thinking...");
+            Move move = Copybot.findMove(currentBoard);
             if (stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
             currentBoard.MovePiece(move, false);
             previousBoards = previousBoards.subList(0, boardIndex+1);
@@ -97,8 +101,9 @@ public class Game {
             madeMoves.add(move);
             boardIndex += 1;
             gui.paintPieces();
+            gui.clearTextField();
             handleWinCondition();
-        }catch(IllegalStateException x){ } //Om botten av en eller annen grunn blir aktivert etter at spillet er over,
+        }catch(IllegalStateException x){ gui.clearTextField(); } //Om botten av en eller annen grunn blir aktivert etter at spillet er over,
         // har den ingen lovlige trekk og kaster en IllegalStateException, som blir tatt imot her.
     }
 
@@ -106,7 +111,7 @@ public class Game {
         //Tar inn et trekk, sjekker om det er lovlig, og gjør trekket på brettet.
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
-        if(currentBoard.CheckPlayerMove(move)) {
+        if(currentBoard.CheckMoveLegality(move)) {
             currentBoard.MovePiece(move, true);
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
@@ -114,14 +119,14 @@ public class Game {
             madeMoves.add(move);
             boardIndex += 1;
             gui.paintPieces();
-            if(handleWinCondition()) return true;
+            handleWinCondition();
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");
             return false;
         }
     }
-    private Boolean handleWinCondition(){
+    private void handleWinCondition(){
         //Returnerer true om spillet er ferdig, false ellers.
 
         //Sjekker om det er matt eller patt.
@@ -140,7 +145,6 @@ public class Game {
             gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
             stop = true;
         }
-        return stop;
     }
     //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
     //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.

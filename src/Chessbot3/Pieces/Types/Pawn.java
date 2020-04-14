@@ -28,9 +28,8 @@ public class Pawn extends SimplePiece {
         Tuple<Integer, Integer> passantPos = bård.GetPassantPos();
         ArrayList<Move> ret = new ArrayList<>();
         Tuple[] directions;
-        if(color == WHITE){
-            directions = direcDict.get('P');
-        } else directions = direcDict.get('p');
+        if(color == WHITE) directions = direcDict.get('P');
+        else directions = direcDict.get('p');
 
         Integer fraX = getX(bård);
         Integer fraY = getY(bård);
