@@ -160,7 +160,7 @@ public class Game {
     public void clearBotColors(){ bots.clear(); }
 
     //printer det nåværende brettet til konsollen.
-    public void printBoard() { System.out.println(currentBoard); }
+    public void printCurrentBoard() { System.out.println(currentBoard); }
 
     //Returnerer det nåværende brettet.
     public Board getCurrentBoard(){ return currentBoard; }
@@ -169,7 +169,7 @@ public class Game {
     public void printTurn() { System.out.println(currentBoard.GetColorToMove() + " to move"); }
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
-    public void printMoves() { for(Move move : currentBoard.GenCompletelyLegalMoves()) System.out.println(move); }
+    public void printPossibleMoves() { for(Move move : currentBoard.GenCompletelyLegalMoves()) System.out.println(move); }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
     public void printPieces() { for(iPiece pie : currentBoard.GetPieceList()) System.out.println(pie); }
@@ -183,4 +183,11 @@ public class Game {
 
     //Printer alle tidligere brett.
     public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
+
+    public void testGetValue(){
+        System.out.println(currentBoard.GetColorToMove());
+        for(Move move : currentBoard.GenMoves()){
+            System.out.println(move + ": " + currentBoard.GetValue(move));
+        }
+    }
 }

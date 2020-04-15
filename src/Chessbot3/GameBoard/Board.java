@@ -253,11 +253,9 @@ public class Board implements Comparable {
         // Tar hensyn til om trekket setter seg selv i sjakk.
         // Returnerer true om det er lov.
         boolean ret = false;
-        for (Move move : GenMoves(GetColorToMove())) {
-            if (move.equals(playerMove)) {
-                ret = true;
-            }
-        }//Om spillerens trekk er på listen, er det kanskje lovlig.
+        for (Move move : GenMoves(GetColorToMove())) if (move.equals(playerMove)) ret = true;
+
+        //Om spillerens trekk er på listen, er det kanskje lovlig.
         //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
         //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
         //Da er trekket ulovlig, og returnerer false;

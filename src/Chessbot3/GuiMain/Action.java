@@ -112,9 +112,9 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("back")) game.goBack();
         else if(usertext.equals("forward")) game.goForward();
         else if(usertext.equals("new")) game.newGame();
-        else if(usertext.equals("board")) game.printBoard();
+        else if(usertext.equals("board")) game.printCurrentBoard();
         else if(usertext.equals("boards")) game.printBoardHistory();
-        else if(usertext.equals("move")) game.printMoves();
+        else if(usertext.equals("move")) game.printPossibleMoves();
         else if(usertext.equals("moves")) game.printMoveHistory();
         else if(usertext.equals("turn")) game.printTurn();
         else if(usertext.equals("pieces")) game.printPieces();
@@ -127,6 +127,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("stop")) game.stop = true;
         else if(usertext.equals("pause")) game.pauseTheBot();
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
+        else if(usertext.equals("value")) game.testGetValue();
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if(isAMove(usertext)) game.playerMove(parse(usertext));
