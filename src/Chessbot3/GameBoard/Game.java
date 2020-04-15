@@ -3,7 +3,7 @@ package Chessbot3.GameBoard;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
-import Chessbot3.Simulators.Copybot;
+import Chessbot3.Simulators.Randbot;
 import Chessbot3.Simulators.Tempbot;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class Game {
     //En liste over hvilke farger botten skal styre.
     //Om denne kun inneholder BLACK betyr det at botten styrer svart, mens spilleren styrer hvit.
     //Om denne er tom spiller spilleren mot seg selv.
-    private ArrayList<WhiteBlack> bots = new ArrayList<>(2);
+    private ArrayList<WhiteBlack> bots = new ArrayList<>(1);
 
     //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
     public volatile Boolean stop = false;
@@ -41,9 +41,23 @@ public class Game {
         previousBoards.add(currentBoard.Copy());
     }
 
+    /*
+    public void goBack(){
+        //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerenes nyeste trekk blir resatt. *insert Bites Za Dusto reference here*
+        if(previousBoards.size()>2){
+            previousBoards.remove(previousBoards.size()-1);
+            previousBoards.remove(previousBoards.size()-1);
+            madeMoves.remove(madeMoves.size()-1);
+            madeMoves.remove(madeMoves.size()-1);
+            currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
+            gui.paintPieces();
+        }
+        else gui.displayTextFieldMessage("Can't go further back!");
+    }
+
+     */
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
-        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1)delta = 2;
         else delta = 1;
@@ -59,7 +73,6 @@ public class Game {
     public void goForward(){
         //Går fremover igjen ett trekk, og angrer på anringen til goBack().
         //Om du spiller mot botten går den frem to trekk.
-        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1) delta = 2;
         else delta = 1;
@@ -74,7 +87,6 @@ public class Game {
 
     public void newGame(){
         //Starter et nytt parti.
-        gui.makeButtonsGrey();
         stop = true; //Ber botten om stoppe, om den gjør noe.
         previousBoards.clear();
         madeMoves.clear();
@@ -91,8 +103,7 @@ public class Game {
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
         try {
-            if(bots.size() != 2) gui.displayTextFieldMessage("Thinking...");
-            Move move = Copybot.findMove(currentBoard);
+            Move move = Randbot.findMove(currentBoard);
             if (stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
             currentBoard.MovePiece(move, false);
             previousBoards = previousBoards.subList(0, boardIndex+1);
@@ -102,16 +113,15 @@ public class Game {
             boardIndex += 1;
             gui.paintPieces();
             gui.clearTextField();
-            handleWinCondition();
-        }catch(IllegalStateException x){ gui.clearTextField(); } //Om botten av en eller annen grunn blir aktivert etter at spillet er over,
-        // har den ingen lovlige trekk og kaster en IllegalStateException, som blir tatt imot her.
+            if (handleWinCondition()) return;
+        }catch(IllegalStateException x){ }
     }
 
     public Boolean playerMove(Move move){
         //Tar inn et trekk, sjekker om det er lovlig, og gjør trekket på brettet.
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
-        if(currentBoard.CheckMoveLegality(move)) {
+        if(currentBoard.CheckPlayerMove(move)) {
             currentBoard.MovePiece(move, true);
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
@@ -119,32 +129,34 @@ public class Game {
             madeMoves.add(move);
             boardIndex += 1;
             gui.paintPieces();
-            handleWinCondition();
+            if(handleWinCondition()) return true;
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");
             return false;
         }
     }
-    private void handleWinCondition(){
+    private Boolean handleWinCondition(){
         //Returnerer true om spillet er ferdig, false ellers.
 
         //Sjekker om det er matt eller patt.
         Boolean check = currentBoard.CheckCheckMate();
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
-        if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1
-                && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
+        if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
             gui.makeButtonsGrey();
             gui.displayPopupMessage("Draw!");
             stop = true;
+            return true;
         }
         //Sjekker om det er matt.
-        else if(check){
+        if(check){
             gui.makeButtonsGrey();
             gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
             stop = true;
+            return true;
         }
+        return false;
     }
     //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
     //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
@@ -174,8 +186,6 @@ public class Game {
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
     public void printPieces() { for(iPiece pie : currentBoard.GetPieceList()) System.out.println(pie); }
 
-    //Printet hvor på listen over tidligere brett det nåværende brettet er.
-    //Vanligvis på slutten av listen, men om brukeren har trykket Go Back eller Go Forward trenger vi denne.
     public void printBoardIndex(){ System.out.println(boardIndex); }
 
     //Printer alle trekkene som har blitt gjort.

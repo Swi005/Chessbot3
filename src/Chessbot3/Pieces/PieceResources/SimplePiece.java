@@ -30,7 +30,7 @@ public abstract class SimplePiece implements iPiece {
     public WhiteBlack getColor() { return this.color; }
 
     public Boolean isOppositeColor(iPiece p) { //Om en brikke har en annen farge enn en annen brikke. Da kan disse angripe hverandre.
-        if(p == null) return false;
+        if(p == null) return true;
         return this.getColor() != p.getColor();
     }
     public Boolean canSprint(){ return canSprint; } //Om brikken kan gå flere skritt om gangen eller ei.
@@ -73,7 +73,7 @@ public abstract class SimplePiece implements iPiece {
             Integer tilX = fraX;
             Integer tilY = fraY;
 
-            for(int i=0; i<=7; i++){ //Looper til 7, for noen ganger kan brikken gå 7 skritt, men den forventer å bli brutt før det.
+            for(int i=0; i<7; i++){ //Looper til 7, for noen ganger kan brikken gå 7 skritt, men den forventer å bli brutt før det.
                 tilX += retning.getX();
                 tilY += retning.getY();
                 Tuple<Integer, Integer> tilPos =  new Tuple<>(tilX, tilY);
