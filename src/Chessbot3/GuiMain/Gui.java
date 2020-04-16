@@ -1,4 +1,3 @@
-/*
 package Chessbot3.GuiMain;
 
 import Chessbot3.GameBoard.Board;
@@ -23,22 +22,19 @@ import java.util.List;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
-public class Gui {
-
-    //Selve vinduet som vises på skjermen.
-    public static JPanel chessBoard;
+public class Gui extends JFrame {
 
     //En nøstet liste over alle rutene på brettet.
     //Disse må være statiske, så Action kan referere til dem når noen gjør et trekk.
-    public static JButton[][] chessBoardSquares = new JButton[8][8];
+    protected static JButton[][] chessBoardSquares = new JButton[8][8];
 
     //Selve partiet.
-    public static Game game;
+    protected static Game game;
 
     //Om brettet er rotert eller ikke.
     protected static Boolean reverse = false;
 
-    //Om tekstfeltet har en feilmelding i seg akkurat nå.
+    //Om tekstfeltet har noen feilmeldinger i seg nå eller ikke.
     private static Boolean errorInChat = false;
 
     //listen over ruter som er lyst opp akkurat nå.
@@ -48,71 +44,90 @@ public class Gui {
     //Fargene på alle rutene.
     private static Color darkSquareColor = Color.DARK_GRAY;
     private static Color lightSquareColor = Color.GRAY;
-    private static Color litUpColor = Color.LIGHT_GRAY;
+    private static Color litUpColor = Color.LIGHT_GRAY; //farger på ruter som blir opplyst av mulige trekk.
 
     //Knappene og tekstfeltet som vises på skjermen.
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
     protected static JButton enter = new JButton("Enter");
     protected static JButton back = new JButton("Go Back");
+    protected static JButton forward = new JButton("Go Forward");
     protected static JButton neww = new JButton("New Game");
     protected static JButton quit = new JButton("Quit Game");
-    //protected static JButton stopp = new JButton("Stop bot");
+    protected static JButton botstop = new JButton("Pause Bot");
+
+    //Tekstfeltet.
     private JTextField textField = new JTextField(20);
 
-    JFrame frame;
-
     public Gui(){
+        //Gui er egentlig en ramme.
+        //Oppå denne rammen skal vi legge til alt det andre.
         game = new Game();
-        frame = new JFrame("Chessbot3");
-        frame.add(initializeGUI());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLocationByPlatform(true);
-        frame.pack();
-        frame.setMinimumSize(frame.getSize());
+        setTitle("Chessbot3");
+        add(initializeGUI()); //Her legger vi til alle knappene og rutenettet.
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationByPlatform(true);
+        pack();
+        setMinimumSize(getSize());
         paintPieces();
-        frame.setVisible(true);
+        setVisible(true);
         chooseGamemode();
     }
 
     private JPanel initializeGUI() {
         //Lager selve vinduet i Gui-en.
         //Den oppretter alle knappene, tekstfeltet, samt rutene som brikkene skal stå på.
-        JPanel gui = new JPanel(new BorderLayout(3, 3));
-        gui.setBorder(new EmptyBorder(1, 1, 1, 1));
+        JPanel panel = new JPanel(new BorderLayout(3, 3));
+        panel.setBorder(new EmptyBorder(1, 1, 1, 1));
 
-        JToolBar toolbar2 = new JToolBar();
-        toolbar2.add(quit);
-        toolbar2.add(neww);
-        toolbar2.add(back);
-        //toolbar2.add(stopp);
-        //stopp.addActionListener(new Action());
-        quit.addActionListener(new Action());
-        back.addActionListener(new Action());
-        neww.addActionListener(new Action());
-        gui.add(toolbar2, BorderLayout.PAGE_START);
+        //Lager en toolbar med de spesielle knappene på toppen av panelet.
+        panel.add(makeTopToolbar(), BorderLayout.PAGE_START);
 
-        JToolBar toolbar = new JToolBar();
-        gui.add(toolbar, BorderLayout.PAGE_END);
+        //Oppretter selve rutenettet.
+        panel.add(makeButtons());
 
+        //Oppretter tekstfeltet nederst.
+        panel.add(makeTextField(), BorderLayout.PAGE_END);
+
+        return panel;
+    }
+    private JToolBar makeTextField(){
+        //Oppretter tekstfeltet nederst.
+        JToolBar ret = new JToolBar();
         JTextField text = new JTextField(20);
         textField = text; //Tekstfeltet støtter kun juksekoder, en komplett liste finnes i Action.enter().
-        textField.addKeyListener(new Chessbot3.GuiMain.Action());
-        toolbar.add(text);
-        toolbar.add(enter);
-        enter.addActionListener(new Chessbot3.GuiMain.Action());
-
-        chessBoard = new JPanel(new GridLayout(0, 8));
-        chessBoard.setBorder(new LineBorder(Color.BLACK));
-        makeButtons(); //Legger til knapper oppå chessBoard
-        gui.add(chessBoard);
-
-        return gui;
+        textField.addKeyListener(new Action());
+        ret.add(text);
+        ret.add(enter);
+        enter.addActionListener(new Action());
+        return ret;
     }
-    private void makeButtons() {
+
+    private JToolBar makeTopToolbar(){
+        //Oppretter toolbaren øverst på skjermen, den med alle knappene.
+        JToolBar ret = new JToolBar();
+        ret.add(quit);
+        ret.add(neww);
+        ret.add(back);
+        ret.add(forward);
+        ret.addSeparator();
+        ret.add(botstop);
+        quit.addActionListener(new Action());
+        back.addActionListener(new Action());
+        forward.addActionListener(new Action());
+        neww.addActionListener(new Action());
+        botstop.addActionListener(new Action());
+        botstop.setVisible(false); //botstop-knappen skal kun være synlig i EvE. Denne endres i chooseGamemode().
+        return ret;
+    }
+
+    private JPanel makeButtons() {
         //Skaper alle rutene som brikkene skal stå på. Disse rutene er egentlig knapper.
         //Disse knappene får alle sammen et blankt ikon, som paintPieces() og repaintPiece tegner oppå.
 
+        JPanel ret = new JPanel(new GridLayout(0, 8));
+        ret.setBorder(new LineBorder(Color.BLACK));
         Insets buttonMargin = new Insets(0,0,0,0);
+
         for (int ii = 0; ii < chessBoardSquares.length; ii++) {
             for (int jj = 0; jj < chessBoardSquares[ii].length; jj++) {
 
@@ -128,30 +143,62 @@ public class Gui {
         }
         for (int ii = 0; ii < 8; ii++) {
             for (int jj = 0; jj < 8; jj++) {
-                chessBoard.add(chessBoardSquares[jj][ii]);
+                ret.add(chessBoardSquares[jj][ii]);
             }
         }
+        return ret;
     }
-    protected void lightUpButtons(Tuple initpos){
-        //Tar en brikke, finner alle rutene den kan gå til, og lyser dem opp.
+
+    //Sjekker om det er noen feilmeldinger i tekstfeltet, og fjerner dem.
+    public void removeErrorsFromTextField(){ if(errorInChat) clearTextField(); }
+
+    public void clearTextField(){
+        //Klarerer tekstfeltet.
+        textField.setText("");
+        errorInChat = false;
+    }
+
+    protected String getTextField() {
+        //Fjerner og returnerer det som står i tekstfeltet.
+        String ret = textField.getText();
+        clearTextField();
+        return ret;
+    }
+
+    //Sender en streng til tekstfeltet.
+    //Denne er for mindre alvorlige meldinger, som ikke trenger et popup.
+    public void displayTextFieldMessage(String s) {
+        textField.setText(s);
+        errorInChat = true;
+    }
+
+    //Lager et popup-felt med valgfri melding.
+    public void displayPopupMessage(String s){ JOptionPane.showMessageDialog(this, s); }
+
+    public void lightUpButtons(Tuple initpos) throws IllegalArgumentException{
+        //Tar en posisjon, finner brikken som står der, og lyser opp alle de lovlige trekkene den brikken kan gjøre.
+        //Forutsetter at det faktisk står en brikke der, gir feilmelding ellers.
         Board bård = game.getCurrentBoard();
         iPiece pie = bård.GetPiece(initpos);
-        List<Move> legals = bård.GenCompletelyLegalMoves();
-        for(Move move : legals){
-            if(bård.GetPiece(move.getX()) == pie) {
-                int X = move.getY().getX();
-                int Y = move.getY().getY();
-                if(!reverse) {
-                    chessBoardSquares[X][Y].setBackground(litUpColor);
-                    litSquares.add(new Tuple(X, Y));
-                }else{
-                    chessBoardSquares[7-X][7-Y].setBackground(litUpColor);
-                    litSquares.add(new Tuple(7-X, 7-Y));
+        if(pie == null) throw new IllegalArgumentException("The piece is null, and has noe legal moves");
+        for(Move move : pie.getMoves(bård)){
+            if(bård.CheckMoveLegality(move)) {
+                int x;
+                int y;
+                if (!reverse) {
+                    x = move.getY().getX();
+                    y = move.getY().getY();
+                } else {
+                    x = 7 - move.getY().getX();
+                    y = 7 - move.getY().getY();
                 }
+                chessBoardSquares[x][y].setBackground(litUpColor);
+                litSquares.add(new Tuple(x, y));
             }
         }
     }
-    protected void makeButtonsGrey(){
+
+    public void makeButtonsGrey(){
         //Gjør alle ruter grå igjen. Denne må kalles opp før lightUpButtons, så bare de riktige knappene lyses opp.
         for(Tuple<Integer, Integer> pos : litSquares){
             int x = pos. getX();
@@ -168,18 +215,17 @@ public class Gui {
         game.clearBotColors();
 
         //Selve popup-vinduet. Endre denne på eget ansvar!
-        Object[] options = {"Player vs Player", "Player vs Bot", "Bot vs Bot"};
-        int n = JOptionPane.showOptionDialog(chessBoard, "Please choose a gamemode.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+        int n = JOptionPane.showOptionDialog(this, "Please pick a gamemode.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, new String[]{"Player vs Player", "Player vs Bot", "Bot vs Bot"}, 0);
 
         //n er indeksen til hvilken knapp brukeren trykket på. Dette legger til farger som botten skal styre.
         // F. eks om du klikket Bot vs Bot blir både svart og hvit lagt til, og botten vil automatisk gjøre trekk for begge fargene.
 
-        //Om spilleren vil spille mot botten, da skal han få velge farge.
         if(n == 1){
+            botstop.setVisible(false);
 
             //Om spilleren vil spille mot en bot må han få lov til å velge hvilken farge han vil spille som.
-            int m = JOptionPane.showOptionDialog(chessBoard, "Please pick a side.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
+            int m = JOptionPane.showOptionDialog(this, "Please pick a side.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, new String[]{"White", "Black"}, 0);
             if(m == 1){
                 //Om spilleren vil være svart.
@@ -193,48 +239,13 @@ public class Gui {
         else if(n == 2){
             game.addBotColor(BLACK);
             game.addBotColor(WHITE);
+            botstop.setVisible(true);
         }
+        //Om to mennekser skal spille mot hverandre. Da skal ikke botten ha noen farger.
+        else botstop.setVisible(false);
     }
 
-    public iPiece promotePawn(){
-        //Lager et popup-vindu og spør hvilken brikke en spiller vil promotere til, og returnerer den brikken.
-        //Tar utgangspunkt i at alle vil ha en dronning uansett.
-        WhiteBlack color = game.getCurrentBoard().GetColorToMove();
-        int n = JOptionPane.showOptionDialog(chessBoard, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
-        if(n == 1) return new Rook(color);
-        else if(n == 2) return new Knight(color);
-        else if(n == 3) return new Bishop(color);
-        else return new Queen(color);
-    }
-
-    //Sender en streng til tekstfeltet.
-    //Denne er for mindre alvorlige meldinger, som ikke trenger et popup.
-    public void displayTextFieldMessage(String s) {
-        textField.setText(s);
-        errorInChat = true;
-    }
-
-    //Lager et popup-felt med valgfri melding.
-    public void displayPopupMessage(String s){ JOptionPane.showMessageDialog(chessBoard, s); }
-
-    //Sjekker om det nylig er blitt printet en feilmelding i tekstfeltet.
-    protected Boolean hasErrorInTextField(){ return errorInChat; }
-
-    public void clearTextField(){
-        //Klarerer tekstfeltet.
-        textField.setText("");
-        errorInChat = false;
-    }
-
-    protected String getTextField(){
-        //Fjerner og returnerer det som står i tekstfeltet.
-        String ret = textField.getText();
-        clearTextField();
-        return ret;
-    }
-
-    protected void reverse() {
+    public void reverse() {
         //Reverserer alt det visuelle på brettet.
         //Knappene er fortsatt på samme plass, men de får nye bilder.
         //Dette blir tatt hensyn til i findSquare() i Action.
@@ -252,21 +263,30 @@ public class Gui {
         Board bård = game.getCurrentBoard();
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
-                if(bård.GetPiece(x, y) != null) {
-                    ImageIcon newIcon = new ImageIcon(); //Oppretteter et nytt ikon
-                    newIcon.setImage(bård.GetPiece(x, y).getImage()); //Legger til et bilde på ikonet, hentet fra iPiece.getImage()
+                JButton butt;
+                if(!reverse) butt = chessBoardSquares[x][y];
+                else butt = chessBoardSquares[7-x][7-y];
 
-                    //Setter ikonet på ruten.
-                    //Reverse er kun om brettet skal være opp-ned, med svart nederst.
-                    if(!reverse) chessBoardSquares[x][y].setIcon(newIcon);
-                    else chessBoardSquares[7-x][7-y].setIcon(newIcon);
+                if(bård.GetPiece(x, y) != null) {
+                    ImageIcon newIcon = new ImageIcon(); //Oppretter et nytt ikon
+                    newIcon.setImage(bård.GetPiece(x, y).getImage()); //Legger til et bilde på ikonet, hentet fra iPiece.getImage()
+                    butt.setIcon(newIcon);
                 }
-                //Om en rute ikke har noen brikke, får den et gjennomsiktig ikon.
-                else if(!reverse) chessBoardSquares[x][y].setIcon(new ImageIcon());
-                else chessBoardSquares[7-x][7-y].setIcon(new ImageIcon());
+                //Legger til et nytt og blankt ikon.
+                //Det gir samme effekt som at det ikke er noe ikon der i det hele tatt.
+                else butt.setIcon(new ImageIcon());
             }
         }
     }
+    public iPiece promotePawn(){
+        //Lager et popup-vindu og spør hvilken brikke en spiller vil promotere til, og returnerer den brikken.
+        //Tar utgangspunkt i at alle vil ha en dronning uansett.
+        WhiteBlack color = game.getCurrentBoard().GetColorToMove();
+        int n = JOptionPane.showOptionDialog(this, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
+        if(n == 1) return new Rook(color);
+        else if(n == 2) return new Knight(color);
+        else if(n == 3) return new Bishop(color);
+        else return new Queen(color); //Standardverdi.
+    }
 }
-
- */

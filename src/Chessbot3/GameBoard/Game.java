@@ -103,7 +103,7 @@ public class Game {
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på første linje.
         try {
-            Move move = Randbot.findMove(currentBoard);
+            Move move = Tempbot.findMove(currentBoard);
             if (stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
             currentBoard.MovePiece(move, false);
             previousBoards = previousBoards.subList(0, boardIndex+1);
@@ -121,7 +121,7 @@ public class Game {
         //Tar inn et trekk, sjekker om det er lovlig, og gjør trekket på brettet.
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
-        if(currentBoard.CheckPlayerMove(move)) {
+        if(currentBoard.CheckMoveLegality(move)) {
             currentBoard.MovePiece(move, true);
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
