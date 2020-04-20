@@ -68,7 +68,7 @@ public class Gui extends JFrame {
         setLocationByPlatform(true);
         pack();
         setMinimumSize(getSize());
-        paintPieces();
+        paintPieces(game.getCurrentBoard());
         setVisible(true);
         chooseGamemode();
     }
@@ -78,14 +78,8 @@ public class Gui extends JFrame {
         //Den oppretter alle knappene, tekstfeltet, samt rutene som brikkene skal stå på.
         JPanel panel = new JPanel(new BorderLayout(3, 3));
         panel.setBorder(new EmptyBorder(1, 1, 1, 1));
-
-        //Lager en toolbar med de spesielle knappene på toppen av panelet.
         panel.add(makeTopToolbar(), BorderLayout.PAGE_START);
-
-        //Oppretter selve rutenettet.
         panel.add(makeButtons());
-
-        //Oppretter tekstfeltet nederst.
         panel.add(makeTextField(), BorderLayout.PAGE_END);
 
         return panel;
@@ -139,10 +133,6 @@ public class Gui extends JFrame {
                 else butt.setBackground(darkSquareColor);
                 butt.addActionListener(new Action());
                 chessBoardSquares[jj][ii] = butt;
-            }
-        }
-        for (int ii = 0; ii < 8; ii++) {
-            for (int jj = 0; jj < 8; jj++) {
                 ret.add(chessBoardSquares[jj][ii]);
             }
         }
@@ -250,17 +240,17 @@ public class Gui extends JFrame {
         //Knappene er fortsatt på samme plass, men de får nye bilder.
         //Dette blir tatt hensyn til i findSquare() i Action.
         reverse = !reverse;
-        paintPieces();
+        paintPieces(game.getCurrentBoard());
     }
     public void reset(){
         //Resetter orienteringen, slik at hvit er nederst, og maler brikkene på nytt.
         reverse = false;
-        paintPieces();
+        paintPieces(game.getCurrentBoard());
     }
 
-    public void paintPieces(){
+    public void paintPieces(Board bård){
         //Tegner alle brikkene på brettet, helt fra scratch.
-        Board bård = game.getCurrentBoard();
+        //Board bård = game.getCurrentBoard();
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
                 JButton butt;

@@ -2,22 +2,82 @@ package Chessbot3.Simulators;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
+import static Chessbot3.GuiMain.Chess.gui;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Copybot {
 
-    //En bot kopipastet nesten direkte fra forrige sjakkbotten, med små endringer.
+    //Steinar prøver å skrive en bot basert på det vi gjorde i chessbot2! Det går ikke bra.
 
     static int i = 0;
     static int plies = 4;
     static int alpha = -999999999;
     static int beta = 999999999;
 
+    public static Move findMove(Board bård) throws IllegalStateException {
+        List<Move> possibles = bård.GenCompletelyLegalMoves();
+        if (possibles.size() == 0) throw new IllegalStateException();
+        System.out.println();
+        Move bestMove = possibles.get(0);
+        for(int i=0; i<possibles.size(); i++){
+            Move move = possibles.get(i);
+
+            int n=steinarsBizarreAlphaBeta(plies, bård, move);
+            move.addWeight(n);
+
+            move.addWeight(bård.GetValue(move));
+
+            System.out.println(move + ": " + move.getWeight());
+
+            if(bård.GetColorToMove() == WHITE && move.getWeight() > bestMove.getWeight()){
+                bestMove = move;
+            }
+            else if(bård.GetColorToMove() == BLACK && move.getWeight() < bestMove.getWeight()){
+                bestMove = move;
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static int steinarsBizarreAlphaBeta(int plies, Board bård, Move node) {
+        if (plies == 0) return bård.GetValue(node);
+
+
+        Board copy = bård.Copy();
+
+        copy.MovePiece(node);
+        List<Move> counters = copy.GenMoves();
+        int theWorstThatCanHappen = 0;
+
+        if(bård.GetColorToMove() == WHITE){
+            for(int i=0; i<counters.size(); i++){
+                int n=copy.GetValue(counters.get(0)) + steinarsBizarreAlphaBeta(plies-1, copy, counters.get(i));
+                if(n<theWorstThatCanHappen){
+                    theWorstThatCanHappen = n;
+                }
+            }
+        }
+        else{
+            for(int i=0; i<counters.size(); i++){
+                int n=copy.GetValue(counters.get(0)) + steinarsBizarreAlphaBeta(plies-1, copy, counters.get(i));
+                if(n>theWorstThatCanHappen){
+                    theWorstThatCanHappen = n;
+                }
+            }
+        }
+        return theWorstThatCanHappen;
+    }
+
+
+
+/*
     public static Move findMove(Board bård) throws IllegalStateException{
        List<Move> moves = bård.GenCompletelyLegalMoves();
        if(moves.size() == 0) throw new IllegalStateException("The game is over, I have no legal moves");
@@ -44,6 +104,7 @@ public class Copybot {
 
         int value;
         Board currPos = bård.Copy();
+
         Board tempPos;
         if(isMaximizingPlayer){
             value = -999999999;
@@ -64,63 +125,5 @@ public class Copybot {
             }
         }
         return value;
-    }
-
-    public static Move findOkMove(Board bård) throws IllegalStateException{
-        List<Move> possibles = bård.GenCompletelyLegalMoves();
-        if(possibles.size() == 0) throw new IllegalStateException();
-
-        boolean isMaximizingPlayer;
-        if(bård.GetColorToMove() == WHITE) isMaximizingPlayer = false;
-        else isMaximizingPlayer = true;
-
-        for(int i=0; i<possibles.size(); i++){
-            int initialWeight = bård.GetValue(possibles.get(i));
-            int futureWeight = alphaBeta2(possibles.get(i), plies-1, isMaximizingPlayer, bård);
-
-            possibles.get(i).addWeight(initialWeight + futureWeight);
-        }
-
-
-        if(isMaximizingPlayer) Collections.sort(possibles);
-        else Collections.sort(possibles, Collections.reverseOrder());
-        return possibles.get(0);
-    }
-
-    private static int alphaBeta2(Move move, int plies, boolean isMaximizingPlayer, Board bård) {
-
-        if(isMaximizingPlayer){
-
-            Board copy = bård.Copy();
-            copy.MovePiece(move);
-
-        }
-
-
-        return 0;
-    }
-
-    public static Move loooooop(Board bård){
-        List<Move> possibles = bård.GenCompletelyLegalMoves();
-        if(possibles.size() == 0) throw new IllegalStateException();
-
-        for(Move move : possibles){
-            Board copy = bård.Copy();
-            copy.MovePiece(move);
-            move.addWeight(copy.GetScore());
-
-            int best = 999999999;
-            for(Move counter : copy.GenMoves()){
-                Board countercopy = copy.Copy();
-                countercopy.MovePiece(counter);
-
-
-
-                best = Math.min(best, countercopy.GetScore());
-            }
-            move.addWeight(best);
-        }
-        Collections.sort(possibles);
-        return possibles.get(0);
-    }
+    }*/
 }

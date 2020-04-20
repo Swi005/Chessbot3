@@ -55,7 +55,7 @@ public class Action extends KeyAdapter implements ActionListener {
                     iPiece pressedPiece = bård.GetPiece(pos);
 
                     //Aktiveres når spilleren trykker på en av sine egne brikker.
-                    if(pressedPiece != null && colorToMove == pressedPiece.getColor()){
+                    if(pressedPiece != null && colorToMove == pressedPiece.getColor() && !game.isBotThinking()){
                         gui.makeButtonsGrey();
                         gui.lightUpButtons(pos);
                         pressedMove.setX(pos);
@@ -118,7 +118,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("moves")) game.printMoveHistory();
         else if(usertext.equals("turn")) game.printTurn();
         else if(usertext.equals("pieces")) game.printPieces();
-        else if(usertext.equals("paint")) gui.paintPieces();
+        else if(usertext.equals("paint")) gui.paintPieces(game.getCurrentBoard());
         else if(usertext.equals("reverse")) gui.reverse();
         else if(usertext.equals("bot")) game.botMove();
         else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());

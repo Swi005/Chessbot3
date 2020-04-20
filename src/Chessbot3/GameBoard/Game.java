@@ -3,8 +3,8 @@ package Chessbot3.GameBoard;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
+import Chessbot3.Simulators.Copybot;
 import Chessbot3.Simulators.Randbot;
-import Chessbot3.Simulators.Tempbot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,9 @@ public class Game {
     //Det nåværende brettet.
     private Board currentBoard;
 
+    //Om botten tenker akkurat nå.
+    private boolean isBotThinking;
+
     //En liste over hvilke farger botten skal styre.
     //Om denne kun inneholder BLACK betyr det at botten styrer svart, mens spilleren styrer hvit.
     //Om denne er tom spiller spilleren mot seg selv.
@@ -41,21 +44,6 @@ public class Game {
         previousBoards.add(currentBoard.Copy());
     }
 
-    /*
-    public void goBack(){
-        //Går tilbake to trekk, et trekk fra hver spiller. Dvs at begge spillerenes nyeste trekk blir resatt. *insert Bites Za Dusto reference here*
-        if(previousBoards.size()>2){
-            previousBoards.remove(previousBoards.size()-1);
-            previousBoards.remove(previousBoards.size()-1);
-            madeMoves.remove(madeMoves.size()-1);
-            madeMoves.remove(madeMoves.size()-1);
-            currentBoard = previousBoards.get(previousBoards.size()-1).Copy();
-            gui.paintPieces();
-        }
-        else gui.displayTextFieldMessage("Can't go further back!");
-    }
-
-     */
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
         int delta;
@@ -65,7 +53,7 @@ public class Game {
         if(boardIndex - delta >= 0){
             boardIndex -= delta;
             currentBoard = previousBoards.get(boardIndex).Copy();
-            gui.paintPieces();
+            gui.paintPieces(currentBoard);
         }
         else gui.displayTextFieldMessage("Can't go further back!");
     }
@@ -80,7 +68,7 @@ public class Game {
         if(boardIndex + delta < previousBoards.size()){
             boardIndex += delta;
             currentBoard = previousBoards.get(boardIndex).Copy();
-            gui.paintPieces();
+            gui.paintPieces(currentBoard);
         }
         else gui.displayTextFieldMessage("Can't go further forward!");
     }
@@ -101,26 +89,35 @@ public class Game {
     public void botMove(){
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
-        //Botten kan lett byttes ut ved å endre på første linje.
+        //Botten kan lett byttes ut ved å endre på der den blir kalt opp.
         try {
-            Move move = Tempbot.findMove(currentBoard);
-            if (stop) return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
+            isBotThinking = true;
+            if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
+            Move move = Randbot.findMove(currentBoard);
+            if (stop){
+                isBotThinking = false;
+                return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
+            }
             currentBoard.MovePiece(move, false);
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             boardIndex += 1;
-            gui.paintPieces();
+            gui.paintPieces(currentBoard);
             gui.clearTextField();
-            if (handleWinCondition()) return;
-        }catch(IllegalStateException x){ }
+            handleWinCondition();
+            isBotThinking = false;
+        }catch(IllegalStateException x){
+            isBotThinking = false;
+        }
     }
 
     public Boolean playerMove(Move move){
         //Tar inn et trekk, sjekker om det er lovlig, og gjør trekket på brettet.
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
+        if(isBotThinking) return false;
         if(currentBoard.CheckMoveLegality(move)) {
             currentBoard.MovePiece(move, true);
             previousBoards = previousBoards.subList(0, boardIndex+1);
@@ -128,15 +125,15 @@ public class Game {
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             boardIndex += 1;
-            gui.paintPieces();
-            if(handleWinCondition()) return true;
+            gui.paintPieces(currentBoard);
+            handleWinCondition();
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");
             return false;
         }
     }
-    private Boolean handleWinCondition(){
+    private void handleWinCondition(){
         //Returnerer true om spillet er ferdig, false ellers.
 
         //Sjekker om det er matt eller patt.
@@ -147,20 +144,20 @@ public class Game {
             gui.makeButtonsGrey();
             gui.displayPopupMessage("Draw!");
             stop = true;
-            return true;
         }
         //Sjekker om det er matt.
-        if(check){
+        else if(check){
             gui.makeButtonsGrey();
             gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
             stop = true;
-            return true;
         }
-        return false;
+        //Hvis ingen ble aktivert er spillet fortsatt i gang.
     }
     //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
     //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
     public Boolean isBotTurn(){ return !stop && bots.contains(currentBoard.GetColorToMove()); }
+
+    public boolean isBotThinking(){ return isBotThinking; }
 
     //Legger til en farge som bottens skal styre.
     public void addBotColor(WhiteBlack c){ bots.add(c); }
