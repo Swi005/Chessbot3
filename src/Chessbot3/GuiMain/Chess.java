@@ -28,10 +28,10 @@ public class Chess {
         //Starter en uendelig loop. Gui har en haug med actionlisteners,
         //som gjør at brukeren kan spille ved å trykke på knappene på skjermen,
         //selv om loopen kjører på siden.
-        while (true) {
+        while(true) {
             try {
                 Thread.sleep(0);
-                if (game.isBotTurn()) game.botMove();
+                if(game.isBotTurn()) game.botMove();
             } catch (InterruptedException x) { }
         }
     }

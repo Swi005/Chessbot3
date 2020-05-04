@@ -40,7 +40,7 @@ public class Pawn extends SimplePiece {
             Integer tilY = fraY+direc.getY();
             Tuple<Integer, Integer> tilPos = new Tuple(tilX, tilY);
 
-            if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den holder på å gå utenfor brettet.
+            if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) continue; //Om den holder på å gå utenfor brettet.
             iPiece mål = bård.GetPiece(tilPos);
 
             if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der, eller at den kan ta en passant.

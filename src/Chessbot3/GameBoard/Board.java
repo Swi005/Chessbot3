@@ -50,7 +50,7 @@ public class Board implements Comparable {
     private static final Tuple C8 = new Tuple(2,0);
 
     //Rutenettet av brikker
-    iPiece[][] grid;
+    private iPiece[][] grid;
 
     //'Verdien' til brettet. Positivt tall er bra for hvit, negativt er bra for svart.
     private Integer score;
