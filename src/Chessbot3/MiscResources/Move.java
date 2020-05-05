@@ -35,6 +35,7 @@ public class Move implements Comparable
     public void setX(Tuple<Integer, Integer> from) { this.from = from; }
     public void setY(Tuple<Integer, Integer> to) { this.to = to; }
     public void addWeight(int n) {this.weight += n; }
+    public void setWeight(int n) { this.weight = n; }
     public void setStabIndex(boolean set) { this.stabilityIndex = set; }
 
     public String toString2() {return "(" + this.from + ", " + this.to + ")"; }

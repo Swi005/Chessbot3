@@ -141,6 +141,7 @@ public class Board implements Comparable {
 
         //Gir score for å flytte til en bedre posisjon.
         iPiece pie = GetPiece(move.getX());
+        if(pie == null) System.out.println("null");
         int ret = pie.getValueAt(move.getY()) - pie.getValueAt(move.getX());
 
         //Gir score for å ta en brikke på normalt vis.
@@ -148,9 +149,10 @@ public class Board implements Comparable {
         if(target != null) ret += target.getCombinedValue(move.getY());
 
         //Gir score for å ta en passant.
-        if(move.getY() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien til å ta den brikken.
+        if(move.getY() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien av å ta den brikken.
 
-        // TODO: 31.03.2020 Legg til rokadepoeng 
+        // TODO: 31.03.2020 Legg til rokadepoeng
+
         if(colorToMove == WHITE) return ret;
         else return -ret;
     }

@@ -3,6 +3,7 @@ package Chessbot3.GameBoard;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
+import Chessbot3.Simulators.AlphaBota;
 import Chessbot3.Simulators.Copybot;
 import Chessbot3.Simulators.Randbot;
 
@@ -93,23 +94,28 @@ public class Game {
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
-            Move move = Randbot.findMove(currentBoard);
+            Move move = AlphaBota.findMove(currentBoard);
             if (stop){
                 isBotThinking = false;
                 return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
             }
             currentBoard.MovePiece(move, false);
+
+            //Oppdaterer lister over brett, trekk, etc
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             boardIndex += 1;
+
             gui.paintPieces(currentBoard);
             gui.clearTextField();
+
             handleWinCondition();
             isBotThinking = false;
         }catch(IllegalStateException x){
             isBotThinking = false;
+            gui.clearTextField();
         }
     }
 
@@ -120,11 +126,13 @@ public class Game {
         if(isBotThinking) return false;
         if(currentBoard.CheckMoveLegality(move)) {
             currentBoard.MovePiece(move, true);
+
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
             previousBoards.add(currentBoard.Copy());
             madeMoves.add(move);
             boardIndex += 1;
+
             gui.paintPieces(currentBoard);
             handleWinCondition();
             return true;
