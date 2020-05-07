@@ -214,7 +214,7 @@ public class Board implements Comparable {
         grid[fra.getX()][fra.getY()] = null;
 
         //Dreper en bonde, om trekket er en passant.
-        if(til.equals(passantPos)){
+        if(til.equals(passantPos) && pie instanceof Pawn){
             Tuple<Integer, Integer> tempPos;
 
             //Finner hvor den drepte brikken er.
