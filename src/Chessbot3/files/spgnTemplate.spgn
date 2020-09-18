@@ -1,0 +1,13 @@
+#------ShittyPortableGameNotation Template File-------
+#Hash indicates comments
+#
+#Fields with [] are variables
+[TYPE 0] #Save == 0 | lookup Table == 1
+[SCORE 0] #Game Score
+
+#Each turn is given a number followed by the start position and the end position of the piece that moved. seperated by a ':'
+#In contrast with normal PGN, sPGN does not note the piece that moved
+#Each new turn is given its own line
+#Example under:
+1.e2:e4
+2.

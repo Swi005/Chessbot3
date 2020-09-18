@@ -12,7 +12,7 @@ public class Move implements Comparable
     private boolean stabilityIndex;
     private int weight;
     private String chars = "ABCDEFGH";
-
+    private String chars2 = chars.toLowerCase();
     public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to)
     {
         this.from = from;
@@ -57,6 +57,15 @@ public class Move implements Comparable
         char rekketil = chars.charAt(to.getX());
         int radtil = 8-to.getY();
         return "(" + rekkefra+radfra + "-" + rekketil+radtil + ")";
+    }
+    //Pls fix this
+    public String toAlgebraicNotation()
+    {
+        char rekkefra = chars2.charAt(from.getX());
+        int radfra = 8-from.getY();
+        char rekketil = chars2.charAt(to.getX());
+        int radtil = 8-to.getY();
+        return  rekkefra+ (char)radfra + ":" + rekketil+ (char)radtil;
     }
 
 }

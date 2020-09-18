@@ -20,7 +20,8 @@ public class AlphaBota {
         for(Move move : possibles) move.addWeight(bård.GetValue(move));
         Collections.sort(possibles, Collections.reverseOrder());
 
-        for(Move move : possibles){
+        for(Move move : possibles)
+        {
             move.setWeight(0);
             Board copy = bård.Copy();
             copy.MovePiece(move);

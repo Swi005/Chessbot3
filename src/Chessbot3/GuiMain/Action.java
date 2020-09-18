@@ -135,7 +135,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else gui.displayPopupMessage("Unrecognized command");
     }
 
-    private Move parse(String input) {
+    public static Move parse(String input) {
         //Tar en streng fra brukeren og oversetter det til et trekk.
         //f. eks 'e2 e4' blir til new Move((4, 6) (4, 4)).
         input = input.replace(" ", "").toLowerCase();
@@ -150,7 +150,7 @@ public class Action extends KeyAdapter implements ActionListener {
         return new Move(fra, til);
     }
 
-    private boolean isAMove(String input) {
+    public static boolean isAMove(String input) {
         //Sjekker om det brukeren skrev kan tolkes som et trekk eller ikke.
         //Standard sjakknotasjon (som Nf3) fungerer ikke, man må skrive to koordinater etter hverandre (som g1f3).
         //f. eks 'e2 e4' returnerer true, 'tcfvyguy76ftviyubv7ughbij' returnerer false.
