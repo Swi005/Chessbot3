@@ -35,4 +35,9 @@ public interface Ispgn
      */
     Move[] GetAllMoves();
 
+    /**Returns the path to where the spgn file will be saved
+     *
+     * @return - patht to where the file is stored
+     */
+    String GetPathToFile();
 }
