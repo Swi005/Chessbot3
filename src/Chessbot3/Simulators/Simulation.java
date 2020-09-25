@@ -11,10 +11,10 @@ public class Simulation
     Board board;
     public Simulation(Board board) 
     {
-        this.board = board.Copy();
+        this.board = board.copy();
     }
     public void simulateMove( Move move)
     {
-        board.MovePiece(move, false);
+        board.movePiece(move, false);
     }
 }

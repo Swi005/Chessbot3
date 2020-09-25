@@ -5,11 +5,10 @@ import Chessbot3.MiscResources.Move;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Randbot {
     public static Move findMove(Board bård) throws IllegalStateException{
-        List<Move> possibles = bård.GenCompletelyLegalMoves();
+        List<Move> possibles = bård.genCompletelyLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
         Collections.shuffle(possibles);
 

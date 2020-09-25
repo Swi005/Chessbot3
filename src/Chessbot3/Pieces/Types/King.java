@@ -9,7 +9,6 @@ import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Chessbot3.GuiMain.Chess.imageDict;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
@@ -40,20 +39,20 @@ public class King extends SimplePiece {
         // 4: Ingen av rutene fra og med kongen til og med der kongen vil flytte blir truet av noen fiendtlig brikke.
         // Nummer 4 ignorerer vi, fordi det ville mangedoblet kompleksiteten.
         List<Move> ret = new ArrayList<>();
-        Tuple<Boolean, Boolean> wCastle = bård.GetWhiteCastle();
-        Tuple<Boolean, Boolean> bCastle = bård.GetBlackCastle();
+        Tuple<Boolean, Boolean> wCastle = bård.getWhiteCastle();
+        Tuple<Boolean, Boolean> bCastle = bård.getBlackCastle();
         if(color == WHITE){
-            if(wCastle.getY() && bård.GetPiece(5, 7) ==  null && bård.GetPiece(6, 7) == null){
+            if(wCastle.getY() && bård.getPiece(5, 7) ==  null && bård.getPiece(6, 7) == null){
                 ret.add(new Move(new Tuple(4, 7), new Tuple(6, 7))); //Hvit rokerer kort
             }
-            if(wCastle.getX() && bård.GetPiece(3, 7) ==  null && bård.GetPiece(2, 7) == null && bård.GetPiece(1, 7) ==  null){
+            if(wCastle.getX() && bård.getPiece(3, 7) ==  null && bård.getPiece(2, 7) == null && bård.getPiece(1, 7) ==  null){
                 ret.add(new Move(new Tuple(4, 7), new Tuple(2, 7))); //Hvit rokerer langt
             }
         }else if(color == BLACK){
-            if(bCastle.getY() && bård.GetPiece(5, 0) ==  null && bård.GetPiece(6, 0) == null){
+            if(bCastle.getY() && bård.getPiece(5, 0) ==  null && bård.getPiece(6, 0) == null){
                 ret.add(new Move(new Tuple(4, 0), new Tuple(6, 0))); //Svart rokerer kort
             }
-            if(bCastle.getX() && bård.GetPiece(3, 0) == null && bård.GetPiece(2, 0) ==  null && bård.GetPiece(1, 0) ==  null){
+            if(bCastle.getX() && bård.getPiece(3, 0) == null && bård.getPiece(2, 0) ==  null && bård.getPiece(1, 0) ==  null){
                 ret.add(new Move(new Tuple(4, 0), new Tuple(2, 0))); //Svart rokerer langt
             }
         }

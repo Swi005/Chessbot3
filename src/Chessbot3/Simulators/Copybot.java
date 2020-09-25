@@ -2,10 +2,7 @@ package Chessbot3.Simulators;
 
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
-import static Chessbot3.GuiMain.Chess.gui;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
@@ -21,7 +18,7 @@ public class Copybot {
     static int beta = 999999999;
 
     public static Move findMove(Board bård) throws IllegalStateException {
-        List<Move> possibles = bård.GenCompletelyLegalMoves();
+        List<Move> possibles = bård.genCompletelyLegalMoves();
         if (possibles.size() == 0) throw new IllegalStateException();
         System.out.println();
         Move bestMove = possibles.get(0);
@@ -31,14 +28,14 @@ public class Copybot {
             int n=steinarsBizarreAlphaBeta(plies, bård, move);
             move.addWeight(n);
 
-            move.addWeight(bård.GetValue(move));
+            move.addWeight(bård.getValue(move));
 
             System.out.println(move + ": " + move.getWeight());
 
-            if(bård.GetColorToMove() == WHITE && move.getWeight() > bestMove.getWeight()){
+            if(bård.getColorToMove() == WHITE && move.getWeight() > bestMove.getWeight()){
                 bestMove = move;
             }
-            else if(bård.GetColorToMove() == BLACK && move.getWeight() < bestMove.getWeight()){
+            else if(bård.getColorToMove() == BLACK && move.getWeight() < bestMove.getWeight()){
                 bestMove = move;
             }
         }
@@ -47,18 +44,18 @@ public class Copybot {
     }
 
     private static int steinarsBizarreAlphaBeta(int plies, Board bård, Move node) {
-        if (plies == 0) return bård.GetValue(node);
+        if (plies == 0) return bård.getValue(node);
 
 
-        Board copy = bård.Copy();
+        Board copy = bård.copy();
 
-        copy.MovePiece(node);
-        List<Move> counters = copy.GenMoves();
+        copy.movePiece(node);
+        List<Move> counters = copy.genMoves();
         int theWorstThatCanHappen = 0;
 
-        if(bård.GetColorToMove() == WHITE){
+        if(bård.getColorToMove() == WHITE){
             for(int i=0; i<counters.size(); i++){
-                int n=copy.GetValue(counters.get(0)) + steinarsBizarreAlphaBeta(plies-1, copy, counters.get(i));
+                int n=copy.getValue(counters.get(0)) + steinarsBizarreAlphaBeta(plies-1, copy, counters.get(i));
                 if(n<theWorstThatCanHappen){
                     theWorstThatCanHappen = n;
                 }
@@ -66,7 +63,7 @@ public class Copybot {
         }
         else{
             for(int i=0; i<counters.size(); i++){
-                int n=copy.GetValue(counters.get(0)) + steinarsBizarreAlphaBeta(plies-1, copy, counters.get(i));
+                int n=copy.getValue(counters.get(0)) + steinarsBizarreAlphaBeta(plies-1, copy, counters.get(i));
                 if(n>theWorstThatCanHappen){
                     theWorstThatCanHappen = n;
                 }

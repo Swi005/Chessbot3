@@ -4,8 +4,6 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Simulators.AlphaBota;
-import Chessbot3.Simulators.Copybot;
-import Chessbot3.Simulators.Randbot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +40,7 @@ public class Game {
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
         //For å starte på nytt kan du bruke newGame(), som resetter alt i dette objektet.
         currentBoard = new Board();
-        previousBoards.add(currentBoard.Copy());
+        previousBoards.add(currentBoard.copy());
     }
 
     public void goBack(){
@@ -53,7 +51,7 @@ public class Game {
 
         if(boardIndex - delta >= 0){
             boardIndex -= delta;
-            currentBoard = previousBoards.get(boardIndex).Copy();
+            currentBoard = previousBoards.get(boardIndex).copy();
             gui.paintPieces(currentBoard);
         }
         else gui.displayTextFieldMessage("Can't go further back!");
@@ -68,7 +66,7 @@ public class Game {
 
         if(boardIndex + delta < previousBoards.size()){
             boardIndex += delta;
-            currentBoard = previousBoards.get(boardIndex).Copy();
+            currentBoard = previousBoards.get(boardIndex).copy();
             gui.paintPieces(currentBoard);
         }
         else gui.displayTextFieldMessage("Can't go further forward!");
@@ -80,7 +78,7 @@ public class Game {
         previousBoards.clear();
         madeMoves.clear();
         currentBoard = new Board();
-        previousBoards.add(currentBoard.Copy());
+        previousBoards.add(currentBoard.copy());
         boardIndex = 0;
         gui.reset();
         gui.chooseGamemode();
@@ -99,12 +97,12 @@ public class Game {
                 isBotThinking = false;
                 return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
             }
-            currentBoard.MovePiece(move, false);
+            currentBoard.movePiece(move, false);
 
             //Oppdaterer lister over brett, trekk, etc
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
-            previousBoards.add(currentBoard.Copy());
+            previousBoards.add(currentBoard.copy());
             madeMoves.add(move);
             boardIndex += 1;
 
@@ -124,12 +122,12 @@ public class Game {
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
         if(isBotThinking) return false;
-        if(currentBoard.CheckMoveLegality(move)) {
-            currentBoard.MovePiece(move, true);
+        if(currentBoard.checkMoveLegality(move)) {
+            currentBoard.movePiece(move, true);
 
             previousBoards = previousBoards.subList(0, boardIndex+1);
             madeMoves = madeMoves.subList(0, boardIndex);
-            previousBoards.add(currentBoard.Copy());
+            previousBoards.add(currentBoard.copy());
             madeMoves.add(move);
             boardIndex += 1;
 
@@ -145,10 +143,10 @@ public class Game {
         //Returnerer true om spillet er ferdig, false ellers.
 
         //Sjekker om det er matt eller patt.
-        Boolean check = currentBoard.CheckCheckMate();
+        Boolean check = currentBoard.checkCheckMate();
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
-        if(check == null || (currentBoard.GetPieceList(currentBoard.GetColorToMove()).size() == 1 && currentBoard.GetPieceList(currentBoard.GetOppositeColorToMove()).size() == 1)){
+        if(check == null || (currentBoard.getPieceList(currentBoard.getColorToMove()).size() == 1 && currentBoard.getPieceList(currentBoard.getOppositeColorToMove()).size() == 1)){
             gui.makeButtonsGrey();
             gui.displayPopupMessage("Draw!");
             stop = true;
@@ -156,14 +154,14 @@ public class Game {
         //Sjekker om det er matt.
         else if(check){
             gui.makeButtonsGrey();
-            gui.displayPopupMessage("Checkmate! " + currentBoard.GetOppositeColorToMove() + " wins!");
+            gui.displayPopupMessage("Checkmate! " + currentBoard.getOppositeColorToMove() + " wins!");
             stop = true;
         }
         //Hvis ingen ble aktivert er spillet fortsatt i gang.
     }
     //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
     //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
-    public Boolean isBotTurn(){ return !stop && bots.contains(currentBoard.GetColorToMove()); }
+    public Boolean isBotTurn(){ return !stop && bots.contains(currentBoard.getColorToMove()); }
 
     public boolean isBotThinking(){ return isBotThinking; }
 
@@ -183,13 +181,13 @@ public class Game {
     public Board getCurrentBoard(){ return currentBoard; }
 
     //Printer hvilken farge som skal flytte.
-    public void printTurn() { System.out.println(currentBoard.GetColorToMove() + " to move"); }
+    public void printTurn() { System.out.println(currentBoard.getColorToMove() + " to move"); }
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
-    public void printPossibleMoves() { for(Move move : currentBoard.GenCompletelyLegalMoves()) System.out.println(move); }
+    public void printPossibleMoves() { for(Move move : currentBoard.genCompletelyLegalMoves()) System.out.println(move); }
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
-    public void printPieces() { for(iPiece pie : currentBoard.GetPieceList()) System.out.println(pie); }
+    public void printPieces() { for(iPiece pie : currentBoard.getPieceList()) System.out.println(pie); }
 
     public void printBoardIndex(){ System.out.println(boardIndex); }
 
@@ -200,9 +198,9 @@ public class Game {
     public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
 
     public void testGetValue(){
-        System.out.println(currentBoard.GetColorToMove());
-        for(Move move : currentBoard.GenMoves()){
-            System.out.println(move + ": " + currentBoard.GetValue(move));
+        System.out.println(currentBoard.getColorToMove());
+        for(Move move : currentBoard.genMoves()){
+            System.out.println(move + ": " + currentBoard.getValue(move));
         }
     }
 }

@@ -1,7 +1,6 @@
 package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
-import Chessbot3.GuiMain.Chess;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 
@@ -38,7 +37,7 @@ public abstract class SimplePiece implements iPiece {
 
     public Integer getX(Board bård){ return getCoords(bård).getX(); }
     public Integer getY(Board bård){ return getCoords(bård).getY(); }
-    public Tuple<Integer, Integer> getCoords(Board bård) { return bård.GetCoordsOfPiece(this); }
+    public Tuple<Integer, Integer> getCoords(Board bård) { return bård.getCoordsOfPiece(this); }
 
     public Character getSymbol(){ return symbol; }
 
@@ -80,7 +79,7 @@ public abstract class SimplePiece implements iPiece {
 
                 if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den prøver å gå ut av brettet.
 
-                iPiece mål = bård.GetPiece(tilPos);
+                iPiece mål = bård.getPiece(tilPos);
                 if(mål == null){
                     ret.add(new Move(fraPos, tilPos)); //Om det er en tom rute.
                 }

@@ -25,7 +25,7 @@ public class Pawn extends SimplePiece {
     }
     @Override
     public ArrayList<Move> getMoves(Board bård){
-        Tuple<Integer, Integer> passantPos = bård.GetPassantPos();
+        Tuple<Integer, Integer> passantPos = bård.getPassantPos();
         ArrayList<Move> ret = new ArrayList<>();
         Tuple[] directions;
         if(color == WHITE) directions = direcDict.get('P');
@@ -41,7 +41,7 @@ public class Pawn extends SimplePiece {
             Tuple<Integer, Integer> tilPos = new Tuple(tilX, tilY);
 
             if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) continue; //Om den holder på å gå utenfor brettet.
-            iPiece mål = bård.GetPiece(tilPos);
+            iPiece mål = bård.getPiece(tilPos);
 
             if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der, eller at den kan ta en passant.
                 if (mål != null && this.isOppositeColor(mål) || tilPos.equals(passantPos)) {
@@ -52,7 +52,7 @@ public class Pawn extends SimplePiece {
                 ret.add(new Move(fraPos, tilPos));
 
                 //Om den klarer å gå et skritt, og det er første gang den flytter, kan den prøve om det er lov å gå et skritt til.
-                if(((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK)) && bård.GetPiece(tilX, tilY+direc.getY()) ==  null){
+                if(((fraY == 6 && color == WHITE) || (fraY == 1 && color == BLACK)) && bård.getPiece(tilX, tilY+direc.getY()) ==  null){
                     ret.add(new Move(fraPos, new Tuple(tilX, tilY + direc.getY()))); //Om det er en åpen rute, kan den gå to skritt.
                 }
             }
