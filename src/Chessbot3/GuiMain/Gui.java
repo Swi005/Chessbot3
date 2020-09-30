@@ -17,7 +17,6 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
@@ -169,10 +168,10 @@ public class Gui extends JFrame {
         //Tar en posisjon, finner brikken som står der, og lyser opp alle de lovlige trekkene den brikken kan gjøre.
         //Forutsetter at det faktisk står en brikke der, gir feilmelding ellers.
         Board bård = game.getCurrentBoard();
-        iPiece pie = bård.GetPiece(initpos);
+        iPiece pie = bård.getPiece(initpos);
         if(pie == null) throw new IllegalArgumentException("The piece is null, and has noe legal moves");
         for(Move move : pie.getMoves(bård)){
-            if(bård.CheckMoveLegality(move)) {
+            if(bård.checkMoveLegality(move)) {
                 int x;
                 int y;
                 if (!reverse) {
@@ -257,9 +256,9 @@ public class Gui extends JFrame {
                 if(!reverse) butt = chessBoardSquares[x][y];
                 else butt = chessBoardSquares[7-x][7-y];
 
-                if(bård.GetPiece(x, y) != null) {
+                if(bård.getPiece(x, y) != null) {
                     ImageIcon newIcon = new ImageIcon(); //Oppretter et nytt ikon
-                    newIcon.setImage(bård.GetPiece(x, y).getImage()); //Legger til et bilde på ikonet, hentet fra iPiece.getImage()
+                    newIcon.setImage(bård.getPiece(x, y).getImage()); //Legger til et bilde på ikonet, hentet fra iPiece.getImage()
                     butt.setIcon(newIcon);
                 }
                 //Legger til et nytt og blankt ikon.
@@ -271,7 +270,7 @@ public class Gui extends JFrame {
     public iPiece promotePawn(){
         //Lager et popup-vindu og spør hvilken brikke en spiller vil promotere til, og returnerer den brikken.
         //Tar utgangspunkt i at alle vil ha en dronning uansett.
-        WhiteBlack color = game.getCurrentBoard().GetColorToMove();
+        WhiteBlack color = game.getCurrentBoard().getColorToMove();
         int n = JOptionPane.showOptionDialog(this, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
         if(n == 1) return new Rook(color);

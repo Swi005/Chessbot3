@@ -42,7 +42,7 @@ public class Action extends KeyAdapter implements ActionListener {
     private void findSquare(ActionEvent e) {
         //Holder styr på hva som gjøres hver gang spilleren trykker på en rute på brettet.
         Board bård = game.getCurrentBoard();
-        WhiteBlack colorToMove = bård.GetColorToMove();
+        WhiteBlack colorToMove = bård.getColorToMove();
 
         //Looper igjennom alle knappene i listen til den finner den riktige.
         for(int x=0; x<8; x++){
@@ -52,7 +52,7 @@ public class Action extends KeyAdapter implements ActionListener {
                     if(!gui.reverse) pos = new Tuple(x, y);
                     else pos = new Tuple(7-x, 7-y);
 
-                    iPiece pressedPiece = bård.GetPiece(pos);
+                    iPiece pressedPiece = bård.getPiece(pos);
 
                     //Aktiveres når spilleren trykker på en av sine egne brikker.
                     if(pressedPiece != null && colorToMove == pressedPiece.getColor() && !game.isBotThinking()){
@@ -121,7 +121,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("paint")) gui.paintPieces(game.getCurrentBoard());
         else if(usertext.equals("reverse")) gui.reverse();
         else if(usertext.equals("bot")) game.botMove();
-        else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().GetScore());
+        else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().getScore());
         else if(usertext.equals("index")) game.printBoardIndex();
         else if(usertext.equals("start")) game.stop = false;
         else if(usertext.equals("stop")) game.stop = true;

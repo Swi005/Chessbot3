@@ -97,30 +97,30 @@ public class Board implements Comparable {
 
     //Lager en liste over nesten-lovlige trekk som kan gjøres akkurat nå.
     //Denne tar IKKE hensyn til om trekket setter kongen i sjakk.
-    public List<Move> GenMoves(){ return GenMoves(colorToMove); }
+    public List<Move> genMoves(){ return genMoves(colorToMove); }
 
-    public List<Move> GenMoves(WhiteBlack color){
+    public List<Move> genMoves(WhiteBlack color){
         //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå,
         //inkludert rokader og en passant.
         ArrayList<Move> ret = new ArrayList();
-        for(iPiece pie : GetPieceList(color)){
+        for(iPiece pie : getPieceList(color)){
             ret.addAll(pie.getMoves(this));
         }
         return ret;
     }
 
     //Returnerer en liste over helt lovlige trekk. Denne er mye mer kompleks enn GenMoves, og bør ikke brukes av botten.
-    public List<Move> GenCompletelyLegalMoves(){ return GenCompletelyLegalMoves(colorToMove); }
+    public List<Move> genCompletelyLegalMoves(){ return genCompletelyLegalMoves(colorToMove); }
 
     //Alternativ versjon, om du vil finne de teoritiske lovlige trekkene til en spesifikk farge,
     //selv om det ikke nødvendigvis er den sin tur.
-    public List<Move> GenCompletelyLegalMoves(WhiteBlack color){
+    public List<Move> genCompletelyLegalMoves(WhiteBlack color){
         List<Move> ret = new ArrayList<>();
-        for(Move move : GenMoves(color)) if(CheckMoveLegality(move)) ret.add(move);
+        for(Move move : genMoves(color)) if(checkMoveLegality(move)) ret.add(move);
         return ret;
     }
 
-    public Tuple<Integer, Integer> GetCoordsOfPiece(iPiece piece) throws IllegalArgumentException {
+    public Tuple<Integer, Integer> getCoordsOfPiece(iPiece piece) throws IllegalArgumentException {
         //Søker etter en brikke og returnerer koordinatene dens.
         //Kræsjer om den ikke finner den.
         for (int i = 0; i < grid.length; i++) {
@@ -132,7 +132,7 @@ public class Board implements Comparable {
         }
         throw new IllegalArgumentException("Fant ikke brikken!");
     }
-    public int GetValue(Move move){
+    public int getValue(Move move){
         //Regner ut den umiddelbare verdien av et trekk.
         //Denne gir høy score om du tar en brikke eller flytter til en bedre posisjon,
         //og lav score om du flytter til en dårligere posisjon.
@@ -140,12 +140,11 @@ public class Board implements Comparable {
         //mener denne funksjonen fortsatt at det er et bra trekk.
 
         //Gir score for å flytte til en bedre posisjon.
-        iPiece pie = GetPiece(move.getX());
-        if(pie == null) System.out.println("null");
+        iPiece pie = getPiece(move.getX());
         int ret = pie.getValueAt(move.getY()) - pie.getValueAt(move.getX());
 
         //Gir score for å ta en brikke på normalt vis.
-        iPiece target = GetPiece(move.getY());
+        iPiece target = getPiece(move.getY());
         if(target != null) ret += target.getCombinedValue(move.getY());
 
         //Gir score for å ta en passant.
@@ -157,15 +156,15 @@ public class Board implements Comparable {
         else return -ret;
     }
 
-    private void AddScore(int x){
+    private void addScore(int x){
         //Legger til score.
         //Holder selv styr på hvem sin tur det er, og dermed også om den skal legge til eller trekke fra score.
         if(colorToMove == WHITE) score += x;
         else score -= x;
     }
-    public void MovePiece(Move move){ MovePiece(move, false); }
+    public void movePiece(Move move){ movePiece(move, false); }
 
-    public void MovePiece(Move move, Boolean isHumanPlayer) {
+    public void movePiece(Move move, Boolean isHumanPlayer) {
         //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
         //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med CheckPlayerMove/GenMoves.
         //Om isHumanPlayer=true, og trekket er at en bonde blir flyttet til enden av brettet,
@@ -174,8 +173,8 @@ public class Board implements Comparable {
 
         Tuple<Integer, Integer> fra = move.getX();
         Tuple<Integer, Integer> til = move.getY();
-        iPiece pie = GetPiece(fra);
-        iPiece target = GetPiece(til);
+        iPiece pie = getPiece(fra);
+        iPiece target = getPiece(til);
 
         //Oppdaterer rokadebetingelser
         //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
@@ -192,19 +191,19 @@ public class Board implements Comparable {
         if(pie instanceof King){
             iPiece tempRook = new Rook(pie.getColor()); //Et midldertidig tårn kun for å regne ut verdien av å flytte et tårn når kongen rokererer.
             if(fra.equals(E1) && til.equals(G1)){
-                AddScore(tempRook.getValueAt(5, 7) - tempRook.getValueAt(7, 7));
+                addScore(tempRook.getValueAt(5, 7) - tempRook.getValueAt(7, 7));
                 grid[5][7] = grid[7][7]; //Flytter tårnet når hvit rokerer kort.
                 grid[7][7] = null;
             }else if(fra.equals(E1) && til.equals(C1)){
-                AddScore(tempRook.getValueAt(3, 7) - tempRook.getValueAt(0, 7));
+                addScore(tempRook.getValueAt(3, 7) - tempRook.getValueAt(0, 7));
                 grid[3][7] = grid[0][7]; //Flytter tårnet når hvit rokerer langt.
                 grid[0][7] = null;
             }else if(fra.equals(E8) && til.equals(G8)){
-                AddScore(tempRook.getValueAt(5, 0) - tempRook.getValueAt(7, 0));
+                addScore(tempRook.getValueAt(5, 0) - tempRook.getValueAt(7, 0));
                 grid[5][0] = grid[7][0]; //Flytter tårnet når svart rokerer kort.
                 grid[7][0] = null;
             }else if(fra.equals(E8) && til.equals(C8)){
-                AddScore(tempRook.getValueAt(3, 0) - tempRook.getValueAt(0, 0));
+                addScore(tempRook.getValueAt(3, 0) - tempRook.getValueAt(0, 0));
                 grid[3][0] = grid[0][0]; //Flytter tårnet når svart rokerer langt.
                 grid[0][0] = null;
             }
@@ -223,7 +222,7 @@ public class Board implements Comparable {
             if(til.getY() == 2) tempPos = new Tuple(til.getX(), 3);
             else tempPos = new Tuple(til.getX(), 4);
 
-            AddScore(GetPiece(tempPos).getCombinedValue(tempPos)); //Legger til score for den drepte brikken.
+            addScore(getPiece(tempPos).getCombinedValue(tempPos)); //Legger til score for den drepte brikken.
             grid[tempPos.getX()][tempPos.getY()] = null; //Dreper faktisk brikken.
         }
         //oppdaterer passantbetingelser.
@@ -237,35 +236,38 @@ public class Board implements Comparable {
             else if(til.getY() == 0 || til.getY() == 7){
                 if(!isHumanPlayer) grid[til.getX()][til.getY()] = new Queen(pie.getColor()); //Botten får alltid en dronning.
                 else grid[til.getX()][til.getY()] = gui.promotePawn(); //Lager et popup-vindu for å promotere.
-                AddScore(GetPiece(til).getCombinedValue(til)); //Legger til bonusscore for å få en ny brikke.
+                addScore(getPiece(til).getCombinedValue(til)); //Legger til bonusscore for å få en ny brikke.
             }
         }
         //Legger til score for å flytte til en bedre posisjon.
-        AddScore(pie.getValueAt(til)-pie.getValueAt(fra));
+        addScore(pie.getValueAt(til)-pie.getValueAt(fra));
 
         //Legger til score når du tar en brikke.
-        if(target != null) AddScore(target.getCombinedValue(til));
+        if(target != null) addScore(target.getCombinedValue(til));
 
         //Bytter farge på hvem sin tur det er.
-        colorToMove = GetOppositeColor(colorToMove);
+        colorToMove = getOppositeColor(colorToMove);
     }
 
-    public Boolean CheckMoveLegality(Move playerMove) {
+    public Boolean checkMoveLegality(Move playerMove) {
         //Sjekker om spillerens trekk er lovlig.
         // Tar hensyn til om trekket setter seg selv i sjakk.
         // Returnerer true om det er lov.
         boolean ret = false;
-        for (Move move : GenMoves(GetColorToMove())) if (move.equals(playerMove)) ret = true;
+        for (Move move : genMoves(getColorToMove())) if (move.equals(playerMove)){
+            ret = true;
+            break;
+        }
 
         //Om spillerens trekk er på listen, er det kanskje lovlig.
         //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
         //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
-        //Da er trekket ulovlig, og returnerer false;
+        //Da er trekket ulovlig, og returnerer false
         if(ret) {
-            Board copy = this.Copy();
-            copy.MovePiece(playerMove, false);
-            for (Move counter : copy.GenMoves(GetOppositeColorToMove())) {
-                iPiece target = copy.GetGrid()[counter.getY().getX()][counter.getY().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
+            Board copy = this.copy();
+            copy.movePiece(playerMove, false);
+            for (Move counter : copy.genMoves(getOppositeColorToMove())) {
+                iPiece target = copy.getGrid()[counter.getY().getX()][counter.getY().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
                 if (target instanceof King) return false; //Om motstanderen kan ta kongen.
             }
             return true; //Om motstanderen ikke har noen trekk som kan ta kongen
@@ -273,13 +275,13 @@ public class Board implements Comparable {
         return false; //Om trekket ikke engang er på den originale listen.
     }
 
-    public Boolean CheckCheckMate(){
+    public Boolean checkCheckMate(){
         //Sjekker om brettet er sjakkmatt.
         //Returnerer true om det matt, null om det er patt (uavgjort) og false ellers.
-        List<Move> legals = GenCompletelyLegalMoves();
+        List<Move> legals = genCompletelyLegalMoves();
         if(legals.size()>0) return false; //Om spilleren har lovlige trekk.
         else{
-            for(Move move : GenMoves(GetOppositeColorToMove())){
+            for(Move move : genMoves(getOppositeColorToMove())){
                 iPiece target = grid[move.getY().getX()][move.getY().getY()];
                 if(target instanceof King) return true; //Om spilleren ikke har noen lovlige trekk, og kongen blir truet.
             }
@@ -287,9 +289,9 @@ public class Board implements Comparable {
         }
     }
     //Returnerer score. positivt er bra for hvit, negativt er bra for svart.
-    public Integer GetScore() { return score; }
+    public Integer getScore() { return score; }
 
-    public iPiece[][] GetGrid()
+    public iPiece[][] getGrid()
     {
         //Returnerer en kopi av selve rutenettet av brikker.
         iPiece[][] retgrid = new iPiece[8][8];
@@ -301,19 +303,19 @@ public class Board implements Comparable {
         return retgrid;
     }
 
-    public Board Copy()
+    public Board copy()
     {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.GetGrid(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
+        return new Board(this.getGrid(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
     }
 
     //Returnerer hvilken farge som skal flytte.
-    public WhiteBlack GetColorToMove(){ return colorToMove; }
+    public WhiteBlack getColorToMove(){ return colorToMove; }
 
     //Returnerer den andre fargen, den fargen som ikke skal flytte.
-    public WhiteBlack GetOppositeColorToMove(){ return GetOppositeColor(colorToMove); }
+    public WhiteBlack getOppositeColorToMove(){ return getOppositeColor(colorToMove); }
     
-    public static WhiteBlack GetOppositeColor(WhiteBlack c){
+    public static WhiteBlack getOppositeColor(WhiteBlack c){
         //Tar en farge, og returnerer den andre fargen.
         //Dette er litt det samme som å sette et ikke-tegn foran en farge.
         if(c == WHITE) return BLACK;
@@ -321,9 +323,9 @@ public class Board implements Comparable {
     }
     //Returnerer en liste over brikker som tilhører den som skal flytte.
     //Nyttig for å generere trekk.
-    public List<iPiece> GetPieceList(){ return GetPieceList(colorToMove); }
+    public List<iPiece> getPieceList(){ return getPieceList(colorToMove); }
 
-    public List<iPiece> GetPieceList(WhiteBlack c){
+    public List<iPiece> getPieceList(WhiteBlack c){
         //Lager en liste over alle brikkene til en spesifikk farge.
         List<iPiece> ret = new ArrayList<>();
         for(int y=0; y<8; y++){
@@ -334,23 +336,23 @@ public class Board implements Comparable {
         }
         return ret;
     }
-    public Tuple<Boolean, Boolean> GetWhiteCastle(){ return wCastle; }
+    public Tuple<Boolean, Boolean> getWhiteCastle(){ return wCastle; }
 
-    public Tuple<Boolean, Boolean> GetBlackCastle(){ return bCastle; }
+    public Tuple<Boolean, Boolean> getBlackCastle(){ return bCastle; }
 
     //Returnerer posisjonen hvor det er greit å ta en passant.
-    public Tuple<Integer, Integer> GetPassantPos(){ return passantPos; }
+    public Tuple<Integer, Integer> getPassantPos(){ return passantPos; }
 
     //Returnerer hvilke brikke som befinner seg i en posisjon.
-    public iPiece GetPiece(Tuple<Integer, Integer> pos) { return grid[pos.getX()][pos.getY()]; }
+    public iPiece getPiece(Tuple<Integer, Integer> pos) { return grid[pos.getX()][pos.getY()]; }
 
     //Samme som over, men med x,y-koordinater istedet.
-    public iPiece GetPiece(int x, int y){ return grid[x][y]; }
+    public iPiece getPiece(int x, int y){ return grid[x][y]; }
 
     //Sammenligner brett med hensyn på score.
     //Om botten skal sortere brett etter verdi må den være klar over om den skal sortere baklengs eller ikke,
     //avhengig av fargen den spiller som.
-    public int compareTo(Object other){ return this.GetScore().compareTo(((Board) other).GetScore()); }
+    public int compareTo(Object other){ return this.getScore().compareTo(((Board) other).getScore()); }
 
     @Override
     public String toString(){
@@ -359,7 +361,7 @@ public class Board implements Comparable {
         for(int y=0; y<8; y++){
             String rekke = "";
             for(int x=0; x<8; x++){
-                iPiece pie = GetPiece(x, y);
+                iPiece pie = getPiece(x, y);
                 if(pie == null) rekke += "."; // TODO: 08.04.2020 Fiks lowercase her etter at symbol/image er oppdatert for alle brikker
                 else if(pie.isWhite()) rekke += pie.getSymbol();
                 else rekke += Character.toLowerCase(pie.getSymbol());

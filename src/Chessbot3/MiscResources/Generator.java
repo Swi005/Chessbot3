@@ -57,7 +57,7 @@ public class Generator {
         ret.put('N', new Integer[][]{
             new Integer[] {-66, -53, -75, -75, -10, -55, -58, -70},
             new Integer[] { -3,  -6, 100, -36,   4,  62,  -4, -14},
-            new Integer[] {10,  67,   1,  74,  73,  27,  62,  -2},
+            new Integer[] {1,  67,   10,  74,  73,  27,  62,  -2},
             new Integer[] {24,  24,  45,  37,  33,  41,  25,  17},
             new Integer[] {-1,   5,  31,  21,  22,  35,   2,   0},
             new Integer[] {-18,  10,  13,  22,  18,  15,  11, -14},
