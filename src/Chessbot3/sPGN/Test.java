@@ -1,6 +1,5 @@
-package Chessbot3.LookupTable;
+package Chessbot3.sPGN;
 
-import Chessbot3.GuiMain.Action;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 
