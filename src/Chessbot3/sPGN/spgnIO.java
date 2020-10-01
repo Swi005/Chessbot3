@@ -28,7 +28,7 @@ public class spgnIO implements IspgnIO {
             return moves.toArray(new Move[]{});
         } catch (IOException e) {
             gui.displayPopupMessage("An error occured when attempting to read file: " + file.toString());
-            //System.out.println("An error occured while attempting to read file: " + file.toString());
+            System.out.println("An error occured while attempting to read file: " + file.toString());
             e.printStackTrace();
             return null;
         }

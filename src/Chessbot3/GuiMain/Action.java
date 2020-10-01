@@ -38,6 +38,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(e.getSource() == neww) game.newGame();
         else if(e.getSource() == botstop) game.pauseTheBot();
         else if(e.getSource() == openMenu) gui.openMenu();
+        else if(e.getSource() == load) gui.loadGame(); // TODO: 01.10.2020 Denne må omskrives
         else findSquare(e);
     }
 
@@ -130,6 +131,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("pause")) game.pauseTheBot();
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
         else if(usertext.equals("value")) game.testGetValue();
+        else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if(isAMove(usertext)) game.playerMove(parse(usertext));

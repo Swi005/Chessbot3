@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
@@ -30,7 +31,7 @@ public class Gui extends JFrame {
     protected static JDialog menu;
 
     //Selve partiet.
-    protected static Game game;
+    protected static Game game = new Game();
 
     //Om brettet er rotert eller ikke.
     protected static Boolean reverse = false;
@@ -65,7 +66,7 @@ public class Gui extends JFrame {
     public Gui(){
         //Gui er egentlig en ramme.
         //Oppå denne rammen skal vi legge til alt det andre.
-        game = new Game();
+        File test3 = new File("src\\Chessbot3\\files\\test3.txt");
         setTitle("Chessbot3");
         add(initializeGUI()); //Her legger vi til alle knappene og rutenettet.
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -93,7 +94,7 @@ public class Gui extends JFrame {
         //Oppretter tekstfeltet nederst.
         JToolBar ret = new JToolBar();
         JTextField text = new JTextField(20);
-        textField = text; //Tekstfeltet støtter kun juksekoder, en komplett liste finnes i Action.enter().
+        textField = text; //Tekstfeltet støtter juksekoder, en komplett liste finnes i Action.enter().
         textField.addKeyListener(new Action());
         ret.add(text);
         ret.add(enter);
@@ -310,4 +311,9 @@ public class Gui extends JFrame {
     public void closeMenu(){
         menu.setVisible(false);
     }
+
+    public void loadGame(){
+        game = new Game(new File("src\\Chessbot3\\files\\test.spgn"));
+    }
+
 }

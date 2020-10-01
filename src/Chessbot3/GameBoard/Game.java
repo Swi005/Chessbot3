@@ -5,7 +5,10 @@ import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Simulators.AlphaBota;
 import Chessbot3.Simulators.Randbot;
+import Chessbot3.Simulators.Tempbot;
+import Chessbot3.sPGN.spgnIO;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +47,19 @@ public class Game {
         previousBoards.add(currentBoard.copy());
     }
 
+    public Game(File savedGame){
+        //Oppretter et nytt game, basert på en fil.
+        currentBoard = new Board();
+        previousBoards.add(currentBoard.copy());
+        spgnIO spgn = new spgnIO();
+        for(Move move : spgn.ReadMovesFromFile(savedGame)){
+            playerMove(move);
+        }
+    }
+
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
+        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1)delta = 2;
         else delta = 1;
@@ -61,6 +75,7 @@ public class Game {
     public void goForward(){
         //Går fremover igjen ett trekk, og angrer på anringen til goBack().
         //Om du spiller mot botten går den frem to trekk.
+        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1) delta = 2;
         else delta = 1;
@@ -74,7 +89,6 @@ public class Game {
     }
 
     public void newGame(){
-        System.out.println("starter nytt");
         //Starter et nytt parti.
         stop = true; //Ber botten om stoppe, om den gjør noe.
         previousBoards.clear();
@@ -94,7 +108,7 @@ public class Game {
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
-            Move move = Randbot.findMove(currentBoard);
+            Move move = Tempbot.findMove(currentBoard);
             if (stop){
                 isBotThinking = false;
                 return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.

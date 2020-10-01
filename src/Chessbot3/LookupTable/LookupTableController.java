@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static Chessbot3.GuiMain.Chess.gui;
+
 public class LookupTableController //Give it an interface maybe?
 {
     private List<Ispgn> openingTables;
@@ -34,7 +36,8 @@ public class LookupTableController //Give it an interface maybe?
         }
         else
         {
-            System.out.println("Error the given file path does not lead to the correct place");
+            gui.displayPopupMessage("Error: the given file path does not lead to the correct place");
+            //System.out.println("Error the given file path does not lead to the correct place");
         }
     }
 
