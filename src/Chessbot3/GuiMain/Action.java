@@ -30,12 +30,14 @@ public class Action extends KeyAdapter implements ActionListener {
         //Hver gang du trykker på en virtuell knapp(inkludert knappene i rutenettet) blir denne kalt opp.
         //Den forsøker å finne knappen og handle deretter.
         gui.removeErrorsFromTextField();
+        gui.closeMenu();
         if(e.getSource() == quit) System.exit(0);
         else if(e.getSource() == enter) enter();
         else if(e.getSource() == back) game.goBack();
         else if(e.getSource() == forward) game.goForward();
         else if(e.getSource() == neww) game.newGame();
         else if(e.getSource() == botstop) game.pauseTheBot();
+        else if(e.getSource() == openMenu) gui.openMenu();
         else findSquare(e);
     }
 

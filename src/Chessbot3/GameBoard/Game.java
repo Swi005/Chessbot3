@@ -4,6 +4,7 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Simulators.AlphaBota;
+import Chessbot3.Simulators.Randbot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,7 @@ public class Game {
     }
 
     public void newGame(){
+        System.out.println("starter nytt");
         //Starter et nytt parti.
         stop = true; //Ber botten om stoppe, om den gjør noe.
         previousBoards.clear();
@@ -92,7 +94,7 @@ public class Game {
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
-            Move move = AlphaBota.findMove(currentBoard);
+            Move move = Randbot.findMove(currentBoard);
             if (stop){
                 isBotThinking = false;
                 return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
