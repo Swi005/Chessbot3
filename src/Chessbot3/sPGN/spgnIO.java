@@ -6,6 +6,8 @@ import Chessbot3.MiscResources.Move;
 import java.io.*;
 import java.util.*;
 
+import static Chessbot3.GuiMain.Chess.gui;
+
 public class spgnIO implements IspgnIO {
     @Override
     public Move[] ReadMovesFromFile(File file) {
@@ -25,7 +27,8 @@ public class spgnIO implements IspgnIO {
             }
             return moves.toArray(new Move[]{});
         } catch (IOException e) {
-            System.out.println("An error occured while attempting to read file: " + file.toString());
+            gui.displayPopupMessage("An error occured when attempting to read file: " + file.toString());
+            //System.out.println("An error occured while attempting to read file: " + file.toString());
             e.printStackTrace();
             return null;
         }
@@ -52,10 +55,12 @@ public class spgnIO implements IspgnIO {
                 }
             }
         } catch (IOException e) {
-            System.out.println("An error occured while attempting to read file: " + file.toString());
+            gui.displayPopupMessage("An error occured while attempting to read file: " + file.toString());
+            //System.out.println("An error occured while attempting to read file: " + file.toString());
             e.printStackTrace();
         }
-        System.out.println("Could not find field with name: " + name);
+        gui.displayPopupMessage("Error: could not find field with the name " + name);
+        //System.out.println("Could not find field with name: " + name);
         return 0;
     }
 
@@ -88,7 +93,8 @@ public class spgnIO implements IspgnIO {
             writer.write(lineNm + "." + moveString + "\n");
             writer.close();
         } catch (IOException e) {
-            System.out.println("While writing to file: " + file.toString() + " an error occured.");
+            gui.displayPopupMessage("An error occured when attempting to write to " + file.toString());
+            //System.out.println("While writing to file: " + file.toString() + " an error occured.");
             e.printStackTrace();
         }
     }
@@ -129,7 +135,8 @@ public class spgnIO implements IspgnIO {
             }
             writer.close();
         } catch (IOException e) {
-            System.out.println("While writing to file: " + file.toString() + " an error occured.");
+            gui.displayPopupMessage("An error occured when attempting to write to " +file.toString());
+            //System.out.println("While writing to file: " + file.toString() + " an error occured.");
             e.printStackTrace();
         }
     }
