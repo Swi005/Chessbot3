@@ -305,15 +305,22 @@ public class Gui extends JFrame {
     }
 
     public void openMenu() {
+        //Åpner menyen.
         menu.setVisible(true);
     }
 
     public void closeMenu(){
+        //Lukker menyen.
         menu.setVisible(false);
     }
 
     public void loadGame(){
+        // TODO: 01.10.2020 Her bør brukeren få en meny med alle partier som er lagret. 
         game = new Game(new File("src\\Chessbot3\\files\\test.spgn"));
+    }
+    
+    public void saveGame(){
+        // TODO: 01.10.2020  
     }
 
 }

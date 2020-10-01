@@ -39,6 +39,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(e.getSource() == botstop) game.pauseTheBot();
         else if(e.getSource() == openMenu) gui.openMenu();
         else if(e.getSource() == load) gui.loadGame(); // TODO: 01.10.2020 Denne må omskrives
+        else if(e.getSource() == save) gui.displayPopupMessage("This does nothing.");
         else findSquare(e);
     }
 

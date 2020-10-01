@@ -111,7 +111,7 @@ public class Game {
             Move move = Tempbot.findMove(currentBoard);
             if (stop){
                 isBotThinking = false;
-                return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
+                return; //Om noen annet har skjedd mens botten tenkte skal den ikke gjøre trekket.
             }
             currentBoard.movePiece(move, false);
 
@@ -195,6 +195,12 @@ public class Game {
 
     //Returnerer det nåværende brettet.
     public Board getCurrentBoard(){ return currentBoard; }
+
+    //Returner listen over trekk som har blitt gjort så langt.
+    public List<Move> getMadeMoves(){ return madeMoves; }
+
+    //Returnerer listen over farger som botten styrer. Vanligivs kun 1 farge.
+    public List<WhiteBlack> getBotColors(){ return bots; }
 
     //Printer hvilken farge som skal flytte.
     public void printTurn() { System.out.println(currentBoard.getColorToMove() + " to move"); }
