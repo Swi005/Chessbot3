@@ -31,7 +31,7 @@ public class Gui extends JFrame {
     protected static JDialog menu;
 
     //Selve partiet.
-    protected static Game game = new Game();
+    public static Game game = new Game();
 
     //Om brettet er rotert eller ikke.
     protected static Boolean reverse = false;
@@ -105,9 +105,8 @@ public class Gui extends JFrame {
     private JToolBar makeTopToolbar(){
         //Oppretter toolbaren øverst på skjermen, den med alle knappene.
         JToolBar ret = new JToolBar();
-        ret.add(quit);
-        ret.add(neww);
         ret.add(openMenu);
+        ret.addSeparator();
         ret.add(back);
         ret.add(forward);
         ret.addSeparator();

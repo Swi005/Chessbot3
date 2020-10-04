@@ -4,6 +4,7 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Simulators.AlphaBota;
+import Chessbot3.Simulators.MiniMaxBot;
 import Chessbot3.Simulators.Randbot;
 import Chessbot3.Simulators.Tempbot;
 import Chessbot3.sPGN.spgnIO;
@@ -59,9 +60,10 @@ public class Game {
 
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
+        stop = true;
         gui.makeButtonsGrey();
         int delta;
-        if(bots.size() == 1)delta = 2;
+        if(bots.size() == 1 && !isBotThinking)delta = 2;
         else delta = 1;
 
         if(boardIndex - delta >= 0){
@@ -75,6 +77,7 @@ public class Game {
     public void goForward(){
         //Går fremover igjen ett trekk, og angrer på anringen til goBack().
         //Om du spiller mot botten går den frem to trekk.
+        stop = true;
         gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1) delta = 2;
@@ -108,7 +111,7 @@ public class Game {
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
-            Move move = Tempbot.findMove(currentBoard);
+            Move move = AlphaBota.findMove(currentBoard);                       // TODO: 04.10.2020 Endre på denne linjen om du vil bytte ut botten!
             if (stop){
                 isBotThinking = false;
                 return; //Om noen annet har skjedd mens botten tenkte skal den ikke gjøre trekket.
@@ -139,6 +142,7 @@ public class Game {
         //Oppdaterer også Gui.
         if(isBotThinking) return false;
         if(currentBoard.checkMoveLegality(move)) {
+            stop = false;
             currentBoard.movePiece(move, true);
 
             previousBoards = previousBoards.subList(0, boardIndex+1);

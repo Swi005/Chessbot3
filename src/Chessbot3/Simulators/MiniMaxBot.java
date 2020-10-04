@@ -3,15 +3,13 @@ package Chessbot3.Simulators;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
-import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.util.Collections;
 import java.util.List;
 
-import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
-public class AlphaBota {
+public class MiniMaxBot {
 
     static int plies = 4;
 
@@ -50,6 +48,30 @@ public class AlphaBota {
         return possibles.get(0);
     }
 
+
+    private static int minimax(Board bård, int depth, boolean isMaximizing){
+        if(depth == 0) return bård.getScore();
+
+        if(isMaximizing){
+            int value = -2147483648;
+            for(Move move : bård.genMoves()){
+                Board copy = bård.copy();
+                copy.movePiece(move);
+                value = Math.max(value, minimax(copy, depth-1, false));
+            }
+            return value;
+        }
+        else{
+            int value = 2147483647;
+            for(Move move : bård.genMoves()){
+                Board copy = bård.copy();
+                copy.movePiece(move);
+                value = Math.min(value, minimax(copy, depth-1, true));
+            }
+            return value;
+        }
+    }
+
     private static int alphaBeta(Board bård, int depth, int alpha, int beta, boolean isMaximizing){
         if(depth == 0) return bård.getScore();
 
@@ -76,4 +98,5 @@ public class AlphaBota {
             return value;
         }
     }
+
 }
