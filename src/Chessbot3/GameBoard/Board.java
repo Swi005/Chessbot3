@@ -6,7 +6,9 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 import static java.lang.StrictMath.abs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
@@ -149,8 +151,6 @@ public class Board implements Comparable {
 
         //Gir score for å ta en passant.
         if(move.getY() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien av å ta den brikken.
-
-        // TODO: 31.03.2020 Legg til rokadepoeng
 
         if(colorToMove == WHITE) return ret;
         else return -ret;
@@ -355,6 +355,33 @@ public class Board implements Comparable {
     public int compareTo(Object other){ return this.getScore().compareTo(((Board) other).getScore()); }
 
     @Override
+    public boolean equals(Object obj){
+        Board other = (Board) obj;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+
+                iPiece one = this.grid[i][j];
+                iPiece two = other.grid[i][j];
+
+                if(one == null || two == null){
+                    if(one == two) continue;
+                    else return false;
+                }
+                if(!one.equals(two)) return false;
+            }
+        }
+        if(!this.wCastle.equals(other.wCastle) || !this.bCastle.equals(other.bCastle)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode(){
+        int result = Arrays.deepHashCode(grid);
+        result = 31 * result + Objects.hash(colorToMove);
+        return result;
+    }
+
+    @Override
     public String toString(){
         //Lager en streng av brettet, og printer score nederst.
         String ret = "";
@@ -362,7 +389,7 @@ public class Board implements Comparable {
             String rekke = "";
             for(int x=0; x<8; x++){
                 iPiece pie = getPiece(x, y);
-                if(pie == null) rekke += "."; // TODO: 08.04.2020 Fiks lowercase her etter at symbol/image er oppdatert for alle brikker
+                if(pie == null) rekke += ".";
                 else if(pie.isWhite()) rekke += pie.getSymbol();
                 else rekke += Character.toLowerCase(pie.getSymbol());
                 rekke += "";

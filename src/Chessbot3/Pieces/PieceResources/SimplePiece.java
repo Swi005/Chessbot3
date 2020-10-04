@@ -6,6 +6,7 @@ import Chessbot3.MiscResources.Tuple;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static Chessbot3.GuiMain.Chess.*;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
@@ -58,6 +59,14 @@ public abstract class SimplePiece implements iPiece {
         if(color == WHITE) return posValueDict.get(symbol)[pos.getY()][pos.getX()];
         else return posValueDict.get(symbol)[7-pos.getY()][7-pos.getX()];
     }
+
+    public boolean equals(Object obj){
+        return this.getClass() == obj.getClass() && (this.getColor() == ((SimplePiece) obj).getColor());
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(color, getClass()); }
+
 
     public ArrayList<Move> getMoves(Board bård){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå.

@@ -13,13 +13,17 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class AlphaBota {
 
-    static int plies = 4;
+    static int plies = 5;
 
     public static Move findMove(Board bård){
         List<Move> possibles = bård.genCompletelyLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
 
+        //Regner ut den umiddelbare verdien til hvert trekk, slik at alfabeta kan starte med en nesten sortert liste
+        for(Move move : possibles) move.setWeight(bård.getValue(move));
+
         if(bård.getColorToMove() == WHITE){
+            Collections.sort(possibles, Collections.reverseOrder());
             for(Move move : possibles){
                 if(Gui.game.stop) throw new IllegalStateException();   //Botten ble avbrutt
 
@@ -34,6 +38,7 @@ public class AlphaBota {
             Collections.sort(possibles, Collections.reverseOrder());
         }
         else{
+            Collections.sort(possibles);
             for(Move move : possibles){
                 if(Gui.game.stop) throw new IllegalStateException();   //Botten ble avbrutt
 
