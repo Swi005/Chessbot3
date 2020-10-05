@@ -29,9 +29,9 @@ public class spgn implements Ispgn
         this.moves = moves;
 
         if(type == 0)
-            path = "Chessbot3/src/Chessbot3/files/saves/" + "save:"+ new Date().toString();//TODO: Find out a naming scheme
+            path = "Chessbot3/src/Chessbot3/files/saves/" + name;//TODO: Find out a naming scheme
         else if(type == 1)
-            path = "Chessbot3/src/Chessbot3/files/lookuptables/"+ "lookup:"+ new Date().toString();//TODO: Find out a naming scheme
+            path = "Chessbot3/src/Chessbot3/files/lookuptables/"+ "lookup:" + name;//TODO: Find out a naming scheme
     }
 
     //Constructor for retriving a file as an spgn
