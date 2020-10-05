@@ -119,8 +119,8 @@ public class spgnIO implements IspgnIO {
             file.createNewFile();
             FileWriter writer = new FileWriter(file, true);
 
-            writer.write("[MODE" + type + "] \n");
-            writer.write("[SCORE  " + score + "] \n");
+            writer.write("[TYPE " + type + "] \n");
+            writer.write("[SCORE " + score + "] \n");
             writer.write("[PVP " + pvp + "] \n");
             writer.write("[NAME " + name + "] \n");
             if(bot == WhiteBlack.BLACK)

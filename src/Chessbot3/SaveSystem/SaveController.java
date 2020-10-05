@@ -11,8 +11,7 @@ import java.io.IOException;
 
 public class SaveController
 {
-    String pathToSaves1 = "/src/Chessbot3/files/Chessbot3/files/saves";
-    String pathToSaves = "Chessbot3\\src\\Chessbot3\\files\\saves";
+    String pathToSaves = "C:\\Users\\Sande\\Documents\\INF101\\Chessbot3\\src\\Chessbot3\\files\\saves";
     spgnIO io = new spgnIO();
     public SaveController() {};
 

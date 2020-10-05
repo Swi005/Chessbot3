@@ -65,7 +65,7 @@ public class Move implements Comparable
         int radfra = 8-from.getY();
         char rekketil = chars2.charAt(to.getX());
         int radtil = 8-to.getY();
-        return  rekkefra+ (char)radfra + ":" + rekketil+ (char)radtil;
+        return  ""+rekkefra +""+ radfra + ":" + rekketil + "" + ""+radtil;
     }
 
 }
