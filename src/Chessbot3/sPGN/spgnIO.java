@@ -95,11 +95,18 @@ public class spgnIO implements IspgnIO {
 
     @Override
     public boolean WriteSPGNtoFile(Ispgn spgn, File file) {
-        return false;
+        try{
+            this.WriteToFile(spgn.GetScore(), spgn.GetType(), spgn.GetAllMoves(), file);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
     @Override
-    public void WriteToFile(int score, int type, Collection<Move> moves, File file) {
+    public void WriteToFile(int score, int type, Move[] moves, File file) {
         try {
             file.createNewFile();
             FileWriter writer = new FileWriter(file, true);

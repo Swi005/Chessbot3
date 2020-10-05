@@ -40,4 +40,9 @@ public interface Ispgn
      * @return - patht to where the file is stored
      */
     String GetPathToFile();
+    /**Get name of spgn
+     *
+     * @return - name of file
+     */
+    String GetName();
 }
