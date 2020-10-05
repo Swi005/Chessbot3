@@ -4,7 +4,12 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Simulators.AlphaBota;
+import Chessbot3.Simulators.MiniMaxBot;
+import Chessbot3.Simulators.Randbot;
+import Chessbot3.Simulators.Tempbot;
+import Chessbot3.sPGN.spgnIO;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +48,22 @@ public class Game {
         previousBoards.add(currentBoard.copy());
     }
 
+    public Game(File savedGame){
+        //Oppretter et nytt game, basert på en fil.
+        currentBoard = new Board();
+        previousBoards.add(currentBoard.copy());
+        spgnIO spgn = new spgnIO();
+        for(Move move : spgn.ReadMovesFromFile(savedGame)){
+            playerMove(move);
+        }
+    }
+
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
+        stop = true;
+        gui.makeButtonsGrey();
         int delta;
-        if(bots.size() == 1)delta = 2;
+        if(bots.size() == 1 && !isBotThinking)delta = 2;
         else delta = 1;
 
         if(boardIndex - delta >= 0){
@@ -60,6 +77,8 @@ public class Game {
     public void goForward(){
         //Går fremover igjen ett trekk, og angrer på anringen til goBack().
         //Om du spiller mot botten går den frem to trekk.
+        stop = true;
+        gui.makeButtonsGrey();
         int delta;
         if(bots.size() == 1) delta = 2;
         else delta = 1;
@@ -92,10 +111,10 @@ public class Game {
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
-            Move move = AlphaBota.findMove(currentBoard);
+            Move move = AlphaBota.findMove(currentBoard);                       // TODO: 04.10.2020 Endre på denne linjen om du vil bytte ut botten!
             if (stop){
                 isBotThinking = false;
-                return; //Om noen har trykket på new mens botten tenkte, da skal den ikke gjøre trekket.
+                return; //Om noen annet har skjedd mens botten tenkte skal den ikke gjøre trekket.
             }
             currentBoard.movePiece(move, false);
 
@@ -123,6 +142,7 @@ public class Game {
         //Oppdaterer også Gui.
         if(isBotThinking) return false;
         if(currentBoard.checkMoveLegality(move)) {
+            stop = false;
             currentBoard.movePiece(move, true);
 
             previousBoards = previousBoards.subList(0, boardIndex+1);
@@ -179,6 +199,12 @@ public class Game {
 
     //Returnerer det nåværende brettet.
     public Board getCurrentBoard(){ return currentBoard; }
+
+    //Returner listen over trekk som har blitt gjort så langt.
+    public List<Move> getMadeMoves(){ return madeMoves; }
+
+    //Returnerer listen over farger som botten styrer. Vanligivs kun 1 farge.
+    public List<WhiteBlack> getBotColors(){ return bots; }
 
     //Printer hvilken farge som skal flytte.
     public void printTurn() { System.out.println(currentBoard.getColorToMove() + " to move"); }

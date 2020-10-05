@@ -3,27 +3,21 @@ package Chessbot3.Simulators;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
-import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.util.Collections;
 import java.util.List;
 
-import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
-public class AlphaBota {
+public class MiniMaxBot {
 
-    static int plies = 5;
+    static int plies = 4;
 
     public static Move findMove(Board bård){
         List<Move> possibles = bård.genCompletelyLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
 
-        //Regner ut den umiddelbare verdien til hvert trekk, slik at alfabeta kan starte med en nesten sortert liste
-        for(Move move : possibles) move.setWeight(bård.getValue(move));
-
         if(bård.getColorToMove() == WHITE){
-            Collections.sort(possibles, Collections.reverseOrder());
             for(Move move : possibles){
                 if(Gui.game.stop) throw new IllegalStateException();   //Botten ble avbrutt
 
@@ -38,7 +32,6 @@ public class AlphaBota {
             Collections.sort(possibles, Collections.reverseOrder());
         }
         else{
-            Collections.sort(possibles);
             for(Move move : possibles){
                 if(Gui.game.stop) throw new IllegalStateException();   //Botten ble avbrutt
 
@@ -53,6 +46,30 @@ public class AlphaBota {
             Collections.sort(possibles);
         }
         return possibles.get(0);
+    }
+
+
+    private static int minimax(Board bård, int depth, boolean isMaximizing){
+        if(depth == 0) return bård.getScore();
+
+        if(isMaximizing){
+            int value = -2147483648;
+            for(Move move : bård.genMoves()){
+                Board copy = bård.copy();
+                copy.movePiece(move);
+                value = Math.max(value, minimax(copy, depth-1, false));
+            }
+            return value;
+        }
+        else{
+            int value = 2147483647;
+            for(Move move : bård.genMoves()){
+                Board copy = bård.copy();
+                copy.movePiece(move);
+                value = Math.min(value, minimax(copy, depth-1, true));
+            }
+            return value;
+        }
     }
 
     private static int alphaBeta(Board bård, int depth, int alpha, int beta, boolean isMaximizing){
@@ -81,4 +98,5 @@ public class AlphaBota {
             return value;
         }
     }
+
 }

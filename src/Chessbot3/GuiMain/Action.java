@@ -30,12 +30,16 @@ public class Action extends KeyAdapter implements ActionListener {
         //Hver gang du trykker på en virtuell knapp(inkludert knappene i rutenettet) blir denne kalt opp.
         //Den forsøker å finne knappen og handle deretter.
         gui.removeErrorsFromTextField();
+        gui.closeMenu();
         if(e.getSource() == quit) System.exit(0);
         else if(e.getSource() == enter) enter();
         else if(e.getSource() == back) game.goBack();
         else if(e.getSource() == forward) game.goForward();
         else if(e.getSource() == neww) game.newGame();
         else if(e.getSource() == botstop) game.pauseTheBot();
+        else if(e.getSource() == openMenu) gui.openMenu();
+        else if(e.getSource() == load) gui.loadGame(); // TODO: 01.10.2020 Denne må omskrives
+        else if(e.getSource() == save) gui.displayPopupMessage("This does nothing.");
         else findSquare(e);
     }
 
@@ -128,6 +132,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("pause")) game.pauseTheBot();
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
         else if(usertext.equals("value")) game.testGetValue();
+        else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if(isAMove(usertext)) game.playerMove(parse(usertext));

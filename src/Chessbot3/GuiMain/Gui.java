@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
@@ -27,8 +28,10 @@ public class Gui extends JFrame {
     //Disse må være statiske, så Action kan referere til dem når noen gjør et trekk.
     protected static JButton[][] chessBoardSquares = new JButton[8][8];
 
+    protected static JDialog menu;
+
     //Selve partiet.
-    protected static Game game;
+    public static Game game = new Game();
 
     //Om brettet er rotert eller ikke.
     protected static Boolean reverse = false;
@@ -53,6 +56,9 @@ public class Gui extends JFrame {
     protected static JButton neww = new JButton("New Game");
     protected static JButton quit = new JButton("Quit Game");
     protected static JButton botstop = new JButton("Pause Bot");
+    protected static JButton openMenu = new JButton("Menu");
+    protected static JButton save = new JButton("Save Game");
+    protected static JButton load = new JButton("Load Game");
 
     //Tekstfeltet.
     private JTextField textField = new JTextField(20);
@@ -60,7 +66,7 @@ public class Gui extends JFrame {
     public Gui(){
         //Gui er egentlig en ramme.
         //Oppå denne rammen skal vi legge til alt det andre.
-        game = new Game();
+        File test3 = new File("src\\Chessbot3\\files\\test3.txt");
         setTitle("Chessbot3");
         add(initializeGUI()); //Her legger vi til alle knappene og rutenettet.
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -80,6 +86,7 @@ public class Gui extends JFrame {
         panel.add(makeTopToolbar(), BorderLayout.PAGE_START);
         panel.add(makeButtons());
         panel.add(makeTextField(), BorderLayout.PAGE_END);
+        menu = makeMenu();
 
         return panel;
     }
@@ -87,7 +94,7 @@ public class Gui extends JFrame {
         //Oppretter tekstfeltet nederst.
         JToolBar ret = new JToolBar();
         JTextField text = new JTextField(20);
-        textField = text; //Tekstfeltet støtter kun juksekoder, en komplett liste finnes i Action.enter().
+        textField = text; //Tekstfeltet støtter juksekoder, en komplett liste finnes i Action.enter().
         textField.addKeyListener(new Action());
         ret.add(text);
         ret.add(enter);
@@ -98,16 +105,15 @@ public class Gui extends JFrame {
     private JToolBar makeTopToolbar(){
         //Oppretter toolbaren øverst på skjermen, den med alle knappene.
         JToolBar ret = new JToolBar();
-        ret.add(quit);
-        ret.add(neww);
+        ret.add(openMenu);
+        ret.addSeparator();
         ret.add(back);
         ret.add(forward);
         ret.addSeparator();
         ret.add(botstop);
-        quit.addActionListener(new Action());
+        openMenu.addActionListener(new Action());
         back.addActionListener(new Action());
         forward.addActionListener(new Action());
-        neww.addActionListener(new Action());
         botstop.addActionListener(new Action());
         botstop.setVisible(false); //botstop-knappen skal kun være synlig i EvE. Denne endres i chooseGamemode().
         return ret;
@@ -135,6 +141,24 @@ public class Gui extends JFrame {
                 ret.add(chessBoardSquares[jj][ii]);
             }
         }
+        return ret;
+    }
+
+    private JDialog makeMenu(){
+        JDialog ret = new JDialog();
+        ret.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        ret.setLayout(new GridLayout(4, 1));
+        ret.add(quit);
+        ret.add(neww);
+        ret.add(save);
+        ret.add(load);
+        quit.addActionListener(new Action());
+        neww.addActionListener(new Action());
+        save.addActionListener(new Action());
+        load.addActionListener(new Action());
+        ret.setMinimumSize(new Dimension(20, 200));
+        ret.setLocationRelativeTo(null);
+        ret.setVisible(false);
         return ret;
     }
 
@@ -278,4 +302,24 @@ public class Gui extends JFrame {
         else if(n == 3) return new Bishop(color);
         else return new Queen(color); //Standardverdi.
     }
+
+    public void openMenu() {
+        //Åpner menyen.
+        menu.setVisible(true);
+    }
+
+    public void closeMenu(){
+        //Lukker menyen.
+        menu.setVisible(false);
+    }
+
+    public void loadGame(){
+        // TODO: 01.10.2020 Her bør brukeren få en meny med alle partier som er lagret. 
+        game = new Game(new File("src\\Chessbot3\\files\\test.spgn"));
+    }
+    
+    public void saveGame(){
+        // TODO: 01.10.2020  
+    }
+
 }
