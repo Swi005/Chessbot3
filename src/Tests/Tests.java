@@ -108,4 +108,10 @@ public class Tests {
             futures.put(bård, bård.getScore());
         }
     }
+
+    @Test
+    void moveTest(){
+        Move move =  new Move(new Tuple(0, 1), new Tuple<>(0, 2));
+        System.out.println(move.toAlgebraicNotation());
+    }
 }
