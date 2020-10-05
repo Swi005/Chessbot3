@@ -10,6 +10,8 @@ import Chessbot3.Pieces.Types.Bishop;
 import Chessbot3.Pieces.Types.Knight;
 import Chessbot3.Pieces.Types.Queen;
 import Chessbot3.Pieces.Types.Rook;
+import Chessbot3.SaveSystem.SaveController;
+import Chessbot3.sPGN.Ispgn;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,6 +19,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
@@ -315,11 +318,22 @@ public class Gui extends JFrame {
 
     public void loadGame(){
         // TODO: 01.10.2020 Her bør brukeren få en meny med alle partier som er lagret. 
-        game = new Game(new File("src\\Chessbot3\\files\\test.spgn"));
+        //game = new Game(new File("src\\Chessbot3\\files\\test.spgn"));
+        try {
+            SaveController controller = new SaveController();
+            Ispgn[] savedgames = controller.getAllSaves();
+            Ispgn ispgn = (Ispgn) JOptionPane.showInputDialog(this, "Choose save", "Menu", JOptionPane.PLAIN_MESSAGE, null, savedgames, savedgames[0]);
+            Game game = controller.convertToGame(ispgn);
+            System.out.println(game);
+        }catch(IOException ex){
+            ex.printStackTrace();
+            System.out.println("bruh");
+        }
     }
     
     public void saveGame(){
-        // TODO: 01.10.2020  
+        String name = JOptionPane.showInputDialog("What do you want to save the game as?");
+        game.saveGame(name);
     }
 
 }

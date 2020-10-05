@@ -5,9 +5,6 @@ import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.SaveSystem.SaveController;
 import Chessbot3.Simulators.AlphaBota;
-import Chessbot3.Simulators.MiniMaxBot;
-import Chessbot3.Simulators.Randbot;
-import Chessbot3.Simulators.Tempbot;
 import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgn;
 import Chessbot3.sPGN.spgnIO;
@@ -57,7 +54,7 @@ public class Game {
     public Game(File savedGame){
         //Oppretter et nytt game, basert på en fil.
         spgn save = ioController.GetSPGN(savedGame);
-        Game tempGame = sc.ConvertToGame(save);
+        Game tempGame = sc.convertToGame(save);
         this.madeMoves = tempGame.madeMoves;
         this.bots = tempGame.bots;
         this.currentBoard = tempGame.currentBoard;
@@ -261,6 +258,6 @@ public class Game {
      */
     public void saveGame(String name)
     {
-        sc.Save(this.toSpgn(name));
+        sc.save(this.toSpgn(name));
     }
 }

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
@@ -39,7 +40,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(e.getSource() == botstop) game.pauseTheBot();
         else if(e.getSource() == openMenu) gui.openMenu();
         else if(e.getSource() == load) gui.loadGame(); // TODO: 01.10.2020 Denne må omskrives
-        else if(e.getSource() == save) gui.displayPopupMessage("This does nothing.");
+        else if(e.getSource() == save) gui.saveGame();
         else findSquare(e);
     }
 

@@ -11,11 +11,12 @@ import java.io.IOException;
 
 public class SaveController
 {
-    String pathToSaves = "src/Chessbot3/files/saves";
+    String pathToSaves1 = "/src/Chessbot3/files/Chessbot3/files/saves";
+    String pathToSaves = "Chessbot3\\src\\Chessbot3\\files\\saves";
     spgnIO io = new spgnIO();
     public SaveController() {};
 
-    public Ispgn[] GetAllSaves() throws IOException {
+    public Ispgn[] getAllSaves() throws IOException {
 
         File saveDir = new File(pathToSaves);
 
@@ -32,12 +33,12 @@ public class SaveController
         throw new IOException("Error the chosen directory either doesn't exist or isn't a directory");
     }
 
-    public boolean Save(Ispgn ispgn)
+    public boolean save(Ispgn ispgn)
     {
         return io.WriteSPGNtoFile(ispgn, new File(ispgn.GetPathToFile()));
     }
 
-    public Game ConvertToGame(Ispgn ispgn)
+    public Game convertToGame(Ispgn ispgn)
     {
         Move[] moves = ispgn.GetAllMoves();
         Game game = new Game();

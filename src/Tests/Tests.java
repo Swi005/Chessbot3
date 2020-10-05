@@ -8,6 +8,7 @@ import Chessbot3.Pieces.Types.Pawn;
 import Chessbot3.Pieces.Types.Rook;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
@@ -84,5 +85,27 @@ public class Tests {
 
         System.out.println(Arrays.deepHashCode(grid1));
         System.out.println(Arrays.deepHashCode(grid2));
+    }
+    
+    @Test void hashMapHandlesUniques(){
+        ArrayList<Board> boards = new ArrayList();
+        Board bård1 = new Board();
+        for(Move move : bård1.genMoves()){
+            Board b = new Board();
+            b.movePiece(move);
+            boards.add(b);
+            for(Move m : b.genMoves()){
+                Board n = new Board();
+                n.movePiece(move);
+                n.movePiece(m);
+                boards.add(n);
+            }
+        }
+        System.out.println(boards.size());
+        HashMap<Board, Integer> futures = new HashMap<>();
+        for(Board bård : boards){
+            assertFalse(futures.containsKey(bård));
+            futures.put(bård, bård.getScore());
+        }
     }
 }
