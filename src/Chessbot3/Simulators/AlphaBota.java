@@ -15,6 +15,10 @@ public class AlphaBota {
 
     static int plies = 5;
 
+
+
+
+
     public static Move findMove(Board bård){
         List<Move> possibles = bård.genCompletelyLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
