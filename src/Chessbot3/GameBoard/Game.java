@@ -8,6 +8,7 @@ import Chessbot3.Simulators.AlphaBota;
 import Chessbot3.Simulators.MiniMaxBot;
 import Chessbot3.Simulators.Randbot;
 import Chessbot3.Simulators.Tempbot;
+import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgn;
 import Chessbot3.sPGN.spgnIO;
 
@@ -58,7 +59,9 @@ public class Game {
         spgn save = ioController.GetSPGN(savedGame);
         Game tempGame = sc.ConvertToGame(save);
         this.madeMoves = tempGame.madeMoves;
-        this.madeMoves = tempGame.madeMoves;
+        this.bots = tempGame.bots;
+        this.currentBoard = tempGame.currentBoard;
+        this.previousBoards = tempGame.previousBoards;
     }
 
     public void goBack(){
@@ -234,10 +237,26 @@ public class Game {
     }
 
     /**
+     * Converts a game to an spgn object
+     * @param name - name of current game
+     * @return - spgn representation of game
+     */
+    public Ispgn toSpgn(String name)
+    {
+        int isPvp = 1;
+        if (bots.size() > 0)
+            isPvp= 0;
+        if(bots.size() > 1)
+            System.out.println("Error: Spgn does not support bot v bot at this time");
+        spgn game = new spgn(currentBoard.getScore(), 0, isPvp, bots.get(0), name, getMadeMoves().toArray(new Move[]{}));
+
+        return game;
+    }
+    /**
      * Saves game to file
      */
-    public void saveGame()
+    public void saveGame(String name)
     {
-
+        sc.Save(this.toSpgn(name));
     }
 }

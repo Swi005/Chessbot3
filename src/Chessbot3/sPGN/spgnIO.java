@@ -65,6 +65,7 @@ public class spgnIO implements IspgnIO {
         return "";
     }
 
+    //Deprecated do not use, use WriteToFile() instead
     @Override
     public void WriteMoveToFile(Move move, File file) {
         try {
@@ -156,8 +157,21 @@ public class spgnIO implements IspgnIO {
     }
 
     @Override
-    public spgn GetSPGN(File file) {
-        return null; //TODO: Implement this
+    public spgn GetSPGN(File file)
+    {
+        Move[] moves = ReadMovesFromFile(file);
+        int score = Integer.parseInt(ReadVar("SCORE", file));
+        int type = Integer.parseInt(ReadVar("TYPE", file));
+        int pvp = Integer.parseInt(ReadVar("PVP", file));
+        WhiteBlack bot;
+        if(ReadVar("BOT", file) == "0")
+            bot = WhiteBlack.WHITE;
+        else
+            bot = WhiteBlack.BLACK;
+
+        String name = ReadVar("NAME", file);
+
+        return new spgn(score, type, pvp, bot, name, moves);
     }
 
     @Override
