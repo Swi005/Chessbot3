@@ -3,7 +3,6 @@ package Chessbot3.sPGN;
 import Chessbot3.MiscResources.Move;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -15,13 +14,16 @@ public class spgn implements Ispgn
     private int type; //0 for save| 1 for lookup table
     private Move[] moves;
     private String path;
+    private int pvp;
 
     //Constructor for making a new file
-    public spgn(int score, int type, Move[] moves)
+    public spgn(int score, int type, int pvp , String name, Move[] moves)
     {
 
         this.score = score;
         this.type = type;
+        this.pvp = pvp;
+        this.name = name;
         this.moves = moves;
         if(type == 0)
             path = "Chessbot3/src/Chessbot3/files/saves/" + "save:"+ new Date().toString();//TODO: Find out a naming scheme
@@ -40,10 +42,10 @@ public class spgn implements Ispgn
         path = file.getPath();
         name = file.getName();
     }
-    public spgn(String name)
+    public spgn(String path)
     {
         spgnIO spgnController = new spgnIO();
-        spgn temp = spgnController.GetSPGN(new File(path + name));
+        spgn temp = spgnController.GetSPGN(new File(path));
         this.moves = temp.moves;
         this.score = temp.score;
         this.type = temp.type;
@@ -88,6 +90,11 @@ public class spgn implements Ispgn
     @Override
     public String GetName() {
         return null;
+    }
+
+    @Override
+    public int GetISPvP() {
+        return pvp;
     }
 
     @Override

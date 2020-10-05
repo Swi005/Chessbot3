@@ -45,4 +45,5 @@ public interface Ispgn
      * @return - name of file
      */
     String GetName();
+    int GetISPvP();
 }

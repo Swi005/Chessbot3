@@ -4,6 +4,8 @@
 #Fields with [] are variables
 [TYPE 0] #Save == 0 | lookup Table == 1
 [SCORE 0] #Game Score
+[PVP 0] #IS the game pvp? 0 = no | 1 = yes
+
 
 #Each turn is given a number followed by the start position and the end position of the piece that moved. seperated by a ':'
 #In contrast with normal PGN, sPGN does not note the piece that moved

@@ -3,10 +3,12 @@ package Chessbot3.GameBoard;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
+import Chessbot3.SaveSystem.SaveController;
 import Chessbot3.Simulators.AlphaBota;
 import Chessbot3.Simulators.MiniMaxBot;
 import Chessbot3.Simulators.Randbot;
 import Chessbot3.Simulators.Tempbot;
+import Chessbot3.sPGN.spgn;
 import Chessbot3.sPGN.spgnIO;
 
 import java.io.File;
@@ -17,6 +19,8 @@ import static Chessbot3.GuiMain.Chess.gui;
 
 public class Game {
 
+    private SaveController sc = new SaveController();
+    spgnIO ioController = new spgnIO();
     //Liste over tidligere brett. Denne brukes nå du f. eks. vil angre på et trekk.
     private List<Board> previousBoards = new ArrayList<>();
 
@@ -48,14 +52,13 @@ public class Game {
         previousBoards.add(currentBoard.copy());
     }
 
+    //Dette skal egnetlig gjøres av SaveController.java
     public Game(File savedGame){
         //Oppretter et nytt game, basert på en fil.
-        currentBoard = new Board();
-        previousBoards.add(currentBoard.copy());
-        spgnIO spgn = new spgnIO();
-        for(Move move : spgn.ReadMovesFromFile(savedGame)){
-            playerMove(move);
-        }
+        spgn save = ioController.GetSPGN(savedGame);
+        Game tempGame = sc.ConvertToGame(save);
+        this.madeMoves = tempGame.madeMoves;
+        this.madeMoves = tempGame.madeMoves;
     }
 
     public void goBack(){
@@ -228,5 +231,13 @@ public class Game {
         for(Move move : currentBoard.genMoves()){
             System.out.println(move + ": " + currentBoard.getValue(move));
         }
+    }
+
+    /**
+     * Saves game to file
+     */
+    public void saveGame()
+    {
+
     }
 }
