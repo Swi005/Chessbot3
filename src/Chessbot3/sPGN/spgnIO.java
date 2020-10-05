@@ -2,6 +2,7 @@ package Chessbot3.sPGN;
 
 import Chessbot3.GuiMain.Action;
 import Chessbot3.MiscResources.Move;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.io.*;
 import java.util.*;
@@ -35,7 +36,7 @@ public class spgnIO implements IspgnIO {
     }
 
     @Override
-    public int ReadVar(String name, File file) {
+    public String ReadVar(String name, File file) {
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNextLine()) {
@@ -51,17 +52,17 @@ public class spgnIO implements IspgnIO {
                         }
                     }
                     reader.close();
-                    return Integer.parseInt(tmpStr);
+                    return tmpStr;
                 }
             }
         } catch (IOException e) {
-            gui.displayPopupMessage("An error occured while attempting to read file: " + file.toString());
-            //System.out.println("An error occured while attempting to read file: " + file.toString());
+            //gui.displayPopupMessage("An error occured while attempting to read file: " + file.toString());
+            System.out.println("An error occured while attempting to read file: " + file.toString());
             e.printStackTrace();
         }
-        gui.displayPopupMessage("Error: could not find field with the name " + name);
-        //System.out.println("Could not find field with name: " + name);
-        return 0;
+        //gui.displayPopupMessage("Error: could not find field with the name " + name);
+        System.out.println("Could not find field with name: " + name);
+        return "";
     }
 
     @Override
@@ -100,9 +101,9 @@ public class spgnIO implements IspgnIO {
     }
 
     @Override
-    public boolean WriteSPGNtoFile(Ispgn spgn, File file) {
+    public boolean WriteSPGNtoFile(Ispgn spgn, File dir) {
         try{
-            this.WriteToFile(spgn.GetScore(), spgn.GetType(), spgn.GetAllMoves(), file);
+            this.WriteToFile(spgn.GetScore(), spgn.GetType(), spgn.GetName(), spgn.GetIsPvP(), spgn.GetBotColor(), spgn.GetAllMoves(), dir);
             return true;
         }
         catch (Exception e)
@@ -112,13 +113,19 @@ public class spgnIO implements IspgnIO {
     }
 
     @Override
-    public void WriteToFile(int score, int type, Move[] moves, File file) {
+    public void WriteToFile(int score, int type, String name, int pvp, WhiteBlack bot, Move[] moves, File file) {
         try {
             file.createNewFile();
             FileWriter writer = new FileWriter(file, true);
 
             writer.write("[MODE" + type + "] \n");
             writer.write("[SCORE  " + score + "] \n");
+            writer.write("[PVP " + pvp + "] +n");
+            writer.write("[NAME " + name + "] +n");
+            if(bot == WhiteBlack.BLACK)
+                writer.write("[BOT " + 1 + "] +n");
+            else if(bot == WhiteBlack.WHITE)
+                writer.write("[BOT " + 0 + "] +n");
 
             int lineNm = 1;
 
@@ -150,7 +157,7 @@ public class spgnIO implements IspgnIO {
 
     @Override
     public spgn GetSPGN(File file) {
-        return null;
+        return null; //TODO: Implement this
     }
 
     @Override

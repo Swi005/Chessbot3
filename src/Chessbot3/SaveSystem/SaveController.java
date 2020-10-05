@@ -2,6 +2,7 @@ package Chessbot3.SaveSystem;
 
 import Chessbot3.GameBoard.Game;
 import Chessbot3.MiscResources.Move;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgnIO;
 
@@ -40,6 +41,10 @@ public class SaveController
     {
         Move[] moves = ispgn.GetAllMoves();
         Game game = new Game();
+
+        if(ispgn.GetIsPvP() == 0)
+            game.addBotColor(ispgn.GetBotColor());
+
         for (int i = 0; i < moves.length; i++)
         {
             game.playerMove(moves[i]);

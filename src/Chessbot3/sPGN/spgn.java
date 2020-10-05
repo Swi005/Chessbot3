@@ -1,6 +1,7 @@
 package Chessbot3.sPGN;
 
 import Chessbot3.MiscResources.Move;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.io.File;
 import java.util.Arrays;
@@ -15,16 +16,19 @@ public class spgn implements Ispgn
     private Move[] moves;
     private String path;
     private int pvp;
+    private WhiteBlack botColor;
 
     //Constructor for making a new file
-    public spgn(int score, int type, int pvp , String name, Move[] moves)
+    public spgn(int score, int type, int pvp, WhiteBlack botColor, String name, Move[] moves)
     {
 
         this.score = score;
         this.type = type;
         this.pvp = pvp;
         this.name = name;
+        this.botColor = botColor;
         this.moves = moves;
+
         if(type == 0)
             path = "Chessbot3/src/Chessbot3/files/saves/" + "save:"+ new Date().toString();//TODO: Find out a naming scheme
         else if(type == 1)
@@ -39,6 +43,7 @@ public class spgn implements Ispgn
         this.moves = temp.moves;
         this.score = temp.score;
         this.type = temp.type;
+        this.botColor = temp.botColor;
         path = file.getPath();
         name = file.getName();
     }
@@ -89,12 +94,17 @@ public class spgn implements Ispgn
 
     @Override
     public String GetName() {
-        return null;
+        return name;
     }
 
     @Override
-    public int GetISPvP() {
+    public int GetIsPvP() {
         return pvp;
+    }
+
+    @Override
+    public WhiteBlack GetBotColor() {
+        return botColor;
     }
 
     @Override
@@ -102,10 +112,13 @@ public class spgn implements Ispgn
     {
         return "spgn{" +
                 "index=" + index +
+                ", name='" + name + '\'' +
                 ", score=" + score +
                 ", type=" + type +
                 ", moves=" + Arrays.toString(moves) +
                 ", path='" + path + '\'' +
+                ", pvp='" + pvp + '\'' +
+                ", botColor='" + botColor + '\'' +
                 '}';
     }
 }

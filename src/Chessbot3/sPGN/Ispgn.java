@@ -1,6 +1,7 @@
 package Chessbot3.sPGN;
 
 import Chessbot3.MiscResources.Move;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 public interface Ispgn
 {
@@ -45,5 +46,6 @@ public interface Ispgn
      * @return - name of file
      */
     String GetName();
-    int GetISPvP();
+    int GetIsPvP();
+    WhiteBlack GetBotColor();
 }
