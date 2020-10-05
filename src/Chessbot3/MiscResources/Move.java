@@ -58,7 +58,7 @@ public class Move implements Comparable
         int radtil = 8-to.getY();
         return "(" + rekkefra+radfra + "-" + rekketil+radtil + ")";
     }
-    //Pls fix this
+    //Todo:Pls fix this
     public String toAlgebraicNotation()
     {
         char rekkefra = chars2.charAt(from.getX());

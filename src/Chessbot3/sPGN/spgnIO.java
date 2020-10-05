@@ -121,12 +121,12 @@ public class spgnIO implements IspgnIO {
 
             writer.write("[MODE" + type + "] \n");
             writer.write("[SCORE  " + score + "] \n");
-            writer.write("[PVP " + pvp + "] +n");
-            writer.write("[NAME " + name + "] +n");
+            writer.write("[PVP " + pvp + "] \n");
+            writer.write("[NAME " + name + "] \n");
             if(bot == WhiteBlack.BLACK)
-                writer.write("[BOT " + 1 + "] +n");
+                writer.write("[BOT " + 1 + "] \n");
             else if(bot == WhiteBlack.WHITE)
-                writer.write("[BOT " + 0 + "] +n");
+                writer.write("[BOT " + 0 + "] \n");
 
             int lineNm = 1;
 

@@ -242,14 +242,14 @@ public class Game {
     {
         int isPvp = 1;
         WhiteBlack botColor = WhiteBlack.WHITE;
-        if (bots.size() > 0) {
+        if (bots.size() > 0){
             isPvp = 0;
             botColor = bots.get(0);
         }
         if(bots.size() > 1)
             System.out.println("Error: Spgn does not support bot v bot at this time");
 
-        spgn game = new spgn(currentBoard.getScore(), 0, isPvp, bots.get(0), name, getMadeMoves().toArray(new Move[]{}));
+        spgn game = new spgn(currentBoard.getScore(), 0, isPvp, botColor, name, getMadeMoves().toArray(new Move[]{}));
 
         return game;
     }
