@@ -21,7 +21,6 @@ public class spgn implements Ispgn
     //Constructor for making a new file
     public spgn(int score, int type, int pvp, WhiteBlack botColor, String name, Move[] moves)
     {
-
         this.score = score;
         this.type = type;
         this.pvp = pvp;
@@ -45,7 +44,9 @@ public class spgn implements Ispgn
         this.type = temp.type;
         this.botColor = temp.botColor;
         path = file.getPath();
-        name = file.getName();
+        this.pvp = temp.pvp;
+        this.botColor = temp.botColor;
+        this.name = temp.name;
     }
     public spgn(String path)
     {
@@ -53,8 +54,11 @@ public class spgn implements Ispgn
         spgn temp = spgnController.GetSPGN(new File(path));
         this.moves = temp.moves;
         this.score = temp.score;
+        this.name = temp.name;
         this.type = temp.type;
         this.path = temp.path;
+        this.pvp = temp.pvp;
+        this.botColor = temp.botColor;
     }
 
     @Override
