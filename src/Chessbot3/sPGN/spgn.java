@@ -29,7 +29,8 @@ public class spgn implements Ispgn
         this.moves = moves;
 
         if(type == 0)
-            path = "C:\\Users\\Sande\\Documents\\INF101\\Chessbot3\\src\\Chessbot3\\files\\saves\\" + name + ".spgn";//TODO: Find out a naming scheme
+            path = "src/Chessbot3/files/saves/" + name + ".psgn";
+            //path = "src\\Chessbot3\\files\\saves\\" + name + ".spgn";//TODO: Find out a naming scheme
         else if(type == 1)
             path = "Chessbot3/src/Chessbot3/files/lookuptables/"+ "lookup:" + name+ ".spgn";//TODO: Find out a naming scheme
     }
