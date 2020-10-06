@@ -112,6 +112,6 @@ public class Tests {
     @Test
     void moveTest(){
         Move move =  new Move(new Tuple(0, 1), new Tuple<>(0, 2));
-        System.out.println(move.toAlgebraicNotation());
+        assertEquals("a7:a6", move.toAlgebraicNotation());
     }
 }

@@ -376,8 +376,13 @@ public class Board implements Comparable {
 
     @Override
     public int hashCode(){
-        int result = Arrays.deepHashCode(grid);
-        result = 31 * result + Objects.hash(colorToMove);
+
+        int[] primes = {29, 31, 37, 41, 43, 47, 53, 59, 61};
+        int result = 0;
+        for (int i = 0; i < 8; i++) {
+            result += primes[i] * (Arrays.deepHashCode(grid[i]));
+        }
+        result += primes[8] * Objects.hash(colorToMove);
         return result;
     }
 
