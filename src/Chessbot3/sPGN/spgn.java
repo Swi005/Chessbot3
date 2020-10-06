@@ -115,6 +115,8 @@ public class spgn implements Ispgn
     @Override
     public String toString()//TODO: Find a string representation of an spgn object
     {
+        return name;
+        /*
         return "spgn{" +
                 "index=" + index +
                 ", name='" + name + '\'' +
@@ -125,5 +127,7 @@ public class spgn implements Ispgn
                 ", pvp='" + pvp + '\'' +
                 ", botColor='" + botColor + '\'' +
                 '}';
+
+         */
     }
 }

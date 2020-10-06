@@ -3,19 +3,30 @@ package Chessbot3.Simulators;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
-import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class AlphaBota {
 
-    static int plies = 5;
+    static int initialPlies = 4;
+    static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
+    static int i = 0;
 
     public static Move findMove(Board bård){
+        int nPieces = bård.getNumberOfPieces();
+        if(nPieces < 5) return alphaSetup(bård, initialPlies +4);
+        if(nPieces < 7) return alphaSetup(bård, initialPlies +3);
+        if(nPieces < 10) return alphaSetup(bård, initialPlies +2);
+        if(nPieces < 20) return alphaSetup(bård, initialPlies +1);
+        return alphaSetup(bård, initialPlies);
+        // TODO: 06.10.2020 Velg dybde basert på antall brikker som er igjen 
+    }
+    
+    public static Move alphaSetup(Board bård, int depth){
         List<Move> possibles = bård.genCompletelyLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
 
@@ -29,10 +40,10 @@ public class AlphaBota {
 
                 Board copy = bård.copy();
                 copy.movePiece(move);
-                int value = alphaBeta(copy, plies, -2147483648, 2147483647, false);
+                int value = alphaBeta(copy, depth-1, -2147483648, 2147483647, false);
                 move.setWeight(value);
 
-                System.out.println(move + ": " + value);
+                //System.out.println(move + ": " + value);
             }
             System.out.println();
             Collections.sort(possibles, Collections.reverseOrder());
@@ -44,22 +55,32 @@ public class AlphaBota {
 
                 Board copy = bård.copy();
                 copy.movePiece(move);
-                int value = alphaBeta(copy, plies, -2147483648, 2147483647, true);
+                int value = alphaBeta(copy, depth-1, -2147483648, 2147483647, true);
                 move.setWeight(value);
 
-                System.out.println(move + ": " + value);
+                //System.out.println(move + ": " + value);
             }
             System.out.println();
             Collections.sort(possibles);
         }
+        System.out.println("Unike brett etter " + depth + " trekk: " + uniqueBoards.size());
+        System.out.println("Totalt antall brett etter "+ depth + " trekk: " + i);
+        uniqueBoards.clear();
+        i = 0;
         return possibles.get(0);
     }
 
     private static int alphaBeta(Board bård, int depth, int alpha, int beta, boolean isMaximizing){
-        if(depth == 0) return bård.getScore();
+        if(depth == 0){
+            i++;
+            return bård.getScore();
+        }
 
+        if(uniqueBoards.containsKey(bård)) return uniqueBoards.get(bård);
+
+        int value;
         if (isMaximizing){
-            int value = -2147483648;
+            value = -2147483648;
             for(Move move : bård.genMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);
@@ -67,10 +88,9 @@ public class AlphaBota {
                 alpha = Math.max(alpha, value);
                 if(alpha >= beta) break;
             }
-            return value;
         }
         else{
-            int value = 2147483647;
+            value = 2147483647;
             for(Move move : bård.genMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);
@@ -78,7 +98,8 @@ public class AlphaBota {
                 beta = Math.min(beta, value);
                 if(beta <= alpha) break;
             }
-            return value;
         }
+        uniqueBoards.put(bård, value);
+        return value;
     }
 }
