@@ -169,8 +169,7 @@ public class spgnIO implements IspgnIO {
         else
             bot = WhiteBlack.BLACK;
 
-        String name = ReadVar("NAME", file);
-
+        String name = file.getName();
         return new spgn(score, type, pvp, bot, name, moves);
     }
 
