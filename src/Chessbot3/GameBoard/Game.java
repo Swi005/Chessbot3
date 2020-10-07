@@ -61,6 +61,15 @@ public class Game {
         this.previousBoards = tempGame.previousBoards;
     }
 
+    public Game(Ispgn ispgn){
+        currentBoard = new Board();
+        Move[] moves = ispgn.GetAllMoves();
+        for (Move move : moves){
+            playerMove(move);
+        }
+        // TODO: 07.10.2020 Skriv resten her
+    }
+
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
         stop = true;

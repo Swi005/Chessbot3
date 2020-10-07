@@ -322,18 +322,39 @@ public class Gui extends JFrame {
         try {
             SaveController controller = new SaveController();
             Ispgn[] savedgames = controller.getAllSaves();
+            if(savedgames.length == 0){
+                displayPopupMessage("Found no saved games.");
+                return;
+            }
             Ispgn ispgn = (Ispgn) JOptionPane.showInputDialog(this, "Choose save", "Menu", JOptionPane.PLAIN_MESSAGE, null, savedgames, savedgames[0]);
-            Game game = controller.convertToGame(ispgn);
-            System.out.println(game);
+            game = controller.convertToGame(ispgn);
         }catch(IOException ex){
             ex.printStackTrace();
-            System.out.println("bruh");
         }
     }
     
     public void saveGame(){
         String name = JOptionPane.showInputDialog("What do you want to save the game as?");
+        if (name == null) return;
+        while(!checkName(name)) {
+            displayPopupMessage("Please use a valid name.");
+            name = JOptionPane.showInputDialog("What do you want to save the game as?");
+            if(name == null) return;
+        }
         game.saveGame(name);
+    }
+
+    public boolean checkName(String name){
+        if(name.length() == 0){
+            System.out.println("too long");
+            return false;
+        }
+        for(char c : name.toCharArray()){
+            for(char k : new char[]{'/', '\\', '.', ':'}){
+                if (c == k) return false;
+            }
+        }
+        return true;
     }
 
 }

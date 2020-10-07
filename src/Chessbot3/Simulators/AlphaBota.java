@@ -12,7 +12,7 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class AlphaBota {
 
-    static int initialPlies = 4;
+    static int initialPlies = 5;
     static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
     static int i = 0;
 

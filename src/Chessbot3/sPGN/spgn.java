@@ -115,7 +115,7 @@ public class spgn implements Ispgn
     @Override
     public String toString()//TODO: Find a string representation of an spgn object
     {
-        return name;
+        return name.split("\\.")[0];
         /*
         return "spgn{" +
                 "index=" + index +
