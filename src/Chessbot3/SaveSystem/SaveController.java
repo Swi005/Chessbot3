@@ -11,9 +11,18 @@ import java.io.IOException;
 
 public class SaveController
 {
-    String pathToSaves = "C:\\Users\\Sande\\Documents\\INF101\\Chessbot3\\src\\Chessbot3\\files\\saves";
+    String pathToSaves = "src\\Chessbot3\\files\\saves";
     spgnIO io = new spgnIO();
-    public SaveController() {};
+    public SaveController() {
+        File save = new File(pathToSaves);
+        if(!save.exists())
+            if(save.mkdir()){
+
+            }else{
+                System.out.println("Error: Could not create new save folder for some reason.");
+            }
+
+    };
 
     public Ispgn[] getAllSaves() throws IOException {
 
@@ -23,9 +32,12 @@ public class SaveController
         {
             File[] files = saveDir.listFiles();
             Ispgn[] retAr = new Ispgn[files.length];
-            for (int i = 0; i < files.length; i++)
+            if(files.length >0)
             {
-                retAr[i] = io.GetSPGN(files[i]);
+                for (int i = 0; i < files.length; i++)
+                {
+                    retAr[i] = io.GetSPGN(files[i]);
+                }
             }
             return retAr;
         }
