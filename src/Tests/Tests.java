@@ -15,6 +15,7 @@ import java.util.Objects;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
+import static Chessbot3.Simulators.AlphaBota.alphaSetup;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Tests {
@@ -32,6 +33,31 @@ public class Tests {
         bård1.movePiece(new Move(new Tuple<>(0, 7), new Tuple<>(0, 6)));
         bård2.movePiece(new Move(new Tuple<>(0, 1), new Tuple<>(0, 2)));
         assertTrue(bård1.equals(bård2));
+    }
+
+    @Test
+    void testHashMapSize(){
+        HashMap<Board, Integer> map = new HashMap<>();
+        Board bård1 = new Board();
+        Board bård2 = new Board();
+        map.put(bård1, 0);
+        map.put(bård2, 0);
+        assertEquals(1, map.size());
+
+        map.clear();
+        bård1.movePiece(new Move(new Tuple<>(0, 1), new Tuple<>(0, 2)));
+        bård2.movePiece(new Move(new Tuple<>(0, 7), new Tuple<>(0, 6)));
+        map.put(bård1, 0);
+        map.put(bård2, 0);
+        assertEquals(2, map.size());
+
+        map.clear();
+        bård1.movePiece(new Move(new Tuple<>(0, 7), new Tuple<>(0, 6)));
+        bård2.movePiece(new Move(new Tuple<>(0, 1), new Tuple<>(0, 2)));
+        map.put(bård1, 0);
+        map.put(bård2, 0);
+        assertEquals(1, map.size());
+
     }
 
     @Test
@@ -67,8 +93,8 @@ public class Tests {
 
     @Test
     void testHashing(){
-        int[][] grid2 = {{1, 2}, {3, 4}};
         int[][] grid1 = {{1, 2}, {3, 4}};
+        int[][] grid2 = {{1, 2}, {3, 4}};
         int[][] grid3 = {{1, 2}, {3, 4}};
 
         System.out.println(grid1.hashCode());
@@ -110,8 +136,18 @@ public class Tests {
     }
 
     @Test
+    void testShannonsNumber(){
+        Board bård = new Board();
+        alphaSetup(bård, 1);
+        alphaSetup(bård, 2);
+        alphaSetup(bård, 3);
+        alphaSetup(bård, 4);
+
+    }
+
+    @Test
     void moveTest(){
         Move move =  new Move(new Tuple(0, 1), new Tuple<>(0, 2));
-        System.out.println(move.toAlgebraicNotation());
+        assertEquals("a7:a6", move.toAlgebraicNotation());
     }
 }

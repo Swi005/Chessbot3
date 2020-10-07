@@ -321,6 +321,17 @@ public class Board implements Comparable {
         if(c == WHITE) return BLACK;
         else return WHITE;
     }
+
+    public int getNumberOfPieces(){
+        int ret = 0;
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                if(grid[y][x] != null) ret++;
+            }
+        }
+        return ret;
+    }
+
     //Returnerer en liste over brikker som tilhører den som skal flytte.
     //Nyttig for å generere trekk.
     public List<iPiece> getPieceList(){ return getPieceList(colorToMove); }
@@ -376,8 +387,13 @@ public class Board implements Comparable {
 
     @Override
     public int hashCode(){
-        int result = Arrays.deepHashCode(grid);
-        result = 31 * result + Objects.hash(colorToMove);
+
+        int[] primes = {29, 31, 37, 41, 43, 47, 53, 59, 61};
+        int result = 0;
+        for (int i = 0; i < 8; i++) {
+            result += primes[i] * (Arrays.deepHashCode(grid[i]));
+        }
+        result += primes[8] * Objects.hash(colorToMove);
         return result;
     }
 

@@ -21,13 +21,15 @@ public class Chess {
     public static final Dictionary<Character, Integer[][]> posValueDict = Generator.makePosValueDict();
 
     //Selve Gui-en.
-    public static Gui gui = new Gui();
+    public static Gui gui;
 
     public static void main(String[] args) {
         //Oppretter Gui, og alt som skal til for å spille.
         //Starter en uendelig loop. Gui har en haug med actionlisteners,
         //som gjør at brukeren kan spille ved å trykke på knappene på skjermen,
         //selv om loopen kjører på siden.
+        gui = new Gui();
+
         while(true) {
             try {
                 Thread.sleep(0);

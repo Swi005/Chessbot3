@@ -3,7 +3,7 @@ package Chessbot3.MiscResources;
 public class Move implements Comparable
 {
     //Et objekt for å representere et trekk.
-    //Objektet holde selv styr på hvor den skal flytte, samt 'vekten' og 'stabiliteten' dens.
+    //Objektet holder selv styr på hvor den skal flytte, samt 'vekten' og 'stabiliteten' dens.
     //Positiv vekt er et bra trekk, negativ vekt er et dårlig ett.
     //stabilityIndex=false betyr at trekket kan forårsake at verdifulle brikker (fra begge sider) blir drept, og må søkes lengre.
 
@@ -44,8 +44,7 @@ public class Move implements Comparable
         return (this.getX().getX() == obj.getX().getX() && this.getX().getY() == obj.getX().getY() && this.getY().getX() == obj.getY().getX() && this.getY().getY() == obj.getY().getY());
     }
     @Override
-    public int compareTo(Object m) 
-    {
+    public int compareTo(Object m){
         Move i = (Move)m;
         Integer foo = this.weight;
         Integer bar = i.weight;
@@ -58,17 +57,12 @@ public class Move implements Comparable
         int radtil = 8-to.getY();
         return "(" + rekkefra+radfra + "-" + rekketil+radtil + ")";
     }
-    //Todo:Pls fix this
-    public String toAlgebraicNotation()
-    {
+
+    public String toAlgebraicNotation() {
         char rekkefra = chars2.charAt(from.getX());
-        System.out.println(rekkefra);
         int radfra = 8-from.getY();
-        System.out.println(radfra);
         char rekketil = chars2.charAt(to.getX());
-        System.out.println(rekketil);
         int radtil = 8-to.getY();
-        System.out.println(radtil);
-        return  rekkefra + "" + radfra + ":" + rekketil + "" + radtil;
+        return "" + rekkefra + radfra + ":" + rekketil + radtil;
     }
 }
