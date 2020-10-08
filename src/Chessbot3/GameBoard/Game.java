@@ -5,6 +5,8 @@ import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.SaveSystem.SaveController;
 import Chessbot3.Simulators.AlphaBota;
+import Chessbot3.Simulators.MiniMaxBot;
+import Chessbot3.Simulators.iBot;
 import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgn;
 import Chessbot3.sPGN.spgnIO;
@@ -38,10 +40,13 @@ public class Game {
     //En liste over hvilke farger botten skal styre.
     //Om denne kun inneholder BLACK betyr det at botten styrer svart, mens spilleren styrer hvit.
     //Om denne er tom spiller spilleren mot seg selv.
-    private ArrayList<WhiteBlack> bots = new ArrayList<>(1);
+    private ArrayList<WhiteBlack> bots = new ArrayList<>(2);
 
     //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
-    public volatile Boolean stop = false;
+    public boolean stop = false;
+
+    //Endre på denne linjen for å bytte ut botten
+    private iBot bot = new AlphaBota();
 
     public Game(){
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
@@ -123,7 +128,7 @@ public class Game {
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
-            Move move = AlphaBota.findMove(currentBoard);                       // TODO: 04.10.2020 Endre på denne linjen om du vil bytte ut botten!
+            Move move = bot.findMove(currentBoard);
             if (stop){
                 isBotThinking = false;
                 return; //Om noen annet har skjedd mens botten tenkte skal den ikke gjøre trekket.
