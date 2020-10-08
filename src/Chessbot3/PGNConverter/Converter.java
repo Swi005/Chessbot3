@@ -1,6 +1,10 @@
+package Chessbot3.PGNConverter;
+
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
+import Chessbot3.Pieces.PieceResources.WhiteBlack;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,10 +13,8 @@ import java.util.List;
     public class Converter {
         static Board board = new Board();
 
-        public Converter() {
-        }
-
-        static Move convertToMove(String str) {
+        static Move convertToMove(String str)
+        {
             String chars = "abcdefgh";
             String badstuff = "x+#*";
             boolean extraInfo = false;
@@ -22,9 +24,11 @@ import java.util.List;
             char[] var6 = temp;
             int var7 = temp.length;
 
-            for(int var8 = 0; var8 < var7; ++var8) {
+            for(int var8 = 0; var8 < var7; ++var8)
+            {
                 char c = var6[var8];
-                if (badstuff.indexOf(c) == -1) {
+                if (badstuff.indexOf(c) == -1)
+                {
                     str = str + Character.toString(c);
                 }
             }
@@ -32,11 +36,36 @@ import java.util.List;
             System.out.println(str);
             char fst = str.charAt(0);
             String endofmove = "";
-            if (str.equals("O-O")) {
-                return null;
-            } else if (str.equals("O-O-O")) {
-                return null;
-            } else {
+            if (str.equals("O-O")) //Kingside casteling
+            {
+                Move mv;
+                if(board.getColorToMove() == WhiteBlack.WHITE)//Check if mover is white
+                {
+                    mv = new Move(new Tuple<Integer, Integer>(4,7), new Tuple<Integer, Integer>(6,7));
+
+                }
+                else{//Else is black
+                    mv = new Move(new Tuple<Integer, Integer>(4,0), new Tuple<Integer, Integer>(6,0));
+                }
+                board.movePiece(mv);
+                return mv;
+            }
+            else if (str.equals("O-O-O")) //Queenside casteling
+            {
+                Move mv;
+                if(board.getColorToMove() == WhiteBlack.WHITE)//Check if mover is white
+                {
+                    mv = new Move(new Tuple<Integer, Integer>(4,8), new Tuple<Integer, Integer>(6,8));
+
+                }
+                else{//Else is black
+                    mv = new Move(new Tuple<Integer, Integer>(4,1), new Tuple<Integer, Integer>(2,1));
+                }
+                board.movePiece(mv);
+                return mv;
+            }
+            else
+            {
                 if (str == "Be7") {
                     System.out.println("test");
                 }
@@ -133,7 +162,7 @@ import java.util.List;
                 if (move != null) {
                     System.out.println(move.toAlgebraicNotation());
                 } else {
-                    System.out.println("Casteling");
+                    System.out.println("oh-oh- something went wrong!");
                 }
             }
 

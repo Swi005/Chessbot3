@@ -36,9 +36,11 @@ public class SaveController
             {
                 for (int i = 0; i < files.length; i++)
                 {
-                    retAr[i] = io.GetSPGN(files[i]);
+                    int y = i;
+                    new Thread(() -> retAr[y] = io.GetSPGN(files[y])).start(); //Do function async!
                 }
             }
+
             return retAr;
         }
         throw new IOException("Error the chosen directory either doesn't exist or isn't a directory");

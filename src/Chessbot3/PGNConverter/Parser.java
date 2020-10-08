@@ -19,7 +19,7 @@ public class Parser {
             while(scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if (line.length() > 0 && line.charAt(0) != '[') {
-                    allMoves = allMoves + line;
+                    allMoves = allMoves + line + " ";
                 }
             }
         } catch (IOException var8) {
@@ -39,7 +39,7 @@ public class Parser {
             }
         }
 
-        return (String[])moves.toArray(new String[0]);
+        return moves.toArray(new String[0]);
     }
 
     public static void main(String[] args) {
