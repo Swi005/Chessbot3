@@ -5,7 +5,9 @@ import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgnIO;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -15,62 +17,95 @@ public class LookupTableController //Give it an interface maybe?
 {
     private List<Ispgn> openingTables;
     private List<Move> movesMade;
-    private spgnIO IOcontroller = new spgnIO();
+    int turnIndex = movesMade.size();
+    private final spgnIO io = new spgnIO();
+    private final String pathToTables = "";//TODO: Assign path
 
     public LookupTableController()
     {
-        openingTables = new ArrayList<>();
+        try {
+            openingTables = Arrays.asList(getAllTables());
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());//TODO: Handle error in case lookup table folder doesn't exist
+            e.printStackTrace();
+        }
         movesMade = new ArrayList<>();
-        populateOpeningTables();
     }
 
-    private void populateOpeningTables()
-    {
-        String pathToDirectory = "src/Chessbot3/files/lookuptables";
-        File dir = new File(pathToDirectory);
+    /**Returns all the lookuptables
+     *
+     * @return - List of tables
+     * @throws IOException
+     */
+    public Ispgn[] getAllTables() throws IOException {
 
-        if(dir.isDirectory() && dir.exists())
+        File tableDir = new File(pathToTables);
+
+        if(tableDir.isDirectory() && tableDir.exists())
         {
-            for (File fl : dir.listFiles())
-                openingTables.add(IOcontroller.GetSPGN(fl));
+            File[] files = tableDir.listFiles();
+            Ispgn[] retAr = new Ispgn[files.length];
+            if(files.length > 0)
+            {
+                for (int i = 0; i < files.length; i++)
+                {
+                    int y = i;
+                    new Thread(() -> retAr[y] = io.GetSPGN(files[y])).start(); //Do function async!
+                }
+            }
+
+            return retAr;
         }
-        else
-        {
-            gui.displayPopupMessage("Error: the given file path does not lead to the correct place");
-            //System.out.println("Error the given file path does not lead to the correct place");
-        }
+        throw new IOException("Error the chosen directory either doesn't exist or isn't a directory");
     }
 
-    public Move getNextMove()
-    {
-        return selectTableFrom(getAllTablesCompatible()).GetMove(movesMade.size()-1);
-    }
+    /**
+     * Register a move made in
+     *
+     * @param move - Move made
+     */
     public void registerMove(Move move)
     {
         movesMade.add(move);
     }
 
-    private List<Ispgn> getAllTablesCompatible()
+    /**
+     * Get next move in an opening table
+     * @return - Next move to be made
+     */
+    public Move getNextMove()
     {
-        List<Ispgn> candidates = new ArrayList<>();
-        for(Ispgn table : openingTables)
-        {
-            boolean b = true;
-            for (int i = 0; i < movesMade.size(); i++)
-            {
-                if(movesMade.get(i) != table.GetMove(i))
-                    b = false; break;
-            }
-            if(b) candidates.add(table);
-        }
-        return candidates;
+        pruneMoves();//Remove all tables
+        Random rnd = new Random();
+
+        if(openingTables.size() == 0)
+            return null; //If no strats are available, return null
+        Ispgn strat = openingTables.get(rnd.nextInt(openingTables.size()));//Chose a random available strat
+        return strat.GetAllMoves()[turnIndex-1];//Return the move
     }
 
-    private Ispgn selectTableFrom(List<Ispgn> tables)
+
+
+    /** Removes all tables that do not correspond to current board state
+     *
+     */
+    void pruneMoves()
     {
-        //Replace with whatever method used to choose a table from available candidates
-        if(tables.size() == 0)
-            return null;
-        return  tables.get(new Random().nextInt(tables.size()));
+        turnIndex++;
+        for (Ispgn table: openingTables.toArray(new Ispgn[]{}))
+        {
+            Move[] tableMvs = table.GetAllMoves();
+            for (int i = 0; i < turnIndex; i++)
+            {
+                if(tableMvs[i] != movesMade.get(i))
+                {
+                   openingTables.remove(table);
+                   break;
+                }
+            }
+        }
     }
+
 }
