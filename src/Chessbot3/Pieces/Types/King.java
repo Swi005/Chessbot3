@@ -13,8 +13,8 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class King extends SimplePiece {
-    public King(WhiteBlack c) {
-        super(c);
+    public King(WhiteBlack c, Tuple position) {
+        super(c, position);
         canSprint = false;
         inherentValue = 69420; //Nice.
         symbol = 'K';

@@ -27,13 +27,13 @@ public class Move implements Comparable
         this.stabilityIndex = stabIndex;
         this.weight = weight;
     }
-    public Tuple<Integer, Integer> getX() { return this.from; }
-    public Tuple<Integer, Integer> getY() { return this.to; }
+    public Tuple<Integer, Integer> getFrom() { return this.from; }
+    public Tuple<Integer, Integer> getTo() { return this.to; }
     public int getWeight() {return this.weight; }
     public boolean getStabIndex() { return this.stabilityIndex; }
 
-    public void setX(Tuple<Integer, Integer> from) { this.from = from; }
-    public void setY(Tuple<Integer, Integer> to) { this.to = to; }
+    public void setFrom(Tuple<Integer, Integer> from) { this.from = from; }
+    public void setTo(Tuple<Integer, Integer> to) { this.to = to; }
     public void addWeight(int n) {this.weight += n; }
     public void setWeight(int n) { this.weight = n; }
     public void setStabIndex(boolean set) { this.stabilityIndex = set; }
@@ -41,7 +41,7 @@ public class Move implements Comparable
     public String toString2() {return "(" + this.from + ", " + this.to + ")"; }
 
     public boolean equals(Move obj) {
-        return (this.getX().getX() == obj.getX().getX() && this.getX().getY() == obj.getX().getY() && this.getY().getX() == obj.getY().getX() && this.getY().getY() == obj.getY().getY());
+        return (this.getFrom().getX() == obj.getFrom().getX() && this.getFrom().getY() == obj.getFrom().getY() && this.getTo().getX() == obj.getTo().getX() && this.getTo().getY() == obj.getTo().getY());
     }
     @Override
     public int compareTo(Object m){

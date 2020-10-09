@@ -114,25 +114,25 @@ import java.util.List;
                     }
 
                     m = (Move)var10.next();
-                    sym = Character.toUpperCase(board.getPiece((Integer)m.getX().getX(), (Integer)m.getX().getY()).getSymbol());
+                    sym = Character.toUpperCase(board.getPiece((Integer)m.getFrom().getX(), (Integer)m.getFrom().getY()).getSymbol());
                 } while(sym != fst);
 
                 Move move;
                 if (extraInfo && (Integer)partialInfo.getX() == -1) {
-                    if (m.getX().getY() == partialInfo.getY()) {
-                        move = new Move(m.getX(), endPos);
+                    if (m.getFrom().getY() == partialInfo.getY()) {
+                        move = new Move(m.getFrom(), endPos);
                         board.movePiece(move);
                         return move;
                     }
 
-                    if ((Integer)partialInfo.getY() == -1 && m.getX().getX() == partialInfo.getX()) {
-                        move = new Move(m.getX(), endPos);
+                    if ((Integer)partialInfo.getY() == -1 && m.getFrom().getX() == partialInfo.getX()) {
+                        move = new Move(m.getFrom(), endPos);
                         board.movePiece(move);
                         return move;
                     }
                 }
 
-                move = new Move(m.getX(), endPos);
+                move = new Move(m.getFrom(), endPos);
                 board.movePiece(move);
                 return move;
             }
@@ -144,7 +144,7 @@ import java.util.List;
 
             while(var3.hasNext()) {
                 Move m = (Move)var3.next();
-                if (m.getY().equals(endPos)) {
+                if (m.getTo().equals(endPos)) {
                     retList.add(m);
                 }
             }

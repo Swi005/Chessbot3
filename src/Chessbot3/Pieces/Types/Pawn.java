@@ -15,8 +15,8 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Pawn extends SimplePiece {
 
-    public Pawn(WhiteBlack c) {
-        super(c);
+    public Pawn(WhiteBlack c, Tuple position) {
+        super(c, position);
         canSprint = false;
         inherentValue = 100;
         symbol = 'P';

@@ -59,7 +59,7 @@ public class Tests {
         assertEquals(1, map.size());
 
     }
-
+/*
     @Test
     void testPawnEquals(){
         iPiece pawn = new Pawn(WHITE);
@@ -73,6 +73,8 @@ public class Tests {
         iPiece pawn3 = new Pawn(WHITE);
         assertEquals(pawn3, pawn);
     }
+
+ */
 
     @Test
     void testHashMapDuplicateBoards(){

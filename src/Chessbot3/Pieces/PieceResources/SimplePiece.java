@@ -18,12 +18,20 @@ public abstract class SimplePiece implements iPiece {
     protected Character symbol;
     protected Boolean canSprint;
     protected String imageKey;
+    protected Tuple<Integer, Integer> position;
+    protected int deathDate = -1;
 
-    public SimplePiece(WhiteBlack c){
+    public SimplePiece(WhiteBlack c, Tuple position){
         //Det eneste som er felles for alle brikker er hvordan fargen blir assignert.
         //Verdi, symbolet, bildet osv er unikt for hver brikketype, og blir fikset i konstruktøren til de andre brikkeklassene.
         this.color = c;
+        this.position = position;
     }
+
+    public Tuple<Integer, Integer> getPosition() { return this.position; }
+    public void setPosition(Tuple<Integer, Integer> pos) { this.position = pos; }
+    public int getDeathDate(){ return deathDate; }
+    public void setDeathDate(int n){ deathDate = n; }
 
     public Boolean isWhite() { return color == WHITE; }
     public Boolean isBlack() { return color == BLACK; }

@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 
 import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
@@ -63,20 +62,20 @@ public class Action extends KeyAdapter implements ActionListener {
                     if(pressedPiece != null && colorToMove == pressedPiece.getColor() && !game.isBotThinking()){
                         gui.makeButtonsGrey();
                         gui.lightUpButtons(pos);
-                        pressedMove.setX(pos);
+                        pressedMove.setFrom(pos);
                         gui.clearTextField();
                     }
                     //Aktiveres når spilleren allerede har valgt en brikke han vil flytte.
-                    else if(pressedMove.getX() != null){
+                    else if(pressedMove.getFrom() != null){
 
                         //Når spilleren vil flytte til en tom rute, eller ta en fiendtlig brikke. (Eller begge, i en passant)
                         if(pressedPiece == null || pressedPiece.getColor() != colorToMove){
                             gui.clearTextField();
-                            pressedMove.setY(pos);
+                            pressedMove.setTo(pos);
                         }
                     }
                     //Når spilleren har valgt både en brikke å flytte, og en rute å flytte til, blir denne aktivert.
-                    if(pressedMove.getY() != null) {
+                    if(pressedMove.getTo() != null) {
 
                         //Hvis trekket var lovlig.
                         if(game.playerMove(pressedMove)){
@@ -85,7 +84,7 @@ public class Action extends KeyAdapter implements ActionListener {
                         }
                         //Om trekket er ulovlig, vil pressedMove huske hvilken brikke spilleren ville flytte.
                         //Hvor han vil flytte til må velges på nytt.
-                        else pressedMove.setY(null);
+                        else pressedMove.setTo(null);
                     }
                 }
             }

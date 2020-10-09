@@ -202,11 +202,11 @@ public class Gui extends JFrame {
                 int x;
                 int y;
                 if (!reverse) {
-                    x = move.getY().getX();
-                    y = move.getY().getY();
+                    x = move.getTo().getX();
+                    y = move.getTo().getY();
                 } else {
-                    x = 7 - move.getY().getX();
-                    y = 7 - move.getY().getY();
+                    x = 7 - move.getTo().getX();
+                    y = 7 - move.getTo().getY();
                 }
                 chessBoardSquares[x][y].setBackground(litUpColor);
                 litSquares.add(new Tuple(x, y));
@@ -294,16 +294,16 @@ public class Gui extends JFrame {
             }
         }
     }
-    public iPiece promotePawn(){
+    public iPiece promotePawn(Tuple pos){
         //Lager et popup-vindu og spør hvilken brikke en spiller vil promotere til, og returnerer den brikken.
         //Tar utgangspunkt i at alle vil ha en dronning uansett.
         WhiteBlack color = game.getCurrentBoard().getColorToMove();
         int n = JOptionPane.showOptionDialog(this, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
-        if(n == 1) return new Rook(color);
-        else if(n == 2) return new Knight(color);
-        else if(n == 3) return new Bishop(color);
-        else return new Queen(color); //Standardverdi.
+        if(n == 1) return new Rook(color, pos);
+        else if(n == 2) return new Knight(color, pos);
+        else if(n == 3) return new Bishop(color, pos);
+        else return new Queen(color, pos); //Standardverdi.
     }
 
     public void openMenu() {

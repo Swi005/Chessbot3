@@ -30,4 +30,10 @@ public interface iPiece {
     public String toString();
 
     ArrayList<Move> getMoves(Board bård);
+
+    public Tuple<Integer, Integer> getPosition();
+    public void setPosition(Tuple<Integer, Integer> pos);
+
+    public int getDeathDate();
+    public void setDeathDate(int n);
 }

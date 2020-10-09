@@ -74,7 +74,25 @@ public class Game {
         }
         // TODO: 07.10.2020 Skriv resten her
     }
+    public void goBack(){
+        try{
+            currentBoard.undoMove();
+            gui.paintPieces(currentBoard);
+        }catch(IllegalStateException x){
+            //gui.displayPopupMessage("Can't go further back!");
+        }
+    }
 
+    public void goForward(){
+        try{
+            currentBoard.goForward();
+            gui.paintPieces(currentBoard);
+        }catch (IllegalStateException x){
+            //gui.displayPopupMessage("Can't go further forward!");
+        }
+    }
+
+    /*
     public void goBack(){
         //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
         stop = true;
@@ -89,8 +107,8 @@ public class Game {
             gui.paintPieces(currentBoard);
         }
         else gui.displayTextFieldMessage("Can't go further back!");
-    }
-
+    }*/
+/*
     public void goForward(){
         //Går fremover igjen ett trekk, og angrer på anringen til goBack().
         //Om du spiller mot botten går den frem to trekk.
@@ -106,7 +124,7 @@ public class Game {
             gui.paintPieces(currentBoard);
         }
         else gui.displayTextFieldMessage("Can't go further forward!");
-    }
+    }*/
 
     public void newGame(){
         //Starter et nytt parti.
