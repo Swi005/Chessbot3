@@ -18,7 +18,7 @@ public class Tempbot implements iBot{
         if(legals.size() == 0) throw new IllegalStateException();
         for(Move move : legals){
             Board copy = bård.copy();
-            copy.movePiece(move, false);
+            copy.movePiece(move);
             move.addWeight(copy.getScore());
 
             List<Move> countermoves = copy.genMoves();

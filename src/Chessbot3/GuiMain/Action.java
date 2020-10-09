@@ -117,22 +117,24 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("forward")) game.goForward();
         else if(usertext.equals("new")) game.newGame();
         else if(usertext.equals("board")) game.printCurrentBoard();
-        else if(usertext.equals("boards")) game.printBoardHistory();
         else if(usertext.equals("move")) game.printPossibleMoves();
-        else if(usertext.equals("moves")) game.printMoveHistory();
+        else if(usertext.equals("moves")) game.getCurrentBoard().printMoveHistory();
         else if(usertext.equals("turn")) game.printTurn();
         else if(usertext.equals("pieces")) game.printPieces();
         else if(usertext.equals("paint")) gui.paintPieces(game.getCurrentBoard());
         else if(usertext.equals("reverse")) gui.reverse();
         else if(usertext.equals("bot")) game.botMove();
         else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().getScore());
-        else if(usertext.equals("index")) game.printBoardIndex();
+        else if(usertext.equals("index")) game.getCurrentBoard().printBoardIndex();
         else if(usertext.equals("start")) game.stop = false;
         else if(usertext.equals("stop")) game.stop = true;
         else if(usertext.equals("pause")) game.pauseTheBot();
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
         else if(usertext.equals("value")) game.testGetValue();
         else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());
+        else if(usertext.equals("scores")) game.getCurrentBoard().printScores();
+        else if(usertext.equals("castles"))game.getCurrentBoard().printCastles();
+        else if(usertext.equals("castle")) game.getCurrentBoard().printCurrentCastle();
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if(isAMove(usertext)) game.playerMove(parse(usertext));

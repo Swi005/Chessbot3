@@ -89,18 +89,39 @@ public class Board implements Comparable {
         bCastle = new Tuple<>(true, true);
         score = 0;
         passantPos = new Tuple(-1, -1);
+        previousScores.add(0);
+        wCastles.add(wCastle);
+        bCastles.add(bCastle);
     }
 
-    public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int score, Tuple<Boolean, Boolean> wCastle, Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos)
-    //En konstruktør som kun skal brukes for å opprette en kopi av et tidligere brett.
-    //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
-    {
+    public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int score, Tuple<Boolean, Boolean> wCastle,
+                 Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos,
+                 List<Move> previousMoves, List<Integer> previousScores, List<Tuple<Boolean,
+            Boolean>> wCastles, List<Tuple<Boolean, Boolean>> bCastles, LinkedList<iPiece> capturedPieces,
+                 LinkedList<Integer> promotingtimes){
+        //En konstruktør som kun skal brukes for å opprette en komplett kopi av et tidligere brett.
+        //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
+        //Jeg vet denne ser helt jævlig ut, ikke døm meg.
         this.grid = customBoard;
         this.colorToMove = colorToMove;
         this.wCastle = wCastle;
         this.bCastle = bCastle;
         this.score = score;
         this.passantPos = passantPos;
+        this.bCastles = bCastles;
+        this.wCastles = wCastles;
+        this.previousScores = previousScores;
+        this.previousMoves = previousMoves;
+        this.promotingtimes = promotingtimes;
+        this.capturedPieces = capturedPieces;
+    }
+
+    public Board copy() {
+        //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
+        return new Board(this.getGrid(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(),
+                this.passantPos.copy(), new ArrayList<>(previousMoves), new ArrayList<>(previousScores),
+                new ArrayList<>(wCastles), new ArrayList<>(bCastles), new LinkedList<>(capturedPieces),
+                new LinkedList<>(promotingtimes));
     }
 
     //Lager en liste over nesten-lovlige trekk som kan gjøres akkurat nå.
@@ -171,8 +192,7 @@ public class Board implements Comparable {
 
     public void goForward(){
         if(moveindex < previousMoves.size()){
-            movePiece(previousMoves.get(moveindex));
-            moveindex++;
+            movePiece(previousMoves.get(moveindex), false, false);
         }
     }
 
@@ -199,6 +219,29 @@ public class Board implements Comparable {
             }
         }
 
+        if(pie instanceof King){
+            if(fra.equals(E1) && til.equals(G1)){
+                grid[7][7] = grid[5][7];
+                grid[5][7] = null;
+                grid[7][7].setPosition(new Tuple(7, 7));
+            }
+            else if(fra.equals(E1) && til.equals(C1)){
+                grid[0][7] = grid[3][7];
+                grid[3][7] = null;
+                grid[0][7].setPosition(new Tuple(0, 7));
+            }
+            else if(fra.equals(E8) && til.equals(G8)){
+                grid[7][0] = grid[5][0];
+                grid[5][0] = null;
+                grid[7][0].setPosition(new Tuple(7, 0));
+            }
+            else if(fra.equals(E8) && til.equals(C8)){
+                grid[0][0] = grid[3][0];
+                grid[3][0] = null;
+                grid[0][0].setPosition(new Tuple(0, 0));
+            }
+        }
+
         wCastle = wCastles.get(moveindex).copy();
         bCastle = bCastles.get(moveindex).copy();
 
@@ -211,9 +254,9 @@ public class Board implements Comparable {
         colorToMove = getOppositeColor(colorToMove);
     }
 
-    public void movePiece(Move move){ movePiece(move, false); }
+    public void movePiece(Move move){ movePiece(move, false, true); }
 
-    public void movePiece(Move move, Boolean isHumanPlayer) {
+    public void movePiece(Move move, boolean isHumanPlayer, boolean isNewMove) {
         //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
         //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med CheckPlayerMove/GenMoves.
         //Om isHumanPlayer=true, og trekket er at en bonde blir flyttet til enden av brettet,
@@ -248,19 +291,22 @@ public class Board implements Comparable {
                 addScore(tempRook.getValueAt(5, 7) - tempRook.getValueAt(7, 7));
                 grid[5][7] = grid[7][7]; //Flytter tårnet når hvit rokerer kort.
                 grid[7][7] = null;
+                grid[5][7].setPosition(new Tuple(5, 7));
             }else if(fra.equals(E1) && til.equals(C1)){
                 addScore(tempRook.getValueAt(3, 7) - tempRook.getValueAt(0, 7));
                 grid[3][7] = grid[0][7]; //Flytter tårnet når hvit rokerer langt.
                 grid[0][7] = null;
+                grid[3][7].setPosition(new Tuple(3, 7));
             }else if(fra.equals(E8) && til.equals(G8)){
                 addScore(tempRook.getValueAt(5, 0) - tempRook.getValueAt(7, 0));
                 grid[5][0] = grid[7][0]; //Flytter tårnet når svart rokerer kort.
                 grid[7][0] = null;
+                grid[5][0].setPosition(new Tuple<>(5, 0));
             }else if(fra.equals(E8) && til.equals(C8)){
                 addScore(tempRook.getValueAt(3, 0) - tempRook.getValueAt(0, 0));
                 grid[3][0] = grid[0][0]; //Flytter tårnet når svart rokerer langt.
                 grid[0][0] = null;
-                // TODO: 09.10.2020 Tårnet må oppdatere pos
+                grid[3][0].setPosition(new Tuple(3, 0));
             }
         }
 
@@ -306,17 +352,17 @@ public class Board implements Comparable {
         //Bytter farge på hvem sin tur det er.
         colorToMove = getOppositeColor(colorToMove);
 
-
-        previousMoves = previousMoves.subList(0, moveindex);
-        previousScores = previousScores.subList(0, moveindex);
-        wCastles = wCastles.subList(0, moveindex);
-        bCastles = bCastles.subList(0, moveindex);
-
+        if(isNewMove) {
+            previousMoves = previousMoves.subList(0, moveindex);
+            previousScores = previousScores.subList(0, moveindex+1);
+            wCastles = wCastles.subList(0, moveindex+1);
+            bCastles = bCastles.subList(0, moveindex+1);
+            previousScores.add(score);
+            wCastles.add(wCastle);
+            bCastles.add(bCastle);
+            previousMoves.add(move);
+        }
         moveindex++;
-        previousScores.add(score);
-        wCastles.add(wCastle);
-        bCastles.add(bCastle);
-        previousMoves.add(move);
     }
 
     public Boolean checkMoveLegality(Move playerMove) {
@@ -335,7 +381,7 @@ public class Board implements Comparable {
         //Da er trekket ulovlig, og returnerer false
         if(ret) {
             Board copy = this.copy();
-            copy.movePiece(playerMove, false);
+            copy.movePiece(playerMove, false, false);
             for (Move counter : copy.genMoves(getOppositeColorToMove())) {
                 iPiece target = copy.getGrid()[counter.getTo().getX()][counter.getTo().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
                 if (target instanceof King) return false; //Om motstanderen kan ta kongen.
@@ -361,8 +407,7 @@ public class Board implements Comparable {
     //Returnerer score. positivt er bra for hvit, negativt er bra for svart.
     public Integer getScore() { return score; }
 
-    public iPiece[][] getGrid()
-    {
+    public iPiece[][] getGrid() {
         //Returnerer en kopi av selve rutenettet av brikker.
         iPiece[][] retgrid = new iPiece[8][8];
         for(int x=0; x<8; x++){
@@ -371,12 +416,6 @@ public class Board implements Comparable {
             }
         }
         return retgrid;
-    }
-
-    public Board copy()
-    {
-        //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.getGrid(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(), this.passantPos.copy());
     }
 
     //Returnerer hvilken farge som skal flytte.
@@ -484,5 +523,29 @@ public class Board implements Comparable {
         }
         ret += "Score: " + score;
         return ret;
+    }
+
+    public List<Move> getPreviousMoves() { return previousMoves; }
+
+    public void printMoveHistory() { for (Move move : previousMoves){ System.out.println(move); } }
+
+    public void printBoardIndex() { System.out.println(moveindex); }
+
+    public void printScores(){ System.out.println(previousScores); }
+
+    public void printCastles(){
+        System.out.println("White castles: ");
+        for(Tuple tup : wCastles){
+            System.out.println(tup);
+        }
+        System.out.println("Black castles: ");
+        for (Tuple tup :bCastles){
+            System.out.println(tup);
+        }
+    }
+
+    public void printCurrentCastle(){
+        System.out.println("White castle: " + wCastle);
+        System.out.println("Black castle: " + bCastle);
     }
 }

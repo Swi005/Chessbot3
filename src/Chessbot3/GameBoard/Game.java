@@ -21,15 +21,6 @@ public class Game {
 
     private SaveController sc = new SaveController();
     spgnIO ioController = new spgnIO();
-    //Liste over tidligere brett. Denne brukes nå du f. eks. vil angre på et trekk.
-    private List<Board> previousBoards = new ArrayList<>();
-
-    //En liste over trekkene som er gjort.
-    private List<Move> madeMoves = new ArrayList<>();
-
-    //Hvor på listen over tidligere brett det nåværende brettet er.
-    //Vanligvis på slutten, men om brukeren har trykket Go Back eller Go Forward trenger vi denne.
-    private int boardIndex = 0;
 
     //Det nåværende brettet.
     private Board currentBoard;
@@ -52,7 +43,6 @@ public class Game {
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
         //For å starte på nytt kan du bruke newGame(), som resetter alt i dette objektet.
         currentBoard = new Board();
-        previousBoards.add(currentBoard.copy());
     }
 
     //Dette skal egnetlig gjøres av SaveController.java
@@ -60,10 +50,8 @@ public class Game {
         //Oppretter et nytt game, basert på en fil.
         spgn save = ioController.GetSPGN(savedGame);
         Game tempGame = sc.convertToGame(save);
-        this.madeMoves = tempGame.madeMoves;
         this.bots = tempGame.bots;
         this.currentBoard = tempGame.currentBoard;
-        this.previousBoards = tempGame.previousBoards;
     }
 
     public Game(Ispgn ispgn){
@@ -129,11 +117,7 @@ public class Game {
     public void newGame(){
         //Starter et nytt parti.
         stop = true; //Ber botten om stoppe, om den gjør noe.
-        previousBoards.clear();
-        madeMoves.clear();
         currentBoard = new Board();
-        previousBoards.add(currentBoard.copy());
-        boardIndex = 0;
         gui.reset();
         gui.chooseGamemode();
         stop = false; //Gir botter tilatelse til å gjøre ting igjen.
@@ -151,14 +135,7 @@ public class Game {
                 isBotThinking = false;
                 return; //Om noen annet har skjedd mens botten tenkte skal den ikke gjøre trekket.
             }
-            currentBoard.movePiece(move, false);
-
-            //Oppdaterer lister over brett, trekk, etc
-            previousBoards = previousBoards.subList(0, boardIndex+1);
-            madeMoves = madeMoves.subList(0, boardIndex);
-            previousBoards.add(currentBoard.copy());
-            madeMoves.add(move);
-            boardIndex += 1;
+            currentBoard.movePiece(move);
 
             gui.paintPieces(currentBoard);
             gui.clearTextField();
@@ -178,13 +155,7 @@ public class Game {
         if(isBotThinking) return false;
         if(currentBoard.checkMoveLegality(move)) {
             stop = false;
-            currentBoard.movePiece(move, true);
-
-            previousBoards = previousBoards.subList(0, boardIndex+1);
-            madeMoves = madeMoves.subList(0, boardIndex);
-            previousBoards.add(currentBoard.copy());
-            madeMoves.add(move);
-            boardIndex += 1;
+            currentBoard.movePiece(move, true, true);
 
             gui.paintPieces(currentBoard);
             handleWinCondition();
@@ -235,9 +206,6 @@ public class Game {
     //Returnerer det nåværende brettet.
     public Board getCurrentBoard(){ return currentBoard; }
 
-    //Returner listen over trekk som har blitt gjort så langt.
-    public List<Move> getMadeMoves(){ return madeMoves; }
-
     //Returnerer listen over farger som botten styrer. Vanligivs kun 1 farge.
     public List<WhiteBlack> getBotColors(){ return bots; }
 
@@ -249,14 +217,6 @@ public class Game {
 
     //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
     public void printPieces() { for(iPiece pie : currentBoard.getPieceList()) System.out.println(pie); }
-
-    public void printBoardIndex(){ System.out.println(boardIndex); }
-
-    //Printer alle trekkene som har blitt gjort.
-    public void printMoveHistory(){ for(Move move : madeMoves) System.out.println(move); }
-
-    //Printer alle tidligere brett.
-    public void printBoardHistory() { for(Board bård : previousBoards) System.out.println(bård + "\n"); }
 
     public void testGetValue(){
         System.out.println(currentBoard.getColorToMove());
@@ -281,7 +241,7 @@ public class Game {
         if(bots.size() > 1)
             System.out.println("Error: Spgn does not support bot v bot at this time");
 
-        spgn game = new spgn(currentBoard.getScore(), 0, isPvp, name, getMadeMoves().toArray(new Move[]{}));
+        spgn game = new spgn(currentBoard.getScore(), 0, isPvp, name, currentBoard.getPreviousMoves().toArray(new Move[]{}));
 
         return game;
     }
