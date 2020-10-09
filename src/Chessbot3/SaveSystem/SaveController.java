@@ -16,13 +16,9 @@ public class SaveController
     public SaveController() {
         File save = new File(pathToSaves);
         if(!save.exists())
-            if(save.mkdir()){
-
-            }else{
+            if(!save.mkdir())
                 System.out.println("Error: Could not create new save folder for some reason.");
-            }
-
-    };
+    }
 
     public Ispgn[] getAllSaves() throws IOException {
 
@@ -32,7 +28,7 @@ public class SaveController
         {
             File[] files = saveDir.listFiles();
             Ispgn[] retAr = new Ispgn[files.length];
-            if(files.length >0)
+            if(files.length > 0)
             {
                 for (int i = 0; i < files.length; i++)
                 {
@@ -56,12 +52,24 @@ public class SaveController
         Move[] moves = ispgn.GetAllMoves();
         Game game = new Game();
 
-        if(ispgn.GetIsPvP() == 0)
-            game.addBotColor(ispgn.GetBotColor());
-
-        for (int i = 0; i < moves.length; i++)
+        switch (ispgn.GetPvP())
         {
-            game.playerMove(moves[i]);
+            case 1://Bot is white
+                game.addBotColor(WhiteBlack.WHITE);
+                break;
+            case 2:
+                game.addBotColor(WhiteBlack.BLACK);
+                break;
+            case 3:
+                game.addBotColor(WhiteBlack.BLACK);
+                game.addBotColor(WhiteBlack.WHITE);
+                break;
+            default:
+                break;
+        }
+
+        for (Move move : moves) {
+            game.playerMove(move);
         }
         //Sanity check(s)
         if(game.getCurrentBoard().getScore() == ispgn.GetScore())

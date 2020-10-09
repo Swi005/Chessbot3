@@ -41,7 +41,7 @@ public interface IspgnIO
      * @param moves
      * @return
      */
-    void WriteToFile(int score, int type, String name, int pvp, WhiteBlack bot, Move[] moves, File file);
+    void WriteToFile(int score, int type, String name, int pvp, Move[] moves, File file);
 
     /**Reads a file and return its content as a ispgn object
      *

@@ -46,6 +46,5 @@ public interface Ispgn
      * @return - name of file
      */
     String GetName();
-    int GetIsPvP();
-    WhiteBlack GetBotColor();
+    int GetPvP();
 }

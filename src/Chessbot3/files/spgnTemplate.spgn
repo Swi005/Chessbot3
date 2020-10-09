@@ -4,8 +4,7 @@
 #Fields with [] are variables
 [TYPE 0] #Save == 0 | lookup Table == 1
 [SCORE 0] #Game Score
-[PVP 0] #Is the game pvp? 0 = no | 1 = yes
-[BOT 0] #What color does the bot play, 0 = white| 1 = black
+[PVP 0] #Is the game pvp? 0 = yes | 1 = bot is white | 2 = bot is black | 3 = bot v bot
 [Name ""] #Name of game
 
 #Each turn is given a number followed by the start position and the end position of the piece that moved. seperated by a ':'

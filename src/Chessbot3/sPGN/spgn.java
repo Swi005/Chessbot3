@@ -15,24 +15,21 @@ public class spgn implements Ispgn
     private int type; //0 for save| 1 for lookup table
     private Move[] moves;
     private String path;
-    private int pvp;
-    private WhiteBlack botColor;
+    private int pvp; // 0 = pvp | 1 = bot is white | 2 = bot is black | 3 = bot v bot
 
     //Constructor for making a new file
-    public spgn(int score, int type, int pvp, WhiteBlack botColor, String name, Move[] moves)
+    public spgn(int score, int type, int pvp, String name, Move[] moves)
     {
         this.score = score;
         this.type = type;
         this.pvp = pvp;
         this.name = name;
-        this.botColor = botColor;
         this.moves = moves;
 
         if(type == 0)
             path = "src/Chessbot3/files/saves/" + name + ".psgn";
-            //path = "src\\Chessbot3\\files\\saves\\" + name + ".spgn";//TODO: Find out a naming scheme
         else if(type == 1)
-            path = "Chessbot3/src/Chessbot3/files/lookuptables/"+ "lookup:" + name+ ".spgn";//TODO: Find out a naming scheme
+            path = "Chessbot3/src/Chessbot3/files/lookuptables/" + name+ ".spgn";
     }
 
     //Constructor for retriving a file as an spgn
@@ -43,10 +40,8 @@ public class spgn implements Ispgn
         this.moves = temp.moves;
         this.score = temp.score;
         this.type = temp.type;
-        this.botColor = temp.botColor;
         path = file.getPath();
         this.pvp = temp.pvp;
-        this.botColor = temp.botColor;
         this.name = temp.name;
     }
     public spgn(String path)
@@ -59,7 +54,6 @@ public class spgn implements Ispgn
         this.type = temp.type;
         this.path = temp.path;
         this.pvp = temp.pvp;
-        this.botColor = temp.botColor;
     }
 
     @Override
@@ -103,13 +97,8 @@ public class spgn implements Ispgn
     }
 
     @Override
-    public int GetIsPvP() {
+    public int GetPvP() {
         return pvp;
-    }
-
-    @Override
-    public WhiteBlack GetBotColor() {
-        return botColor;
     }
 
     @Override

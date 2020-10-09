@@ -104,7 +104,7 @@ public class spgnIO implements IspgnIO {
     @Override
     public boolean WriteSPGNtoFile(Ispgn spgn, File dir) {
         try{
-            this.WriteToFile(spgn.GetScore(), spgn.GetType(), spgn.GetName(), spgn.GetIsPvP(), spgn.GetBotColor(), spgn.GetAllMoves(), dir);
+            this.WriteToFile(spgn.GetScore(), spgn.GetType(), spgn.GetName(), spgn.GetPvP(), spgn.GetAllMoves(), dir);
             return true;
         }
         catch (Exception e)
@@ -114,7 +114,7 @@ public class spgnIO implements IspgnIO {
     }
 
     @Override
-    public void WriteToFile(int score, int type, String name, int pvp, WhiteBlack bot, Move[] moves, File file) {
+    public void WriteToFile(int score, int type, String name, int pvp, Move[] moves, File file) {
         try {
             file.createNewFile();
             FileWriter writer = new FileWriter(file, true);
@@ -123,10 +123,6 @@ public class spgnIO implements IspgnIO {
             writer.write("[SCORE " + score + "] \n");
             writer.write("[PVP " + pvp + "] \n");
             writer.write("[NAME " + name + "] \n");
-            if(bot == WhiteBlack.BLACK)
-                writer.write("[BOT " + 1 + "] \n");
-            else if(bot == WhiteBlack.WHITE)
-                writer.write("[BOT " + 0 + "] \n");
 
             int lineNm = 1;
 
@@ -163,14 +159,9 @@ public class spgnIO implements IspgnIO {
         int score = Integer.parseInt(ReadVar("SCORE", file));
         int type = Integer.parseInt(ReadVar("TYPE", file));
         int pvp = Integer.parseInt(ReadVar("PVP", file));
-        WhiteBlack bot;
-        if(ReadVar("BOT", file) == "0")
-            bot = WhiteBlack.WHITE;
-        else
-            bot = WhiteBlack.BLACK;
 
         String name = file.getName();
-        return new spgn(score, type, pvp, bot, name, moves);
+        return new spgn(score, type, pvp, name, moves);
     }
 
     @Override
