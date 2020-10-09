@@ -9,7 +9,7 @@ public class Parser {
     public Parser() {
     }
 
-    static String[] parseMoves(File file) {
+    public static String[] parseMoves(File file) {
         List<String> moves = new ArrayList();
         String allMoves = "";
 

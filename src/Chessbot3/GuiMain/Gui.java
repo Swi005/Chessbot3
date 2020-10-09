@@ -47,9 +47,9 @@ public class Gui extends JFrame {
     private static ArrayList<Tuple<Integer, Integer>> litSquares = new ArrayList();
 
     //Fargene på alle rutene.
-    private static Color darkSquareColor = Color.DARK_GRAY;
-    private static Color lightSquareColor = Color.GRAY;
-    private static Color litUpColor = Color.LIGHT_GRAY; //farger på ruter som blir opplyst av mulige trekk.
+    private static final Color darkSquareColor = Color.DARK_GRAY;
+    private static final Color lightSquareColor = Color.GRAY;
+    private static final Color litUpColor = Color.LIGHT_GRAY; //farger på ruter som blir opplyst av mulige trekk.
 
     //Knappene og tekstfeltet som vises på skjermen.
     //Disse må være statiske, slik at Action kan referere til dem når noen trykker på dem.
@@ -317,7 +317,6 @@ public class Gui extends JFrame {
     }
 
     public void loadGame(){
-        // TODO: 01.10.2020 Her bør brukeren få en meny med alle partier som er lagret. 
         //game = new Game(new File("src\\Chessbot3\\files\\test.spgn"));
         try {
             SaveController controller = new SaveController();

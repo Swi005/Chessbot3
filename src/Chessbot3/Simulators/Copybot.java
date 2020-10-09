@@ -8,7 +8,7 @@ import java.util.List;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
-public class Copybot {
+public class Copybot implements iBot{
 
     //Steinar prøver å skrive en bot basert på det vi gjorde i chessbot2! Det går ikke bra.
 
@@ -17,7 +17,7 @@ public class Copybot {
     static int alpha = -999999999;
     static int beta = 999999999;
 
-    public static Move findMove(Board bård) throws IllegalStateException {
+    public Move findMove(Board bård) throws IllegalStateException {
         List<Move> possibles = bård.genCompletelyLegalMoves();
         if (possibles.size() == 0) throw new IllegalStateException();
         System.out.println();
