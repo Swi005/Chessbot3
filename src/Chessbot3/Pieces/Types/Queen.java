@@ -3,6 +3,7 @@ package Chessbot3.Pieces.Types;
 import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.PieceResources.SimplePiece;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.iPiece;
 
 import static Chessbot3.GuiMain.Chess.imageDict;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
@@ -18,5 +19,7 @@ public class Queen extends SimplePiece {
     }
 
     @Override
-    public String toString(){ return color + "Queen"; }
+    public iPiece copy() {
+        return new Queen(color, position.copy());
+    }
 }

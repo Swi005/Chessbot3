@@ -30,7 +30,7 @@ public class Board implements Comparable {
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+            new char[]{'P', 'P', 'P', 'P', 'P', 'P', '.', '.'},
             new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
@@ -193,12 +193,14 @@ public class Board implements Comparable {
     }
 
     public void goForward(){
+        //Om du har tatt tilbake et trekk, og ombestemt ombestemmingen og vil gå fremover igjen.
         if(moveindex < previousMoves.size()){
             movePiece(previousMoves.get(moveindex), false, false);
-        }
+        }else throw new IllegalStateException("Can't go further forward");
     }
 
     public void undoMove(){
+        //Tar tilbake et trekk, og resetter hele brettet til en tidligere tilstand.
         if(moveindex == 0) throw new IllegalStateException("Can't go further back");
         moveindex--;
         Move move = previousMoves.get(moveindex);
@@ -207,9 +209,17 @@ public class Board implements Comparable {
         Tuple<Integer, Integer> til = move.getTo();
         iPiece pie = getPiece(til);
 
-        grid[fra.getX()][fra.getY()] = pie;
-        grid[til.getX()][til.getY()] = null;
-        pie.setPosition(fra);
+        //Sjekker om trekket var å promotere en bonde
+        if(!promotingtimes.isEmpty() && promotingtimes.getFirst() == moveindex){
+            promotingtimes.removeFirst();
+            grid[fra.getX()][fra.getY()] = new Pawn(pie.getColor(), fra);
+            grid[til.getX()][til.getY()] = null;
+        }else{
+            //flytter brikken tilbake
+            grid[fra.getX()][fra.getY()] = pie;
+            grid[til.getX()][til.getY()] = null;
+            pie.setPosition(fra);
+        }
 
         //Respawner drepte brikker
         if(!capturedPieces.isEmpty()){
@@ -221,6 +231,7 @@ public class Board implements Comparable {
             }
         }
 
+        //Flytter tårn tilbake, om trekket var en rokade
         if(pie instanceof King){
             if(fra.equals(E1) && til.equals(G1)){
                 grid[7][7] = grid[5][7];
@@ -244,15 +255,14 @@ public class Board implements Comparable {
             }
         }
 
+        //Oppdaterer rokadebetingelser
         wCastle = wCastles.get(moveindex).copy();
         bCastle = bCastles.get(moveindex).copy();
 
-        if(!promotingtimes.isEmpty() && promotingtimes.getFirst() == moveindex){
-            promotingtimes.removeFirst();
-            grid[fra.getX()][fra.getY()] = new Pawn(pie.getColor(), fra);
-        }
+        //Oppdaterer score
         score = previousScores.get(moveindex);
 
+        //Bytter farge på hvem sin tur det er
         colorToMove = getOppositeColor(colorToMove);
     }
 
@@ -269,11 +279,6 @@ public class Board implements Comparable {
         Tuple<Integer, Integer> til = move.getTo();
         iPiece pie = getPiece(fra);
         iPiece target = getPiece(til);
-
-        if(target != null){
-            target.setDeathDate(moveindex);
-            capturedPieces.addFirst(target);
-        }
 
         //Oppdaterer rokadebetingelser
         //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
@@ -349,11 +354,18 @@ public class Board implements Comparable {
         pie.setPosition(til);
 
         //Legger til score når du tar en brikke.
-        if(target != null) addScore(target.getCombinedValue(til));
+        if(target != null){
+            target.setDeathDate(moveindex);
+            capturedPieces.addFirst(target);
+            addScore(target.getCombinedValue(til));
+        }
 
         //Bytter farge på hvem sin tur det er.
         colorToMove = getOppositeColor(colorToMove);
 
+        //Om trekket er et nytt trekk, altså at det ikke er et resultat av .goForward(), må alle fremtidige trekk på listen slettes.
+        //Dvs, om noen har gjort to trekk, gått tilbake et trekk, og gjort et annet, vil dette sørge for at kun de to faktiske trekkene
+        //Er i listen. Samme med rokadetupler, scores, osv.
         if(isNewMove) {
             previousMoves = previousMoves.subList(0, moveindex);
             previousScores = previousScores.subList(0, moveindex+1);
@@ -367,27 +379,35 @@ public class Board implements Comparable {
         moveindex++;
     }
 
-    public Boolean checkMoveLegality(Move playerMove) {
+    public Boolean checkMoveLegality(Move inputMove) {
         //Sjekker om spillerens trekk er lovlig.
         // Tar hensyn til om trekket setter seg selv i sjakk.
         // Returnerer true om det er lov.
-        boolean ret = false;
-        for (Move move : genMoves(getColorToMove())) if (move.equals(playerMove)){
-            ret = true;
-            break;
+        iPiece pie = getPiece(inputMove.getFrom());
+        if(pie == null){
+            return false;
         }
-
+        boolean ret = false;
+        for (Move move : pie.getMoves(this)) {
+            if (move.equals(inputMove)) {
+                ret = true;
+                break;
+            }
+        }
         //Om spillerens trekk er på listen, er det kanskje lovlig.
         //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
         //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
         //Da er trekket ulovlig, og returnerer false
         if(ret) {
-            Board copy = this.copy();
-            copy.movePiece(playerMove, false, false);
-            for (Move counter : copy.genMoves(getOppositeColorToMove())) {
-                iPiece target = copy.getGrid()[counter.getTo().getX()][counter.getTo().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
-                if (target instanceof King) return false; //Om motstanderen kan ta kongen.
+            movePiece(inputMove);
+            for (Move counter : genMoves()) {
+                iPiece target = getGrid()[counter.getTo().getX()][counter.getTo().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
+                if (target instanceof King){
+                    undoMove();
+                    return false; //Om motstanderen kan ta kongen.
+                }
             }
+            undoMove();
             return true; //Om motstanderen ikke har noen trekk som kan ta kongen
         }
         return false; //Om trekket ikke engang er på den originale listen.
@@ -414,7 +434,9 @@ public class Board implements Comparable {
         iPiece[][] retgrid = new iPiece[8][8];
         for(int x=0; x<8; x++){
             for(int y=0; y<8; y++){
-                retgrid[x][y] = grid[x][y];
+                iPiece pie = grid[x][y];
+                if (pie != null) pie = pie.copy();
+                retgrid[x][y] = pie;
             }
         }
         return retgrid;
@@ -561,5 +583,11 @@ public class Board implements Comparable {
     public void printCurrentCastle(){
         System.out.println("White castle: " + wCastle);
         System.out.println("Black castle: " + bCastle);
+    }
+
+    public void printCaptures(){
+        for (iPiece pie : capturedPieces){
+            System.out.println("pie, died at " + pie.getDeathDate());
+        }
     }
 }

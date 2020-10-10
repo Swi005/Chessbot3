@@ -5,6 +5,7 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.PieceResources.SimplePiece;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
+import Chessbot3.Pieces.PieceResources.iPiece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,9 @@ public class King extends SimplePiece {
     }
 
     @Override
-    public String toString(){ return color + "King"; }
+    public iPiece copy() {
+        return new King(color, position.copy());
+    }
 
     private List<Move> getCastleMoves(Board bård){
         //En funksjon kun for å legge til rokader som lovlige trekk.

@@ -63,56 +63,28 @@ public class Game {
         // TODO: 07.10.2020 Skriv resten her
     }
     public void goBack(){
+        //Tar tilbake et trekk og resetter det til en tidligere tilstand.
+        // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas tilbake
         try{
+            gui.makeButtonsGrey();
             currentBoard.undoMove();
             gui.paintPieces(currentBoard);
         }catch(IllegalStateException x){
-            //gui.displayPopupMessage("Can't go further back!");
+            //Nothing
         }
     }
 
     public void goForward(){
+        //Går fremover igjen, om du har ombestemt ombestemmingen fra goBack().
+        // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas fremover
         try{
+            gui.makeButtonsGrey();
             currentBoard.goForward();
             gui.paintPieces(currentBoard);
         }catch (IllegalStateException x){
-            //gui.displayPopupMessage("Can't go further forward!");
+            //Nothing
         }
     }
-
-    /*
-    public void goBack(){
-        //Går tilbake ett trekk. Om du spiller mot en bot går den tilbake to trekk.
-        stop = true;
-        gui.makeButtonsGrey();
-        int delta;
-        if(bots.size() == 1 && !isBotThinking)delta = 2;
-        else delta = 1;
-
-        if(boardIndex - delta >= 0){
-            boardIndex -= delta;
-            currentBoard = previousBoards.get(boardIndex).copy();
-            gui.paintPieces(currentBoard);
-        }
-        else gui.displayTextFieldMessage("Can't go further back!");
-    }*/
-/*
-    public void goForward(){
-        //Går fremover igjen ett trekk, og angrer på anringen til goBack().
-        //Om du spiller mot botten går den frem to trekk.
-        stop = true;
-        gui.makeButtonsGrey();
-        int delta;
-        if(bots.size() == 1) delta = 2;
-        else delta = 1;
-
-        if(boardIndex + delta < previousBoards.size()){
-            boardIndex += delta;
-            currentBoard = previousBoards.get(boardIndex).copy();
-            gui.paintPieces(currentBoard);
-        }
-        else gui.displayTextFieldMessage("Can't go further forward!");
-    }*/
 
     public void newGame(){
         //Starter et nytt parti.
@@ -154,11 +126,10 @@ public class Game {
         //Oppdaterer også Gui.
         if(isBotThinking) return false;
         if(currentBoard.checkMoveLegality(move)) {
-            stop = false;
             currentBoard.movePiece(move, true, true);
-
             gui.paintPieces(currentBoard);
             handleWinCondition();
+            stop = false;
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");

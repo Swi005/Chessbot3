@@ -13,7 +13,7 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public abstract class SimplePiece implements iPiece {
-    protected WhiteBlack color;
+    protected final WhiteBlack color;
     protected int inherentValue;
     protected Character symbol;
     protected Boolean canSprint;
@@ -29,7 +29,10 @@ public abstract class SimplePiece implements iPiece {
     }
 
     public Tuple<Integer, Integer> getPosition() { return this.position; }
-    public void setPosition(Tuple<Integer, Integer> pos) { this.position = pos; }
+    public void setPosition(Tuple<Integer, Integer> pos) {
+        System.out.println("flyttet til " + pos);
+        this.position = pos;
+    }
     public int getDeathDate(){ return deathDate; }
     public void setDeathDate(int n){ deathDate = n; }
 

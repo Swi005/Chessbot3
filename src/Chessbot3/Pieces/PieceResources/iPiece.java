@@ -35,4 +35,6 @@ public interface iPiece {
 
     public int getDeathDate();
     public void setDeathDate(int n);
+
+    public iPiece copy();
 }

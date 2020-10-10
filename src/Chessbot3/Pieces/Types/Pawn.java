@@ -24,8 +24,9 @@ public class Pawn extends SimplePiece {
         else imageKey = "Pb";
     }
 
-    @Override
-    public String toString(){ return color + "Pawn"; }
+    public iPiece copy(){
+        return new Pawn(color, position.copy());
+    }
 
     @Override
     public ArrayList<Move> getMoves(Board bård){
