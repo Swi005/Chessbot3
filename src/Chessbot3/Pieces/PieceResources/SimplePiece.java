@@ -44,9 +44,8 @@ public abstract class SimplePiece implements iPiece {
     public Boolean canSprint(){ return canSprint; } //Om brikken kan gå flere skritt om gangen eller ei.
     public String toString(){ return color + " " + getClass().getName().substring(7).toUpperCase(); }
 
-    public Integer getX(Board bård){ return getCoords(bård).getX(); }
-    public Integer getY(Board bård){ return getCoords(bård).getY(); }
-    public Tuple<Integer, Integer> getCoords(Board bård) { return bård.getCoordsOfPiece(this); }
+    public Integer getX(){ return position.getX(); }
+    public Integer getY(){ return position.getY(); }
 
     public Character getSymbol(){ return symbol; }
 
@@ -68,6 +67,7 @@ public abstract class SimplePiece implements iPiece {
         else return posValueDict.get(symbol)[7-pos.getY()][7-pos.getX()];
     }
 
+    @Override
     public boolean equals(Object obj){
         return this.getClass() == obj.getClass() && (this.getColor() == ((SimplePiece) obj).getColor());
     }
@@ -75,14 +75,14 @@ public abstract class SimplePiece implements iPiece {
     @Override
     public int hashCode() { return Objects.hash(color, getClass()); }
 
-
+    @Override
     public ArrayList<Move> getMoves(Board bård){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå.
         //NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
         //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må sjekkes i checkPlayerMove.
         ArrayList<Move> ret = new ArrayList<>();
-        Integer fraX = getX(bård);
-        Integer fraY = getY(bård);
+        Integer fraX = position.getX();
+        Integer fraY = position.getY();
         Tuple<Integer, Integer> fraPos = new Tuple<>(fraX, fraY);
 
         for(Tuple<Integer, Integer> retning : direcDict.get(symbol)){ //Looper igjennom hver enkelt retning den kan gå.

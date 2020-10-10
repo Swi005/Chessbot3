@@ -15,9 +15,8 @@ public interface iPiece {
 
     public Boolean canSprint();
 
-    public Integer getX(Board bård);
-    public Integer getY(Board bård);
-    public Tuple<Integer, Integer> getCoords(Board bård);
+    public Integer getX();
+    public Integer getY();
     public BufferedImage getImage();
 
     int getValueAt(int x, int y);

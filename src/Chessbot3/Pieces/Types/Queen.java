@@ -16,4 +16,7 @@ public class Queen extends SimplePiece {
         if(c == WHITE)imageKey = "Qw";
         else imageKey = "Qb";
     }
+
+    @Override
+    public String toString(){ return color + "Queen"; }
 }

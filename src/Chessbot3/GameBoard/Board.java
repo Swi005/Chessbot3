@@ -81,7 +81,7 @@ public class Board implements Comparable {
         grid = new iPiece[8][8];
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                iPiece pie = PieceFactory.getPiece(initialBoard[y][x], new Tuple(y, x));
+                iPiece pie = PieceFactory.getPiece(initialBoard[y][x], new Tuple(x, y));
                 grid[x][y] = pie;
             }
         }
@@ -148,7 +148,7 @@ public class Board implements Comparable {
         for(Move move : genMoves(color)) if(checkMoveLegality(move)) ret.add(move);
         return ret;
     }
-
+/*
     public Tuple<Integer, Integer> getCoordsOfPiece(iPiece piece) throws IllegalArgumentException {
         //Søker etter en brikke og returnerer koordinatene dens.
         //Kræsjer om den ikke finner den.
@@ -161,6 +161,8 @@ public class Board implements Comparable {
         }
         throw new IllegalArgumentException("Fant ikke brikken!");
     }
+
+ */
     public int getValue(Move move){
         //Regner ut den umiddelbare verdien av et trekk.
         //Denne gir høy score om du tar en brikke eller flytter til en bedre posisjon,
@@ -504,6 +506,18 @@ public class Board implements Comparable {
         }
         result += primes[8] * Objects.hash(colorToMove);
         return result;
+    }
+
+    public void printPiecePosition(){
+        for (iPiece pie : getPieceList(WHITE)){
+            System.out.println(pie.getPosition());
+        }
+    }
+
+    public void printPieceMoves(Tuple<Integer, Integer> tup){
+        for (Move move : getPiece(tup).getMoves(this)){
+            System.out.println(move);
+        }
     }
 
     @Override

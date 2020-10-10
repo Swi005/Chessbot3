@@ -23,6 +23,10 @@ public class Pawn extends SimplePiece {
         if(c == WHITE) imageKey = "Pw";
         else imageKey = "Pb";
     }
+
+    @Override
+    public String toString(){ return color + "Pawn"; }
+
     @Override
     public ArrayList<Move> getMoves(Board bård){
         Tuple<Integer, Integer> passantPos = bård.getPassantPos();
@@ -31,8 +35,8 @@ public class Pawn extends SimplePiece {
         if(color == WHITE) directions = direcDict.get('P');
         else directions = direcDict.get('p');
 
-        Integer fraX = getX(bård);
-        Integer fraY = getY(bård);
+        Integer fraX = position.getX();
+        Integer fraY = position.getY();
         Tuple<Integer, Integer> fraPos = new Tuple<>(fraX, fraY);
 
         for(Tuple<Integer, Integer> direc : directions){ //Looper igjennom alle retningene den kan gå.
@@ -40,10 +44,12 @@ public class Pawn extends SimplePiece {
             Integer tilY = fraY+direc.getY();
             Tuple<Integer, Integer> tilPos = new Tuple(tilX, tilY);
 
-            if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) continue; //Om den holder på å gå utenfor brettet.
+            //Om den holder på å gå utenfor brettet.
+            if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) continue;
             iPiece mål = bård.getPiece(tilPos);
 
-            if(direc.getX() == -1 || direc.getX() == 1){ //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der, eller at den kan ta en passant.
+            //Om den prøver å gå skrått. Da trenger den at det står en fiendtlig brikke der, eller at den kan ta en passant.
+            if(direc.getX() == -1 || direc.getX() == 1){
                 if (mål != null && this.isOppositeColor(mål) || tilPos.equals(passantPos)) {
                     ret.add(new Move(fraPos, tilPos));
                 }

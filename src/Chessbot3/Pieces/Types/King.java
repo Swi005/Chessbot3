@@ -30,6 +30,9 @@ public class King extends SimplePiece {
         return ret;
     }
 
+    @Override
+    public String toString(){ return color + "King"; }
+
     private List<Move> getCastleMoves(Board bård){
         //En funksjon kun for å legge til rokader som lovlige trekk.
         //En rokade er lov om:

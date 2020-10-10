@@ -16,4 +16,7 @@ public class Knight extends SimplePiece {
         if(c == WHITE) imageKey = "Nw";
         else imageKey = "Nb";
     }
+
+    @Override
+    public String toString(){ return color + "Knight"; }
 }
