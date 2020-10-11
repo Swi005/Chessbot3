@@ -1,5 +1,8 @@
 package Chessbot3.MiscResources;
 
+import static Chessbot3.GuiMain.Action.isAMove;
+import static Chessbot3.GuiMain.Action.parse;
+
 public class Move implements Comparable
 {
     //Et objekt for å representere et trekk.
@@ -13,15 +16,21 @@ public class Move implements Comparable
     private int weight;
     private String chars = "ABCDEFGH";
     private String chars2 = chars.toLowerCase();
-    public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to)
-    {
+    public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to) {
         this.from = from;
         this.to = to;
         this.weight = 0;
         this.stabilityIndex = false;
     }
-    public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to, boolean stabIndex, int weight)
-    {
+
+    public Move Move(String s){
+        if(isAMove(s)){
+            return parse(s);
+        }
+        throw new IllegalArgumentException("Not a move");
+    }
+
+    public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to, boolean stabIndex, int weight) {
         this.from = from;
         this.to = to;
         this.stabilityIndex = stabIndex;

@@ -67,7 +67,7 @@ public class Game {
         // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas tilbake
         try{
             gui.makeButtonsGrey();
-            currentBoard.undoMove();
+            currentBoard.undoMove(false);
             gui.paintPieces(currentBoard);
         }catch(IllegalStateException x){
             //Nothing
@@ -137,7 +137,7 @@ public class Game {
         }
     }
     private void handleWinCondition(){
-        //Returnerer true om spillet er ferdig, false ellers.
+        System.out.println();
 
         //Sjekker om det er matt eller patt.
         Boolean check = currentBoard.checkCheckMate();

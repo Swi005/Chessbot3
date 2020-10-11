@@ -4,6 +4,7 @@ import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 import static java.lang.StrictMath.abs;
+import static java.lang.StrictMath.min;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class Board implements Comparable {
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
-            new char[]{'P', 'P', 'P', 'P', 'P', 'P', '.', '.'},
+            new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
             new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
@@ -73,6 +74,7 @@ public class Board implements Comparable {
     private LinkedList<iPiece> capturedPieces = new LinkedList();
     private List<Tuple<Boolean, Boolean>> wCastles = new ArrayList<>();
     private List<Tuple<Boolean, Boolean>> bCastles = new ArrayList<>();
+    private List<Tuple<Integer, Integer>> passants = new ArrayList();
     private LinkedList<Integer> promotingtimes = new LinkedList<>();
     private List<Integer> previousScores = new ArrayList<>();
 
@@ -92,13 +94,14 @@ public class Board implements Comparable {
         previousScores.add(0);
         wCastles.add(wCastle);
         bCastles.add(bCastle);
+        passants.add(passantPos);
     }
 
     public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int score, Tuple<Boolean, Boolean> wCastle,
                  Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos,
                  List<Move> previousMoves, List<Integer> previousScores, List<Tuple<Boolean,
             Boolean>> wCastles, List<Tuple<Boolean, Boolean>> bCastles, LinkedList<iPiece> capturedPieces,
-                 LinkedList<Integer> promotingtimes){
+                 LinkedList<Integer> promotingtimes, List<Tuple<Integer, Integer>> passants){
         //En konstruktør som kun skal brukes for å opprette en komplett kopi av et tidligere brett.
         //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
         //Jeg vet denne ser helt jævlig ut, ikke døm meg.
@@ -114,14 +117,15 @@ public class Board implements Comparable {
         this.previousMoves = previousMoves;
         this.promotingtimes = promotingtimes;
         this.capturedPieces = capturedPieces;
+        this.passants = passants;
     }
 
     public Board copy() {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.getGrid(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(),
+        return new Board(this.getGridCopy(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(),
                 this.passantPos.copy(), new ArrayList<>(previousMoves), new ArrayList<>(previousScores),
                 new ArrayList<>(wCastles), new ArrayList<>(bCastles), new LinkedList<>(capturedPieces),
-                new LinkedList<>(promotingtimes));
+                new LinkedList<>(promotingtimes), new ArrayList(passants));
     }
 
     //Lager en liste over nesten-lovlige trekk som kan gjøres akkurat nå.
@@ -199,7 +203,9 @@ public class Board implements Comparable {
         }else throw new IllegalStateException("Can't go further forward");
     }
 
-    public void undoMove(){
+    public void undoMove(){ undoMove(true);}
+
+    public void undoMove(boolean deleteFuture){
         //Tar tilbake et trekk, og resetter hele brettet til en tidligere tilstand.
         if(moveindex == 0) throw new IllegalStateException("Can't go further back");
         moveindex--;
@@ -262,8 +268,19 @@ public class Board implements Comparable {
         //Oppdaterer score
         score = previousScores.get(moveindex);
 
+        //Oppdaterer hvor det er greit å ta en passant
+        passantPos = passants.get(moveindex).copy();
+
         //Bytter farge på hvem sin tur det er
         colorToMove = getOppositeColor(colorToMove);
+
+        if(deleteFuture){
+            wCastles.remove(moveindex+1);
+            bCastles.remove(moveindex+1);
+            previousScores.remove(moveindex+1);
+            previousMoves.remove(moveindex);
+            passants.remove(moveindex+1);
+        }
     }
 
     public void movePiece(Move move){ movePiece(move, false, true); }
@@ -375,6 +392,7 @@ public class Board implements Comparable {
             wCastles.add(wCastle);
             bCastles.add(bCastle);
             previousMoves.add(move);
+            passants.add(passantPos);
         }
         moveindex++;
     }
@@ -401,7 +419,7 @@ public class Board implements Comparable {
         if(ret) {
             movePiece(inputMove);
             for (Move counter : genMoves()) {
-                iPiece target = getGrid()[counter.getTo().getX()][counter.getTo().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
+                iPiece target = getGridCopy()[counter.getTo().getX()][counter.getTo().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
                 if (target instanceof King){
                     undoMove();
                     return false; //Om motstanderen kan ta kongen.
@@ -429,7 +447,7 @@ public class Board implements Comparable {
     //Returnerer score. positivt er bra for hvit, negativt er bra for svart.
     public Integer getScore() { return score; }
 
-    public iPiece[][] getGrid() {
+    public iPiece[][] getGridCopy() {
         //Returnerer en kopi av selve rutenettet av brikker.
         iPiece[][] retgrid = new iPiece[8][8];
         for(int x=0; x<8; x++){
