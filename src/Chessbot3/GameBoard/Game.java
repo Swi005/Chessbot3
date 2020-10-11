@@ -34,7 +34,7 @@ public class Game {
     private ArrayList<WhiteBlack> bots = new ArrayList<>(2);
 
     //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
-    public boolean stop = false;
+    public boolean stop = true;
 
     //Endre på denne linjen for å bytte ut botten
     private iBot bot = new AlphaBota();
@@ -43,6 +43,7 @@ public class Game {
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
         //For å starte på nytt kan du bruke newGame(), som resetter alt i dette objektet.
         currentBoard = new Board();
+        if (bots.contains(currentBoard.getColorToMove())) stop = false;
     }
 
     //Dette skal egnetlig gjøres av SaveController.java
@@ -52,6 +53,7 @@ public class Game {
         Game tempGame = sc.convertToGame(save);
         this.bots = tempGame.bots;
         this.currentBoard = tempGame.currentBoard;
+        if (bots.contains(currentBoard.getColorToMove())) stop = false;
     }
 
     public Game(Ispgn ispgn){
@@ -60,17 +62,22 @@ public class Game {
         for (Move move : moves){
             playerMove(move);
         }
+        if (bots.contains(currentBoard.getColorToMove())) stop = false;
         // TODO: 07.10.2020 Skriv resten her
     }
     public void goBack(){
         //Tar tilbake et trekk og resetter det til en tidligere tilstand.
         // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas tilbake
         try{
+            stop = true;
             gui.makeButtonsGrey();
             currentBoard.undoMove(false);
             gui.paintPieces(currentBoard);
+            handleWinCondition();
         }catch(IllegalStateException x){
-            //Nothing
+            gui.displayTextFieldMessage("Cannot go further back!");
+        }finally {
+            handleWinCondition();
         }
     }
 
@@ -78,27 +85,34 @@ public class Game {
         //Går fremover igjen, om du har ombestemt ombestemmingen fra goBack().
         // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas fremover
         try{
+            stop = true;
             gui.makeButtonsGrey();
             currentBoard.goForward();
             gui.paintPieces(currentBoard);
+            handleWinCondition();
         }catch (IllegalStateException x){
-            //Nothing
+            gui.displayTextFieldMessage("Cannot go further forward!");
+        }finally {
+            handleWinCondition();
         }
     }
 
     public void newGame(){
         //Starter et nytt parti.
-        stop = true; //Ber botten om stoppe, om den gjør noe.
+        stop = true;
         currentBoard = new Board();
         gui.reset();
         gui.chooseGamemode();
-        stop = false; //Gir botter tilatelse til å gjøre ting igjen.
+        if (bots.contains(currentBoard.getColorToMove())){
+            stop = false;
+        }
     }
 
     public void botMove(){
         //Spør en bot om hva det er lurt å gjøre, og gjør trekket.
         //Denne tar IKKE hensyn til om trekket er lovlig eller ikke, så botten bør være ærlig.
         //Botten kan lett byttes ut ved å endre på der den blir kalt opp.
+        if (stop) throw new IllegalArgumentException("Bot was stopped, but botMove was called anyway");
         try {
             isBotThinking = true;
             if(bots.size() == 1) gui.displayTextFieldMessage("Thinking...");
@@ -114,6 +128,7 @@ public class Game {
 
             handleWinCondition();
             isBotThinking = false;
+
         }catch(IllegalStateException x){
             isBotThinking = false;
             gui.clearTextField();
@@ -125,11 +140,11 @@ public class Game {
         //Legger alle tidligere trekk og brett inn previousBoards og madeMoves.
         //Oppdaterer også Gui.
         if(isBotThinking) return false;
+        stop = true;
         if(currentBoard.checkMoveLegality(move)) {
             currentBoard.movePiece(move, true, true);
             gui.paintPieces(currentBoard);
             handleWinCondition();
-            stop = false;
             return true;
         }else {
             gui.displayTextFieldMessage("Not a legal move!");
@@ -137,7 +152,7 @@ public class Game {
         }
     }
     private void handleWinCondition(){
-        System.out.println();
+        //Sjekker om spillet er over, sender relevante instrukser til gui, og oppdaterer bottens status.
 
         //Sjekker om det er matt eller patt.
         Boolean check = currentBoard.checkCheckMate();
@@ -154,7 +169,9 @@ public class Game {
             gui.displayPopupMessage("Checkmate! " + currentBoard.getOppositeColorToMove() + " wins!");
             stop = true;
         }
-        //Hvis ingen ble aktivert er spillet fortsatt i gang.
+        //Hvis vi kommer hit er spillet fortsatt igang. Da må vi sjekke om det er bottens tur og aktivere den.
+        if (bots.contains(currentBoard.getColorToMove())) stop = false;
+        else stop = true;
     }
     //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
     //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.

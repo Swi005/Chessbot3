@@ -152,21 +152,7 @@ public class Board implements Comparable {
         for(Move move : genMoves(color)) if(checkMoveLegality(move)) ret.add(move);
         return ret;
     }
-/*
-    public Tuple<Integer, Integer> getCoordsOfPiece(iPiece piece) throws IllegalArgumentException {
-        //Søker etter en brikke og returnerer koordinatene dens.
-        //Kræsjer om den ikke finner den.
-        for (int i = 0; i < grid.length; i++) {
-            iPiece[] subRow = grid[i];
-            for (int j = 0; j < subRow.length; j++) {
-                if (subRow[j] == piece)
-                    return new Tuple(i, j);
-            }
-        }
-        throw new IllegalArgumentException("Fant ikke brikken!");
-    }
 
- */
     public int getValue(Move move){
         //Regner ut den umiddelbare verdien av et trekk.
         //Denne gir høy score om du tar en brikke eller flytter til en bedre posisjon,
@@ -207,7 +193,7 @@ public class Board implements Comparable {
 
     public void undoMove(boolean deleteFuture){
         //Tar tilbake et trekk, og resetter hele brettet til en tidligere tilstand.
-        if(moveindex == 0) throw new IllegalStateException("Can't go further back");
+        if(moveindex <= 0) throw new IllegalStateException("Can't go further back");
         moveindex--;
         Move move = previousMoves.get(moveindex);
 
@@ -388,6 +374,7 @@ public class Board implements Comparable {
             previousScores = previousScores.subList(0, moveindex+1);
             wCastles = wCastles.subList(0, moveindex+1);
             bCastles = bCastles.subList(0, moveindex+1);
+            passants = passants.subList(0, moveindex+1);
             previousScores.add(score);
             wCastles.add(wCastle);
             bCastles.add(bCastle);

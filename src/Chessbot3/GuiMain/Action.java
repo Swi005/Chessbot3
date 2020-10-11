@@ -31,115 +31,63 @@ public class Action extends KeyAdapter implements ActionListener {
         //Den forsøker å finne knappen og handle deretter.
         gui.removeErrorsFromTextField();
         gui.closeMenu();
-        if(e.getSource() == quit) System.exit(0);
-        else if(e.getSource() == enter) enter();
-        else if(e.getSource() == back) game.goBack();
-        else if(e.getSource() == forward) game.goForward();
-        else if(e.getSource() == neww) game.newGame();
-        else if(e.getSource() == botstop) game.pauseTheBot();
-        else if(e.getSource() == openMenu) gui.openMenu();
-        else if(e.getSource() == load) gui.loadGame();
-        else if(e.getSource() == save) gui.saveGame();
+        if (e.getSource() == quit) System.exit(0);
+        else if (e.getSource() == enter) enter();
+        else if (e.getSource() == back) game.goBack();
+        else if (e.getSource() == forward) game.goForward();
+        else if (e.getSource() == neww) game.newGame();
+        else if (e.getSource() == botstop) game.pauseTheBot();
+        else if (e.getSource() == openMenu) gui.openMenu();
+        else if (e.getSource() == load) gui.loadGame();
+        else if (e.getSource() == save) gui.saveGame();
         else findSquare(e);
     }
 
     private void findSquare(ActionEvent e) {
         //Holder styr på hva som gjøres hver gang spilleren trykker på en rute på brettet.
+        if (game.isBotThinking()) return;
+        gui.clearTextField();
         Board bård = game.getCurrentBoard();
         WhiteBlack colorToMove = bård.getColorToMove();
 
-
         //Looper igjennom alle knappene i listen til den finner den riktige.
-        for(int x=0; x<8; x++){
-            for(int y=0; y<8; y++){
-                if(e.getSource() == chessBoardSquares[x][y]) {
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (e.getSource() == chessBoardSquares[x][y]) {
                     Tuple<Integer, Integer> pos;
-                    if(!gui.reverse) pos = new Tuple(x, y);
-                    else pos = new Tuple(7-x, 7-y);
+                    if (!gui.reverse) pos = new Tuple(x, y);
+                    else pos = new Tuple(7 - x, 7 - y);
 
                     iPiece pressedPiece = bård.getPiece(pos);
-                    try {
-                        if (pressedPiece == null) {
-                            if (pressedMove.getFrom() != null) {
-                                pressedMove.setTo(pos);
-                                if (game.playerMove(pressedMove)) {
-                                    pressedMove = new Move(null, null);
-                                }
-                            }
-                            gui.makeButtonsGrey();
-                        } else if (pressedPiece.getColor() == colorToMove) {
-                            pressedMove.setFrom(pos);
-                            gui.makeButtonsGrey();
-                            gui.lightUpButtons(pos);
-                        } else {
-                            if (pressedMove.getFrom() != null) {
-                                pressedMove.setTo(pos);
-                                if (game.playerMove(pressedMove)) {
-                                    pressedMove = new Move(null, null);
-                                }
-                            }
-                            gui.makeButtonsGrey();
-
+                    if (pressedPiece == null) {
+                        if (pressedMove.getFrom() != null) {
+                            pressedMove.setTo(pos);
+                            if (game.playerMove(pressedMove)) {
+                                pressedMove = new Move(null, null);
+                            }else gui.displayTextFieldMessage("Not a legal move");
                         }
-                    }catch (NullPointerException ex){
-                        ex.printStackTrace();
-                        System.out.println(bård);
-                        System.out.println(pressedPiece.getPosition());
-                    }
-                    /*
-                    //System.out.print(pressedMove.getFrom() + " " + pressedMove.getTo() + " -> ");
-                    Tuple<Integer, Integer> pos;
-                    if(!gui.reverse) pos = new Tuple(x, y);
-                    else pos = new Tuple(7-x, 7-y);
-
-                    iPiece pressedPiece = bård.getPiece(pos);
-                    //System.out.println(pressedPiece);
-                    //System.out.println(pos);
-
-                    //if(pressedPiece != null){
-                    //   bård.printPieceMoves(pos);
-                    //   System.out.println();
-                    //}
-
-                    //Aktiveres når spilleren trykker på en av sine egne brikker.
-                    if(pressedPiece != null && colorToMove == pressedPiece.getColor() && !game.isBotThinking()){
+                        gui.makeButtonsGrey();
+                    } else if (pressedPiece.getColor() == colorToMove) {
+                        pressedMove.setFrom(pos);
                         gui.makeButtonsGrey();
                         gui.lightUpButtons(pos);
-                        pressedMove.setFrom(pos);
-                        gui.clearTextField();
-                    }
-                    //Aktiveres når spilleren allerede har valgt en brikke han vil flytte.
-                    else if(pressedMove.getFrom() != null){
-
-                        //Når spilleren vil flytte til en tom rute, eller ta en fiendtlig brikke. (Eller begge, i en passant)
-                        if(pressedPiece == null || pressedPiece.getColor() != colorToMove){
-                            //System.out.println("ulik farge");
-                            gui.clearTextField();
+                    } else {
+                        if (pressedMove.getFrom() != null) {
                             pressedMove.setTo(pos);
+                            if (game.playerMove(pressedMove)) {
+                                pressedMove = new Move(null, null);
+                            }else gui.displayTextFieldMessage("Not a legal move");
                         }
+                        gui.makeButtonsGrey();
                     }
-                    //Når spilleren har valgt både en brikke å flytte, og en rute å flytte til, blir denne aktivert.
-                    if(pressedMove.getTo() != null) {
-
-                        //Hvis trekket var lovlig.
-                        if(game.playerMove(pressedMove)){
-                            gui.makeButtonsGrey();
-                            pressedMove = new Move(null, null);
-                        }
-                        //Om trekket er ulovlig, vil pressedMove huske hvilken brikke spilleren ville flytte.
-                        //Hvor han vil flytte til må velges på nytt.
-                        else pressedMove.setTo(null);
-                    }*/
                 }
-
-
             }
         }
-        //System.out.println(pressedMove.getFrom() + " " + pressedMove.getTo());
     }
 
     public void keyPressed(KeyEvent e) {
         //Holder styr på hva som skjer hver gang brukeren trykker en tast på tastaturet.
+        gui.closeMenu();
         int key = e.getKeyCode();
         try {
             switch (key) {
@@ -169,7 +117,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("pieces")) game.printPieces();
         else if(usertext.equals("paint")) gui.paintPieces(game.getCurrentBoard());
         else if(usertext.equals("reverse")) gui.reverse();
-        else if(usertext.equals("bot")) game.botMove();
+        else if(usertext.equals("bot")){ game.stop = false; game.botMove(); }
         else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().getScore());
         else if(usertext.equals("start")) game.stop = false;
         else if(usertext.equals("stop")) game.stop = true;
