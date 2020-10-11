@@ -3,9 +3,6 @@ package Tests;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
-import Chessbot3.Pieces.PieceResources.iPiece;
-import Chessbot3.Pieces.Types.Pawn;
-import Chessbot3.Pieces.Types.Rook;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,9 +10,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
-import static Chessbot3.Simulators.AlphaBota.alphaSetup;
+import static Chessbot3.Simulators.AlphaBota.setupSearch;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Tests {
@@ -140,10 +136,10 @@ public class Tests {
     @Test
     void testShannonsNumber(){
         Board bård = new Board();
-        alphaSetup(bård, 1);
-        alphaSetup(bård, 2);
-        alphaSetup(bård, 3);
-        alphaSetup(bård, 4);
+        setupSearch(bård, 1);
+        setupSearch(bård, 2);
+        setupSearch(bård, 3);
+        setupSearch(bård, 4);
 
     }
 

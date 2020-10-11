@@ -6,30 +6,32 @@ import Chessbot3.MiscResources.Move;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IllformedLocaleException;
 import java.util.List;
 
+import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
-import static Chessbot3.Simulators.TransFlag.*;
 
 public class AlphaBota implements iBot{
 
-    static int initialPlies = 5;
+    static int initialPlies = 4;
     static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
     static HashMap<Board, int[]> uniques = new HashMap<>();
     static HashMap<Board, Transposition> transpositions = new HashMap<>();
     static int i = 0;
 
     public Move findMove(Board bård) throws IllegalStateException{
-        int nPieces = bård.getNumberOfPieces();
-        if(nPieces < 5) return alphaSetup(bård, initialPlies +4);
-        if(nPieces < 7) return alphaSetup(bård, initialPlies +3);
-        if(nPieces < 10) return alphaSetup(bård, initialPlies +2);
-        if(nPieces < 20) return alphaSetup(bård, initialPlies +1);
-
-        return alphaSetup(bård, initialPlies);
+        Board copy = bård.copy();
+        int nMoves = copy.genCompletelyLegalMoves().size();
+        if(nMoves > 25) return setupSearch(copy, initialPlies);
+        if(nMoves > 18) return setupSearch(copy, initialPlies+1);
+        if(nMoves > 12) return setupSearch(copy, initialPlies+2);
+        if(nMoves > 8) return setupSearch(copy,initialPlies+3);
+        if(nMoves > 4) return setupSearch(copy, initialPlies+4);
+        return setupSearch(copy, initialPlies+5);
     }
     
-    public static Move alphaSetup(Board bård, int depth) throws IllegalStateException{
+    public static Move setupSearch(Board bård, int depth) throws IllegalStateException{
         List<Move> possibles = bård.genCompletelyLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
 

@@ -36,7 +36,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if (e.getSource() == back) game.goBack();
         else if (e.getSource() == forward) game.goForward();
         else if (e.getSource() == neww) game.newGame();
-        else if (e.getSource() == botstop) game.pauseTheBot();
         else if (e.getSource() == openMenu) gui.openMenu();
         else if (e.getSource() == load) gui.loadGame();
         else if (e.getSource() == save) gui.saveGame();
@@ -121,7 +120,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("score")) System.out.println(game.getCurrentBoard().getScore());
         else if(usertext.equals("start")) game.stop = false;
         else if(usertext.equals("stop")) game.stop = true;
-        else if(usertext.equals("pause")) game.pauseTheBot();
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
         else if(usertext.equals("value")) game.testGetValue();
         else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());

@@ -5,7 +5,6 @@ import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.SaveSystem.SaveController;
 import Chessbot3.Simulators.AlphaBota;
-import Chessbot3.Simulators.MiniMaxBot;
 import Chessbot3.Simulators.iBot;
 import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgn;
@@ -43,7 +42,6 @@ public class Game {
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
         //For å starte på nytt kan du bruke newGame(), som resetter alt i dette objektet.
         currentBoard = new Board();
-        if (bots.contains(currentBoard.getColorToMove())) stop = false;
     }
 
     //Dette skal egnetlig gjøres av SaveController.java
@@ -53,7 +51,6 @@ public class Game {
         Game tempGame = sc.convertToGame(save);
         this.bots = tempGame.bots;
         this.currentBoard = tempGame.currentBoard;
-        if (bots.contains(currentBoard.getColorToMove())) stop = false;
     }
 
     public Game(Ispgn ispgn){
@@ -62,38 +59,41 @@ public class Game {
         for (Move move : moves){
             playerMove(move);
         }
-        if (bots.contains(currentBoard.getColorToMove())) stop = false;
         // TODO: 07.10.2020 Skriv resten her
     }
     public void goBack(){
-        //Tar tilbake et trekk og resetter det til en tidligere tilstand.
-        // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas tilbake
+        //Tar tilbake ett trekk og resetter det til en tidligere tilstand.
+        //Om det er PvE går du tilbake 2 trekk.
         try{
             stop = true;
             gui.makeButtonsGrey();
             currentBoard.undoMove(false);
-            gui.paintPieces(currentBoard);
-            handleWinCondition();
-        }catch(IllegalStateException x){
+            if(bots.size() == 1 && !isBotThinking) currentBoard.undoMove(false);
+        }
+        catch(IllegalStateException x){
             gui.displayTextFieldMessage("Cannot go further back!");
-        }finally {
-            handleWinCondition();
+        }
+        finally {
+            gui.paintPieces(currentBoard);
+            updateStop();
         }
     }
 
     public void goForward(){
         //Går fremover igjen, om du har ombestemt ombestemmingen fra goBack().
-        // TODO: 09.10.2020 Logikk for om ett eller to trekk skal tas fremover
+        //Om det er PvE går du frem to trekk.
         try{
             stop = true;
             gui.makeButtonsGrey();
             currentBoard.goForward();
-            gui.paintPieces(currentBoard);
-            handleWinCondition();
-        }catch (IllegalStateException x){
+            if (bots.size() == 1) currentBoard.goForward();
+        }
+        catch (IllegalStateException x){
             gui.displayTextFieldMessage("Cannot go further forward!");
-        }finally {
-            handleWinCondition();
+        }
+        finally {
+            gui.paintPieces(currentBoard);
+            updateStop();
         }
     }
 
@@ -170,20 +170,18 @@ public class Game {
             stop = true;
         }
         //Hvis vi kommer hit er spillet fortsatt igang. Da må vi sjekke om det er bottens tur og aktivere den.
-        if (bots.contains(currentBoard.getColorToMove())) stop = false;
-        else stop = true;
+        updateStop();
     }
     //Returnerer true om det er botten som skal gjøre et trekk akkurat nå, false ellers.
     //Om stop=true, altså når noen har trykket en knapp og bedt om å avbryte alt, returnerer denne false og stopper botten.
     public Boolean isBotTurn(){ return !stop && bots.contains(currentBoard.getColorToMove()); }
 
+    public void updateStop(){ stop = !bots.contains(currentBoard.getColorToMove()); }
+
     public boolean isBotThinking(){ return isBotThinking; }
 
     //Legger til en farge som bottens skal styre.
     public void addBotColor(WhiteBlack c){ bots.add(c); }
-
-    //Pauser botten. Til bruk i EvE.
-    public void pauseTheBot(){ stop = !stop; }
 
     //Klarerer listen over farger som botten skal gjøre trekk for, og lar heller noen skitne mennesker ta seg av tenkingen.
     public void clearBotColors(){ bots.clear(); }

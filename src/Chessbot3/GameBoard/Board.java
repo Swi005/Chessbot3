@@ -25,14 +25,16 @@ public class Board implements Comparable {
 
     //Det initielle brettet. Denne kan endres på for å debugge ting litt fortere.
     private static final char[][] initialBoard = new char[][]{
-            new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+            //new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+            new char[]{'r', '.', '.', '.', 'k', '.', '.', 'r'},
             new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-            new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+            new char[]{'R', '.', '.', '.', 'K', '.', '.', 'R'}
+            //new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
     //Hjørneindekser
@@ -95,6 +97,10 @@ public class Board implements Comparable {
         wCastles.add(wCastle);
         bCastles.add(bCastle);
         passants.add(passantPos);
+        if (!(getPiece(H1) instanceof Rook)) wCastle.setY(false);
+        if (!(getPiece(A1) instanceof Rook)) wCastle.setX(false);
+        if (!(getPiece(H8) instanceof Rook)) bCastle.setY(false);
+        if (!(getPiece(A8) instanceof Rook)) bCastle.setX(false);
     }
 
     public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int score, Tuple<Boolean, Boolean> wCastle,
@@ -287,7 +293,9 @@ public class Board implements Comparable {
         //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
         if(fra.equals(A1) || til.equals(A1)) wCastle.setX(false);
         else if(fra.equals(H1) || til.equals(H1)) wCastle.setY(false);
-        else if(fra.equals(A8) || til.equals(A8)) bCastle.setX(false);
+        else if(fra.equals(A8) || til.equals(A8)){
+            bCastle.setX(false);
+        }
         else if(fra.equals(H8) || til.equals(H8)) bCastle.setY(false);
 
         //Om kongen flytter seg, kan den aldri rokere.

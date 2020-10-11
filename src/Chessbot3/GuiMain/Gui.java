@@ -58,7 +58,6 @@ public class Gui extends JFrame {
     protected static JButton forward = new JButton("Go Forward");
     protected static JButton neww = new JButton("New Game");
     protected static JButton quit = new JButton("Quit Game");
-    protected static JButton botstop = new JButton("Pause Bot");
     protected static JButton openMenu = new JButton("Menu");
     protected static JButton save = new JButton("Save Game");
     protected static JButton load = new JButton("Load Game");
@@ -112,13 +111,9 @@ public class Gui extends JFrame {
         ret.addSeparator();
         ret.add(back);
         ret.add(forward);
-        ret.addSeparator();
-        ret.add(botstop);
         openMenu.addActionListener(new Action());
         back.addActionListener(new Action());
         forward.addActionListener(new Action());
-        botstop.addActionListener(new Action());
-        botstop.setVisible(false); //botstop-knappen skal kun være synlig i EvE. Denne endres i chooseGamemode().
         return ret;
     }
 
@@ -238,8 +233,6 @@ public class Gui extends JFrame {
         // F. eks om du klikket Bot vs Bot blir både svart og hvit lagt til, og botten vil automatisk gjøre trekk for begge fargene.
 
         if(n == 1){
-            botstop.setVisible(false);
-
             //Om spilleren vil spille mot en bot må han få lov til å velge hvilken farge han vil spille som.
             int m = JOptionPane.showOptionDialog(this, "Please pick a side.", "Gamemode", JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, new String[]{"White", "Black"}, 0);
@@ -255,10 +248,9 @@ public class Gui extends JFrame {
         else if(n == 2){
             game.addBotColor(BLACK);
             game.addBotColor(WHITE);
-            botstop.setVisible(true);
         }
         //Om to mennekser skal spille mot hverandre. Da skal ikke botten ha noen farger.
-        else botstop.setVisible(false);
+        game.updateStop();
     }
 
     public void reverse() {
@@ -327,6 +319,8 @@ public class Gui extends JFrame {
             }
             Ispgn ispgn = (Ispgn) JOptionPane.showInputDialog(this, "Choose save", "Menu", JOptionPane.PLAIN_MESSAGE, null, savedgames, savedgames[0]);
             game = controller.convertToGame(ispgn);
+            // TODO: 11.10.2020 Gjør noe for å legge til riktige farger for botten
+            game.updateStop();
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -343,7 +337,7 @@ public class Gui extends JFrame {
         game.saveGame(name);
     }
 
-    public boolean checkName(String name){
+    private boolean checkName(String name){
         if(name.length() == 0){
             System.out.println("too long");
             return false;
