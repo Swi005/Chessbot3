@@ -155,7 +155,9 @@ public class Board implements Comparable {
     //selv om det ikke nødvendigvis er den sin tur.
     public List<Move> genCompletelyLegalMoves(WhiteBlack color){
         List<Move> ret = new ArrayList<>();
-        for(Move move : genMoves(color)) if(checkMoveLegality(move)) ret.add(move);
+        for(Move move : genMoves(color)){
+            if(checkMoveLegality(move)) ret.add(move);
+        }
         return ret;
     }
 
@@ -252,7 +254,6 @@ public class Board implements Comparable {
                 grid[0][0].setPosition(new Tuple(0, 0));
             }
         }
-
         //Oppdaterer rokadebetingelser
         wCastle = wCastles.get(moveindex).copy();
         bCastle = bCastles.get(moveindex).copy();
@@ -291,11 +292,9 @@ public class Board implements Comparable {
 
         //Oppdaterer rokadebetingelser
         //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
-        if(fra.equals(A1) || til.equals(A1)) wCastle.setX(false);
+        if     (fra.equals(A1) || til.equals(A1)) wCastle.setX(false);
         else if(fra.equals(H1) || til.equals(H1)) wCastle.setY(false);
-        else if(fra.equals(A8) || til.equals(A8)){
-            bCastle.setX(false);
-        }
+        else if(fra.equals(A8) || til.equals(A8)) bCastle.setX(false);
         else if(fra.equals(H8) || til.equals(H8)) bCastle.setY(false);
 
         //Om kongen flytter seg, kan den aldri rokere.
@@ -360,7 +359,8 @@ public class Board implements Comparable {
             }
         }
         //Legger til score for å flytte til en bedre posisjon.
-        addScore(pie.getValueAt(til)-pie.getValueAt(fra));
+        addScore(pie.getValueAt(til) - pie.getValueAt(fra));
+
 
         pie.setPosition(til);
 
@@ -384,10 +384,10 @@ public class Board implements Comparable {
             bCastles = bCastles.subList(0, moveindex+1);
             passants = passants.subList(0, moveindex+1);
             previousScores.add(score);
-            wCastles.add(wCastle);
-            bCastles.add(bCastle);
+            wCastles.add(wCastle.copy());
+            bCastles.add(bCastle.copy());
             previousMoves.add(move);
-            passants.add(passantPos);
+            passants.add(passantPos.copy());
         }
         moveindex++;
     }
@@ -601,6 +601,14 @@ public class Board implements Comparable {
     public void printCaptures(){
         for (iPiece pie : capturedPieces){
             System.out.println("pie, died at " + pie.getDeathDate());
+        }
+    }
+
+    public void positionTest(){
+        for(int x=0; x<8; x++){
+            for (int y = 0; y < 8; y++) {
+                assert getPiece(x, y).getPosition().equals(new Tuple<>(x, y));
+            }
         }
     }
 }

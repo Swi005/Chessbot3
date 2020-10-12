@@ -3,7 +3,9 @@ package Chessbot3.Simulators;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
+import com.sun.jdi.AbsentInformationException;
 
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IllformedLocaleException;
@@ -14,7 +16,7 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class AlphaBota implements iBot{
 
-    static int initialPlies = 4;
+    static int initialPlies = 3;
     static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
     static HashMap<Board, int[]> uniques = new HashMap<>();
     static HashMap<Board, Transposition> transpositions = new HashMap<>();
@@ -98,9 +100,9 @@ public class AlphaBota implements iBot{
             for(Move move : bård.genMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);
-                value = Math.max(value, alphaBeta(copy, depth-1, alpha, beta, false));
+                value = Math.max(value, alphaBeta(copy, depth - 1, alpha, beta, false));
                 alpha = Math.max(alpha, value);
-                if(alpha >= beta){
+                if (alpha >= beta) {
                     //transpositions.put(bård, new Transposition(value, LOWER_BOUND, move, depth));
                     break;
                     //return value;
@@ -112,9 +114,9 @@ public class AlphaBota implements iBot{
             for(Move move : bård.genMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);
-                value = Math.min(value, alphaBeta(copy, depth-1, alpha, beta, true));
+                value = Math.min(value, alphaBeta(copy, depth - 1, alpha, beta, true));
                 beta = Math.min(beta, value);
-                if(beta <= alpha){
+                if (beta <= alpha) {
                     //transpositions.put(bård, new Transposition(value, UPPER_BOUND, move, depth));
                     break;
                     //return value;

@@ -130,6 +130,7 @@ public class Game {
             isBotThinking = false;
 
         }catch(IllegalStateException x){
+            //Botten kaster en exception om stop ble true i løpet av søket, dvs at noe avbrøt botten.
             isBotThinking = false;
             gui.clearTextField();
         }
