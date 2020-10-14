@@ -130,6 +130,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("castle")) game.getCurrentBoard().printCurrentCastle();
         else if(usertext.equals("castles")) game.getCurrentBoard().printCastles();
         else if(usertext.equals("assert")) game.getCurrentBoard().positionTest();
+        else if(usertext.equals("captures")) game.getCurrentBoard().printCaptures();
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if(isAMove(usertext)) game.playerMove(parse(usertext));

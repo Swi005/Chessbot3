@@ -3,6 +3,8 @@ package Tests;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
+import Chessbot3.Simulators.AlphaBota;
+import Chessbot3.Simulators.iBot;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 import static Chessbot3.Simulators.AlphaBota.setupSearch;
 import static org.junit.jupiter.api.Assertions.*;
@@ -147,5 +150,22 @@ public class Tests {
     void moveTest(){
         Move move =  new Move(new Tuple(0, 1), new Tuple<>(0, 2));
         assertEquals("a7:a6", move.toAlgebraicNotation());
+    }
+
+    @Test
+    void testCastleTuples(){
+        gui.game.stop = false;
+
+        Board bård = new Board();
+        Board copy = bård.copy();
+        assertTrue(bård.getBlackCastle().equals(copy.getBlackCastle()));
+        assertTrue(bård.getWhiteCastle().equals(copy.getWhiteCastle()));
+
+        iBot bot = new AlphaBota();
+        bot.findMove(copy);  //Simulerer mye, kan være tuplene blir endret når de ikke skal
+
+        assertTrue(bård.getBlackCastle().equals(copy.getBlackCastle()));
+        assertTrue(bård.getWhiteCastle().equals(copy.getWhiteCastle()));
+
     }
 }

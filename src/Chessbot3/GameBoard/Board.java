@@ -94,9 +94,9 @@ public class Board implements Comparable {
         score = 0;
         passantPos = new Tuple(-1, -1);
         previousScores.add(0);
-        wCastles.add(wCastle);
-        bCastles.add(bCastle);
-        passants.add(passantPos);
+        wCastles.add(wCastle.copy());
+        bCastles.add(bCastle.copy());
+        passants.add(passantPos.copy());
         if (!(getPiece(H1) instanceof Rook)) wCastle.setY(false);
         if (!(getPiece(A1) instanceof Rook)) wCastle.setX(false);
         if (!(getPiece(H8) instanceof Rook)) bCastle.setY(false);
@@ -600,7 +600,7 @@ public class Board implements Comparable {
 
     public void printCaptures(){
         for (iPiece pie : capturedPieces){
-            System.out.println("pie, died at " + pie.getDeathDate());
+            System.out.println(pie + ", died at move " + pie.getDeathDate());
         }
     }
 
