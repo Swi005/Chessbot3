@@ -12,4 +12,4 @@ Planned features include:
 * Multiplayer over LAN or Internett
 * ..And more!
 
-This is a work in progress.
+This is very much a work in progress project.
