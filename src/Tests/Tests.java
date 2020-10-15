@@ -89,7 +89,7 @@ public class Tests {
         System.out.println(bård1.hashCode());
         System.out.println(bård2.hashCode());
 
-        assertTrue(map.containsKey(bård2)); // TODO: 04.10.2020 Fiks hashing, slik at denne blir true 
+        assertTrue(map.containsKey(bård2));
     }
 
     @Test
@@ -167,5 +167,35 @@ public class Tests {
         assertTrue(bård.getBlackCastle().equals(copy.getBlackCastle()));
         assertTrue(bård.getWhiteCastle().equals(copy.getWhiteCastle()));
 
+    }
+
+    @Test
+    void testUndoSpeed(){
+        Board bård = new Board();
+        long starttid = System.nanoTime();
+        for(Move move : bård.genMoves()){
+            Board copy = bård.copy();
+            copy.movePiece(move);
+            for(Move counter : copy.genMoves()){
+                Board co = copy.copy();
+                co.movePiece(counter);
+            }
+        }
+        long sluttid = System.nanoTime();
+        System.out.println("Copy: " + (sluttid-starttid)/100000 + "ms.");
+
+        starttid = System.nanoTime();
+        for(Move move : bård.genMoves()){
+            bård.movePiece(move);
+            for(Move counter : bård.genMoves()){
+                bård.movePiece(counter);
+                bård.undoMove();
+            }
+            bård.undoMove();
+        }
+        sluttid = System.nanoTime();
+        System.out.println("Undo: " + (sluttid-starttid)/100000 + "ms.");
+
+        assertTrue(bård.equals(new Board()));
     }
 }

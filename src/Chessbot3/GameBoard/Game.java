@@ -5,11 +5,13 @@ import Chessbot3.Pieces.PieceResources.WhiteBlack;
 import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.SaveSystem.SaveController;
 import Chessbot3.Simulators.AlphaBota;
+import Chessbot3.Simulators.MiniMaxBot;
 import Chessbot3.Simulators.iBot;
 import Chessbot3.sPGN.Ispgn;
 import Chessbot3.sPGN.spgn;
 import Chessbot3.sPGN.spgnIO;
 
+import javax.swing.text.html.MinimalHTMLWriter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +27,20 @@ public class Game {
     private Board currentBoard;
 
     //Om botten tenker akkurat nå.
-    private boolean isBotThinking;
+    private boolean isBotThinking = false;
 
     //En liste over hvilke farger botten skal styre.
     //Om denne kun inneholder BLACK betyr det at botten styrer svart, mens spilleren styrer hvit.
     //Om denne er tom spiller spilleren mot seg selv.
     private ArrayList<WhiteBlack> bots = new ArrayList<>(2);
 
-    //En variabel for å stoppe botten fra å gjøre et trekk, om brukeren har trykket new mens botten tenkte.
+    //En variabel for å fortelle botten om den skal gjøre noe eller ikke.
+    //Main-funksjonen sjekker hele tiden om denne er false, og hvis ja, ber den botten finne og gjøre et trekk.
+    //Denne endres hele tiden, for å kontrollere om vi vil at botten skal gjøre noe, eller ikke.
     public boolean stop = true;
 
     //Endre på denne linjen for å bytte ut botten
-    private iBot bot = new AlphaBota();
+    private iBot bot = new MiniMaxBot();
 
     public Game(){
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.

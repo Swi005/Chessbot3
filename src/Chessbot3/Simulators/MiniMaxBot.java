@@ -12,8 +12,8 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class MiniMaxBot implements iBot {
 
-    static int plies = 4;
-    static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
+    private static int plies = 4;
+    private static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
 
     public Move findMove(Board bård) {
         List<Move> possibles = bård.genCompletelyLegalMoves();
@@ -27,10 +27,7 @@ public class MiniMaxBot implements iBot {
                 copy.movePiece(move);
                 int value = minimax(copy, plies, false);
                 move.setWeight(value);
-
-                System.out.println(move + ": " + value);
             }
-            System.out.println();
             Collections.sort(possibles, Collections.reverseOrder());
         } else {
             for (Move move : possibles) {
@@ -40,10 +37,7 @@ public class MiniMaxBot implements iBot {
                 copy.movePiece(move);
                 int value = minimax(copy, plies, true);
                 move.setWeight(value);
-
-                System.out.println(move + ": " + value);
             }
-            System.out.println();
             Collections.sort(possibles);
         }
         uniqueBoards.clear();
@@ -53,10 +47,8 @@ public class MiniMaxBot implements iBot {
     private static int minimax(Board bård, int depth, boolean isMaximizing) {
         if (depth == 0) return bård.getScore();
 
-        boolean contains = false;
-        if(uniqueBoards.containsKey(bård)){
-            contains = true;
-        }
+        Integer v = uniqueBoards.get(bård);
+        if (v != null) return v;
 
         int value;
         if (isMaximizing) {
@@ -74,14 +66,7 @@ public class MiniMaxBot implements iBot {
                 value = Math.min(value, minimax(copy, depth - 1, true));
             }
         }
-
         uniqueBoards.put(bård, value);
-
-        if(contains && uniqueBoards.get(bård) != value){
-            System.out.println("Expected score: " + uniqueBoards.get(bård));
-            System.out.println("Actual score: " + value);
-        }
-
         return value;
     }
 }

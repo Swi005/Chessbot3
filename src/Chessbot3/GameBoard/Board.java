@@ -17,6 +17,7 @@ import Chessbot3.Pieces.Types.King;
 import Chessbot3.Pieces.Types.Pawn;
 import Chessbot3.Pieces.Types.Queen;
 import Chessbot3.Pieces.Types.Rook;
+import com.sun.jdi.VMOutOfMemoryException;
 
 /**
  * Board
@@ -25,16 +26,14 @@ public class Board implements Comparable {
 
     //Det initielle brettet. Denne kan endres på for å debugge ting litt fortere.
     private static final char[][] initialBoard = new char[][]{
-            //new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
-            new char[]{'r', '.', '.', '.', 'k', '.', '.', 'r'},
+            new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'.', '.', '.', '.', '.', '.', '.', '.'},
             new char[]{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-            new char[]{'R', '.', '.', '.', 'K', '.', '.', 'R'}
-            //new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+            new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
     //Hjørneindekser
@@ -107,7 +106,7 @@ public class Board implements Comparable {
                  Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos,
                  List<Move> previousMoves, List<Integer> previousScores, List<Tuple<Boolean,
             Boolean>> wCastles, List<Tuple<Boolean, Boolean>> bCastles, LinkedList<iPiece> capturedPieces,
-                 LinkedList<Integer> promotingtimes, List<Tuple<Integer, Integer>> passants){
+                 LinkedList<Integer> promotingtimes, List<Tuple<Integer, Integer>> passants, int moveIndex){
         //En konstruktør som kun skal brukes for å opprette en komplett kopi av et tidligere brett.
         //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
         //Jeg vet denne ser helt jævlig ut, ikke døm meg.
@@ -124,14 +123,15 @@ public class Board implements Comparable {
         this.promotingtimes = promotingtimes;
         this.capturedPieces = capturedPieces;
         this.passants = passants;
+        this.moveindex = moveIndex;
     }
 
     public Board copy() {
         //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
         return new Board(this.getGridCopy(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(),
-                this.passantPos.copy(), new ArrayList<>(previousMoves), new ArrayList<>(previousScores),
-                new ArrayList<>(wCastles), new ArrayList<>(bCastles), new LinkedList<>(capturedPieces),
-                new LinkedList<>(promotingtimes), new ArrayList(passants));
+            this.passantPos.copy(), new ArrayList<>(previousMoves), new ArrayList<>(previousScores),
+            new ArrayList<>(wCastles), new ArrayList<>(bCastles), new LinkedList<>(capturedPieces),
+            new LinkedList<>(promotingtimes), new ArrayList(passants), moveindex);
     }
 
     //Lager en liste over nesten-lovlige trekk som kan gjøres akkurat nå.
