@@ -1,4 +1,5 @@
 A simple chess-simulator that supports both local PvP and play against an AI.
+
 To start the game, simply run main in Chessbot3/GuiMain/Chess.
 
 The current version has the following features:
