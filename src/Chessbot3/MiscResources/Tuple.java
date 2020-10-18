@@ -21,5 +21,11 @@ public class Tuple<X, Y> {
     public String toString(){
         return "(" + this.x.toString() + ", " + this.y.toString() + ")";
     }
-    public boolean equals(Tuple obj){ return (this.x == obj.getX() && this.y == obj.getY()); }
+
+    @Override
+    public boolean equals(Object obj){
+        if(! (obj instanceof Tuple)) return false;
+        Tuple<X, Y> other = (Tuple) obj;
+        return (this.x == other.getX() && this.y == other.getY());
+    }
 }

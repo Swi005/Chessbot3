@@ -16,7 +16,7 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class AlphaBota implements iBot{
 
-    static int initialPlies = 3;
+    static int initialPlies = 5;
     static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
     static HashMap<Board, int[]> uniques = new HashMap<>();
     static HashMap<Board, Transposition> transpositions = new HashMap<>();
@@ -24,13 +24,14 @@ public class AlphaBota implements iBot{
 
     public Move findMove(Board bård) throws IllegalStateException{
         Board copy = bård.copy();
-        int nMoves = copy.genCompletelyLegalMoves().size();
-        if(nMoves > 25) return setupSearch(copy, initialPlies);
-        if(nMoves > 18) return setupSearch(copy, initialPlies+1);
-        if(nMoves > 12) return setupSearch(copy, initialPlies+2);
-        if(nMoves > 8) return setupSearch(copy,initialPlies+3);
-        if(nMoves > 4) return setupSearch(copy, initialPlies+4);
-        return setupSearch(copy, initialPlies+5);
+        // TODO: 18.10.2020 Finn en bedre måte å skalere botten på når spillet forenkles
+        //int nMoves = copy.genCompletelyLegalMoves().size();
+        //if(nMoves > 25) return setupSearch(copy, initialPlies);
+        //if(nMoves > 18) return setupSearch(copy, initialPlies+1);
+        //if(nMoves > 12) return setupSearch(copy, initialPlies+2);
+        //if(nMoves > 8) return setupSearch(copy,initialPlies+3);
+        //if(nMoves > 4) return setupSearch(copy, initialPlies+4);
+        return setupSearch(copy, initialPlies);
     }
     
     public static Move setupSearch(Board bård, int depth) throws IllegalStateException{
@@ -45,14 +46,14 @@ public class AlphaBota implements iBot{
             for(Move move : possibles){
                 if(Gui.game.stop) throw new IllegalStateException();   //Botten ble avbrutt
 
-                Board copy = bård.copy();
-                copy.movePiece(move);
-                int value = alphaBeta(copy, depth-1, -2147483648, 2147483647, false);
+                //Board copy = bård.copy();
+                bård.movePiece(move);
+                int value = alphaBeta(bård, depth-1, -2147483648, 2147483647, false);
                 move.setWeight(value);
-
-                //System.out.println(move + ": " + value);
+                System.out.println(move + ": " + value);
+                bård.undoMove();
             }
-            //System.out.println();
+            System.out.println();
             Collections.sort(possibles, Collections.reverseOrder());
         }
         else{
@@ -60,14 +61,14 @@ public class AlphaBota implements iBot{
             for(Move move : possibles){
                 if(Gui.game.stop) throw new IllegalStateException();   //Botten ble avbrutt
 
-                Board copy = bård.copy();
-                copy.movePiece(move);
-                int value = alphaBeta(copy, depth-1, -2147483648, 2147483647, true);
+                //Board copy = bård.copy();
+                bård.movePiece(move);
+                int value = alphaBeta(bård, depth-1, -2147483648, 2147483647, true);
                 move.setWeight(value);
-
-                //System.out.println(move + ": " + value);
+                System.out.println(move + ": " + value);
+                bård.undoMove();
             }
-            //System.out.println();
+            System.out.println();
             Collections.sort(possibles);
         }
         //System.out.println("Unike brett etter " + depth + " trekk: " + uniqueBoards.size());
@@ -98,29 +99,35 @@ public class AlphaBota implements iBot{
         if (isMaximizing){
             value = -2147483648;
             for(Move move : bård.genMoves()) {
-                Board copy = bård.copy();
-                copy.movePiece(move);
-                value = Math.max(value, alphaBeta(copy, depth - 1, alpha, beta, false));
+
+                //Board copy = bård.copy();
+                bård.movePiece(move);
+                value = Math.max(value, alphaBeta(bård, depth - 1, alpha, beta, false));
                 alpha = Math.max(alpha, value);
                 if (alpha >= beta) {
                     //transpositions.put(bård, new Transposition(value, LOWER_BOUND, move, depth));
+                    bård.undoMove();
                     break;
                     //return value;
                 }
+                bård.undoMove();
             }
         }
         else{
             value = 2147483647;
             for(Move move : bård.genMoves()) {
-                Board copy = bård.copy();
-                copy.movePiece(move);
-                value = Math.min(value, alphaBeta(copy, depth - 1, alpha, beta, true));
+
+                //Board copy = bård.copy();
+                bård.movePiece(move);
+                value = Math.min(value, alphaBeta(bård, depth - 1, alpha, beta, true));
                 beta = Math.min(beta, value);
                 if (beta <= alpha) {
                     //transpositions.put(bård, new Transposition(value, UPPER_BOUND, move, depth));
+                    bård.undoMove();
                     break;
                     //return value;
                 }
+                bård.undoMove();
             }
         }
 

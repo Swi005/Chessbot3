@@ -40,7 +40,7 @@ public class Game {
     public boolean stop = true;
 
     //Endre på denne linjen for å bytte ut botten
-    private iBot bot = new MiniMaxBot();
+    private iBot bot = new AlphaBota();
 
     public Game(){
         //Oppretter et nytt game-objekt, og dermed også et nytt parti.
