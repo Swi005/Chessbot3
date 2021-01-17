@@ -3,6 +3,8 @@ package Chessbot3.sPGN;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
+import java.util.HashMap;
+
 public interface Ispgn
 {
     /**Return the score of the game
@@ -10,12 +12,6 @@ public interface Ispgn
      * @return - gamescore
      */
     int GetScore();
-
-    /**Returns type of pgn file it is
-     *
-     * @return - Type of file
-     */
-    int GetType();
 
     /**Get move at turn index
      *
@@ -47,4 +43,5 @@ public interface Ispgn
      */
     String GetName();
     int GetPvP();
+    HashMap<String, Object> getVars();
 }

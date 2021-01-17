@@ -29,13 +29,29 @@ public class Parser {
 
         allMoves = allMoves.replaceAll("\\{([\\s\\S]*?)\\}", "");
         String[] subStrings = allMoves.split("([0-9]+[.]) |([\\s])");
-        String[] var10 = subStrings;
-        int var5 = subStrings.length;
 
-        for(int var6 = 0; var6 < var5; ++var6) {
-            String str = var10[var6];
+        for(int i = 0; i < subStrings.length; ++i) {
+            String str = subStrings[i];
             if (!str.equals("")) {
                 moves.add(str);
+            }
+        }
+
+        return moves.toArray(new String[0]);
+    }
+    public static String[] parseMoves(String str)
+    {
+        List<String> moves = new ArrayList();
+        str = str.replaceAll("\\{([\\s\\S]*?)\\}", "");
+        String[] subStrings = str.split("([0-9]+[.]) |([\\s])");
+
+        for(int i = 0; i < subStrings.length; i++)
+        {
+            String s = subStrings[i];
+            if (!s.equals(""))
+            {
+                s = s.replaceAll("([0-9]+[.])", "");
+                moves.add(s);
             }
         }
 

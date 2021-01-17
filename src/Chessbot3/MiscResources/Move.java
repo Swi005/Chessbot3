@@ -1,6 +1,8 @@
 package Chessbot3.MiscResources;
 
-public class Move implements Comparable
+import java.io.Serializable;
+
+public class Move implements Comparable, Serializable
 {
     //Et objekt for å representere et trekk.
     //Objektet holder selv styr på hvor den skal flytte, samt 'vekten' og 'stabiliteten' dens.

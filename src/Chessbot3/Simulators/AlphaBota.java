@@ -92,7 +92,7 @@ public class AlphaBota implements iBot{
 
         int value;
         if (isMaximizing){
-            value = -2147483648;
+            value = -2147483648; //BTW kan bytten us med -Integer.MAX_VALUE;
             for(Move move : bård.genMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);

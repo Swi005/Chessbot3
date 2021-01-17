@@ -58,7 +58,7 @@ public class Game {
     //Dette skal egnetlig gjøres av SaveController.java
     public Game(File savedGame){
         //Oppretter et nytt game, basert på en fil.
-        spgn save = ioController.GetSPGN(savedGame);
+        spgn save = ioController.GetSave(savedGame);
         Game tempGame = sc.convertToGame(save);
         this.madeMoves = tempGame.madeMoves;
         this.bots = tempGame.bots;
@@ -263,7 +263,7 @@ public class Game {
         if(bots.size() > 1)
             System.out.println("Error: Spgn does not support bot v bot at this time");
 
-        spgn game = new spgn(currentBoard.getScore(), 0, isPvp, name, getMadeMoves().toArray(new Move[]{}));
+        spgn game = new spgn(currentBoard.getScore(), isPvp, name, getMadeMoves().toArray(new Move[]{}));
 
         return game;
     }

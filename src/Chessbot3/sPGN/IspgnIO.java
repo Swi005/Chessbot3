@@ -4,7 +4,7 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.HashMap;
 
 public interface IspgnIO
 {
@@ -22,13 +22,6 @@ public interface IspgnIO
      */
     String ReadVar(String name, File file);
 
-    /**Writes a move to a file
-     *
-     * @param move
-     * @return
-     */
-    void WriteMoveToFile(Move move, File file);
-
     /** Converts an spgn object to a file
      *
      * @param spgn - object that is to be written to a file
@@ -41,14 +34,15 @@ public interface IspgnIO
      * @param moves
      * @return
      */
-    void WriteToFile(int score, int type, String name, int pvp, Move[] moves, File file);
+    void WriteToFile(HashMap<String, Object> vars, Move[] moves, File file);
 
     /**Reads a file and return its content as a ispgn object
      *
      * @param file
      * @return
      */
-    Ispgn GetSPGN(File file);
-    Ispgn GetSPGN(String path);
+    Ispgn GetSave(File file);
+    Ispgn GetSave(String path);
+    LookupTable GetTable(File file);
 
 }

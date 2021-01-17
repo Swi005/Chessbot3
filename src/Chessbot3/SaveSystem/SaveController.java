@@ -33,7 +33,7 @@ public class SaveController
                 for (int i = 0; i < files.length; i++)
                 {
                     int y = i;
-                    new Thread(() -> retAr[y] = io.GetSPGN(files[y])).start(); //Do function async!
+                    new Thread(() -> retAr[y] = io.GetSave(files[y])).start(); //Do function async!
                 }
             }
 

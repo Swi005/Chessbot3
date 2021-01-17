@@ -65,64 +65,38 @@ public class spgnIO implements IspgnIO {
         return "";
     }
 
-    //Deprecated do not use, use WriteToFile() instead
-    @Override
-    public void WriteMoveToFile(Move move, File file) {
-        try {
-            boolean isNew = file.createNewFile();
-            FileWriter writer = new FileWriter(file, true);
-
-            if (isNew) {
-                writer.write("[MODE 0] \n");
-                writer.write("[SCORE 0] \n");
-            }
-            int lineNm = 1;
-            //Read last line and get its move number
-            try {
-                Scanner reader = new Scanner(file);
-                while (reader.hasNextLine()) {
-                    String lastLine = reader.nextLine();
-                    if (!reader.hasNextLine()) {
-                        String[] tempArr = lastLine.split("[.]");
-                        lineNm = Integer.parseInt(tempArr[0]) + 1;
-                    }
-                }
-                reader.close();
-            } catch (IOException e) {
-            }
-
-            String moveString = move.toAlgebraicNotation();
-            writer.write(lineNm + "." + moveString + "\n");
-            writer.close();
-        } catch (IOException e) {
-            gui.displayPopupMessage("An error occured when attempting to write to " + file.toString());
-            //System.out.println("While writing to file: " + file.toString() + " an error occured.");
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public boolean WriteSPGNtoFile(Ispgn spgn, File dir) {
         try{
-            this.WriteToFile(spgn.GetScore(), spgn.GetType(), spgn.GetName(), spgn.GetPvP(), spgn.GetAllMoves(), dir);
-            return true;
+            if(spgn.getClass() == Chessbot3.sPGN.spgn.class)
+            {
+                this.WriteToFile(spgn.getVars(), spgn.GetAllMoves(), dir);
+                return true;
+            }else{
+                LookupTable tbl = (LookupTable)spgn;
+                this.WriteToFile(tbl.getVars(), tbl.GetAllMoves(), dir);
+            }
         }
         catch (Exception e)
         {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
+        return false;
     }
 
     @Override
-    public void WriteToFile(int score, int type, String name, int pvp, Move[] moves, File file) {
+    public void WriteToFile(HashMap<String, Object> vars, Move[] moves, File file) {
         try {
             file.createNewFile();
             FileWriter writer = new FileWriter(file, true);
 
-            writer.write("[TYPE " + type + "] \n");
-            writer.write("[SCORE " + score + "] \n");
-            writer.write("[PVP " + pvp + "] \n");
-            writer.write("[NAME " + name + "] \n");
+            for (String str : vars.keySet())
+            {
+                writer.write("[ " + str + " " + vars.get(str) + "] \n");
+            }
+
 
             int lineNm = 1;
 
@@ -153,19 +127,32 @@ public class spgnIO implements IspgnIO {
     }
 
     @Override
-    public spgn GetSPGN(File file)
+    public spgn GetSave(File file)
     {
         Move[] moves = ReadMovesFromFile(file);
         int score = Integer.parseInt(ReadVar("SCORE", file));
-        int type = Integer.parseInt(ReadVar("TYPE", file));
         int pvp = Integer.parseInt(ReadVar("PVP", file));
+        String name = ReadVar("NAME", file);
 
-        String name = file.getName();
-        return new spgn(score, type, pvp, name, moves);
+        return new spgn(score, pvp, name, moves);
     }
 
     @Override
-    public spgn GetSPGN(String path) {
-        return GetSPGN(new File(path));
+    public spgn GetSave(String path) {
+        return GetSave(new File(path));
     }
+
+    @Override
+    public LookupTable GetTable(File file) {
+
+        String name = ReadVar("NAME", file);
+        String color = ReadVar("COLOR", file);
+        String perfRating = ReadVar("PERFRATING", file);
+        String plyrWin = ReadVar("PLYRWIN", file);
+        String draw = ReadVar("DRAW", file);
+        String opWin = ReadVar("OPWIN", file);
+        Move[] moves = ReadMovesFromFile(file);
+        return new LookupTable(name, color, perfRating,plyrWin,draw,opWin,moves);
+    }
+
 }

@@ -11,29 +11,26 @@ import java.util.Iterator;
 import java.util.List;
 
     public class Converter {
-        static Board board = new Board();
 
-        static Move convertToMove(String str)
+        public static Move convertToMove(String str)
         {
+            Board board = new Board();
             String chars = "abcdefgh";
             String badstuff = "x+#*";
             boolean extraInfo = false;
             Tuple<Integer, Integer> partialInfo = null;
             char[] temp = str.toCharArray();
             str = "";
-            char[] var6 = temp;
-            int var7 = temp.length;
 
-            for(int var8 = 0; var8 < var7; ++var8)
+            for(int i = 0; i < temp.length; ++i)
             {
-                char c = var6[var8];
+                char c = temp[i];
                 if (badstuff.indexOf(c) == -1)
                 {
                     str = str + Character.toString(c);
                 }
             }
 
-            System.out.println(str);
             char fst = str.charAt(0);
             String endofmove = "";
             if (str.equals("O-O")) //Kingside casteling
@@ -69,7 +66,6 @@ import java.util.List;
                 if (str == "Be7") {
                     System.out.println("test");
                 }
-
                 if (Character.isUpperCase(fst)) {
                     endofmove = str.substring(1);
                 } else {
@@ -104,38 +100,36 @@ import java.util.List;
                 endPos = new Tuple(chars.indexOf(endofmove.charAt(0)), 8 - Integer.parseInt(endofmove.substring(1)));
                 List<Move> posMoves = board.genCompletelyLegalMoves(board.getColorToMove());
                 posMoves = pruneMoves(posMoves, endPos);
-                Iterator var10 = posMoves.iterator();
 
-                Move m;
-                char sym;
-                do {
-                    if (!var10.hasNext()) {
-                        return null;
-                    }
+                for (Move m: posMoves)
+                {
+                    //Check that its the correct pice
+                    if(fst == Character.toUpperCase(board.getPiece((Integer) m.getX().getX(), (Integer) m.getX().getY()).getSymbol()))
+                    {
+                        if (extraInfo && (Integer) partialInfo.getX() == -1)//Check if extra id info exists
+                        {
+                            if (m.getX().getY() == partialInfo.getY())
+                            {
+                                board.movePiece(m);
+                                return m;
+                            }
 
-                    m = (Move)var10.next();
-                    sym = Character.toUpperCase(board.getPiece((Integer)m.getX().getX(), (Integer)m.getX().getY()).getSymbol());
-                } while(sym != fst);
+                            if ((Integer) partialInfo.getY() == -1 && m.getX().getX() == partialInfo.getX())
+                            {
+                                board.movePiece(m);
+                                return m;
+                            }
+                        }
 
-                Move move;
-                if (extraInfo && (Integer)partialInfo.getX() == -1) {
-                    if (m.getX().getY() == partialInfo.getY()) {
-                        move = new Move(m.getX(), endPos);
-                        board.movePiece(move);
-                        return move;
-                    }
-
-                    if ((Integer)partialInfo.getY() == -1 && m.getX().getX() == partialInfo.getX()) {
-                        move = new Move(m.getX(), endPos);
-                        board.movePiece(move);
-                        return move;
+                        if(m.getY().equals(endPos))
+                        {
+                            board.movePiece(m);
+                            return m;
+                        }
                     }
                 }
-
-                move = new Move(m.getX(), endPos);
-                board.movePiece(move);
-                return move;
             }
+            return null;
         }
 
         static List<Move> pruneMoves(List<Move> list, Tuple<Integer, Integer> endPos) {

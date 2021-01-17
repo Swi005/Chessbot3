@@ -340,7 +340,7 @@ public class Gui extends JFrame {
             name = JOptionPane.showInputDialog("What do you want to save the game as?");
             if(name == null) return;
         }
-        game.saveGame(name);
+       // game.saveGame(name);
     }
 
     public boolean checkName(String name){
