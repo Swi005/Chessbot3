@@ -1,7 +1,7 @@
 package Chessbot3.MiscResources;
 
 public class Tuple<X, Y> {
-    /*
+    /**
     Definerer Tupler, som fra nå av er mutable. "Reality can be whatever I want" - Thanos
      */
     private X x;
@@ -26,6 +26,6 @@ public class Tuple<X, Y> {
     public boolean equals(Object obj){
         if(! (obj instanceof Tuple)) return false;
         Tuple<X, Y> other = (Tuple) obj;
-        return (this.x == other.getX() && this.y == other.getY());
+        return (this.x.equals(other.getX()) && this.y.equals(other.getY()));
     }
 }
