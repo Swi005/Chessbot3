@@ -1,10 +1,12 @@
 package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
+import Chessbot3.GameBoard.Board2;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -74,6 +76,41 @@ public abstract class SimplePiece implements iPiece {
 
     @Override
     public int hashCode() { return Objects.hash(color, getClass()); }
+
+    @Override
+    public ArrayList<Move> getMoves(Board2 bård){
+        ArrayList<Move> ret = new ArrayList<>();
+        Integer fraX = position.getX();
+        Integer fraY = position.getY();
+        Tuple<Integer, Integer> fraPos = new Tuple<>(fraX, fraY);
+
+        for(Tuple<Integer, Integer> retning : direcDict.get(symbol)){ //Looper igjennom hver enkelt retning den kan gå.
+            Integer tilX = fraX;
+            Integer tilY = fraY;
+
+            for(int i=0; i<7; i++){ //Looper til 7, for noen ganger kan brikken gå 7 skritt, men den forventer å bli brutt før det.
+                tilX += retning.getX();
+                tilY += retning.getY();
+                Tuple<Integer, Integer> tilPos =  new Tuple<>(tilX, tilY);
+
+                if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den prøver å gå ut av brettet.
+
+                iPiece mål = bård.getPiece(tilPos);
+                if(mål == null){
+                    ret.add(new Move(fraPos, tilPos)); //Om det er en tom rute.
+                }
+                else if(this.isOppositeColor(mål))      {
+                    ret.add(new Move(fraPos, tilPos)); //Om det står en fiendtlig brikke der.
+                    break;
+                }
+                else break;
+
+                if(!canSprint) break; //Om brikken er en konge/hest/bonde, kan den ikke gå mer enn ett skritt om gangen. Derfor bryttes loopen her.
+            }
+        }
+        return ret;
+    }
+
 
     @Override
     public ArrayList<Move> getMoves(Board bård){

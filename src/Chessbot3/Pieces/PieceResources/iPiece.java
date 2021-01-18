@@ -1,6 +1,7 @@
 package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
+import Chessbot3.GameBoard.Board2;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 
@@ -29,6 +30,7 @@ public interface iPiece {
     public String toString();
 
     ArrayList<Move> getMoves(Board bård);
+    ArrayList<Move> getMoves(Board2 bård);
 
     public Tuple<Integer, Integer> getPosition();
     public void setPosition(Tuple<Integer, Integer> pos);
