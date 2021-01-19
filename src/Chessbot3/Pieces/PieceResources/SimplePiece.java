@@ -1,12 +1,10 @@
 package Chessbot3.Pieces.PieceResources;
 
 import Chessbot3.GameBoard.Board;
-import Chessbot3.GameBoard.Board2;
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -20,20 +18,12 @@ public abstract class SimplePiece implements iPiece {
     protected Character symbol;
     protected Boolean canSprint;
     protected String imageKey;
-    protected Tuple<Integer, Integer> position;
-    protected int deathDate = -1;
 
     public SimplePiece(WhiteBlack c, Tuple position){
         //Det eneste som er felles for alle brikker er hvordan fargen blir assignert.
         //Verdi, symbolet, bildet osv er unikt for hver brikketype, og blir fikset i konstruktøren til de andre brikkeklassene.
         this.color = c;
-        this.position = position;
     }
-
-    public Tuple<Integer, Integer> getPosition() { return this.position; }
-    public void setPosition(Tuple<Integer, Integer> pos) { this.position = pos; }
-    public int getDeathDate(){ return deathDate; }
-    public void setDeathDate(int n){ deathDate = n; }
 
     public Boolean isWhite() { return color == WHITE; }
     public Boolean isBlack() { return color == BLACK; }
@@ -45,9 +35,6 @@ public abstract class SimplePiece implements iPiece {
     }
     public Boolean canSprint(){ return canSprint; } //Om brikken kan gå flere skritt om gangen eller ei.
     public String toString(){ return color + " " + getClass().getName().substring(7).toUpperCase(); }
-
-    public Integer getX(){ return position.getX(); }
-    public Integer getY(){ return position.getY(); }
 
     public Character getSymbol(){ return symbol; }
 
@@ -78,42 +65,7 @@ public abstract class SimplePiece implements iPiece {
     public int hashCode() { return Objects.hash(color, getClass()); }
 
     @Override
-    public ArrayList<Move> getMoves(Board2 bård){
-        ArrayList<Move> ret = new ArrayList<>();
-        Integer fraX = position.getX();
-        Integer fraY = position.getY();
-        Tuple<Integer, Integer> fraPos = new Tuple<>(fraX, fraY);
-
-        for(Tuple<Integer, Integer> retning : direcDict.get(symbol)){ //Looper igjennom hver enkelt retning den kan gå.
-            Integer tilX = fraX;
-            Integer tilY = fraY;
-
-            for(int i=0; i<7; i++){ //Looper til 7, for noen ganger kan brikken gå 7 skritt, men den forventer å bli brutt før det.
-                tilX += retning.getX();
-                tilY += retning.getY();
-                Tuple<Integer, Integer> tilPos =  new Tuple<>(tilX, tilY);
-
-                if(tilX < 0 || tilY < 0 || tilX > 7 || tilY > 7) break; //Om den prøver å gå ut av brettet.
-
-                iPiece mål = bård.getPiece(tilPos);
-                if(mål == null){
-                    ret.add(new Move(fraPos, tilPos)); //Om det er en tom rute.
-                }
-                else if(this.isOppositeColor(mål))      {
-                    ret.add(new Move(fraPos, tilPos)); //Om det står en fiendtlig brikke der.
-                    break;
-                }
-                else break;
-
-                if(!canSprint) break; //Om brikken er en konge/hest/bonde, kan den ikke gå mer enn ett skritt om gangen. Derfor bryttes loopen her.
-            }
-        }
-        return ret;
-    }
-
-
-    @Override
-    public ArrayList<Move> getMoves(Board bård){
+    public ArrayList<Move> getMoves(Board bård, Tuple<Integer, Integer> position){
         //Lager en liste over trekk som denne brikken kan ta akkurat nå.
         //NB! Bønder må overskrive denne funksjonen, siden de fungerer helt annereledes.
         //Denne tar IKKE hensyn til om trekket setter kongen i sjakk, det må sjekkes i checkPlayerMove.

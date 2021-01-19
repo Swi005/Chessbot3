@@ -110,7 +110,6 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("board")) game.printCurrentBoard();
         else if(usertext.equals("move")) game.printPossibleMoves();
         else if(usertext.equals("turn")) game.printTurn();
-        else if(usertext.equals("pieces")) game.printPieces();
         else if(usertext.equals("paint")) gui.paintPieces(game.getCurrentBoard());
         else if(usertext.equals("reverse")) gui.reverse();
         else if(usertext.equals("bot")){ game.stop = false; game.botMove(); }
@@ -119,7 +118,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("stop")) game.stop = true;
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
         else if(usertext.equals("value")) game.testGetValue();
-        else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());
+        /*else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());
         else if(usertext.equals("positions")) game.getCurrentBoard().printPiecePosition();
         else if(usertext.equals("scores")) game.getCurrentBoard().printScores();
         else if(usertext.equals("moves")) game.getCurrentBoard().printMoveHistory();
@@ -127,7 +126,8 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("castle")) game.getCurrentBoard().printCurrentCastle();
         else if(usertext.equals("castles")) game.getCurrentBoard().printCastles();
         else if(usertext.equals("assert")) game.getCurrentBoard().positionTest();
-        else if(usertext.equals("captures")) game.getCurrentBoard().printCaptures();
+        else if(usertext.equals("captures")) game.getCurrentBoard().printCaptures();*/
+            // TODO: 19.01.2021 Lag disse debug-kommandoene på nytt kanskje?
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
         else if(isAMove(usertext)) game.playerMove(new Move(usertext));

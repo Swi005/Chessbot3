@@ -5,10 +5,8 @@ import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.PieceResources.SimplePiece;
 import Chessbot3.Pieces.PieceResources.WhiteBlack;
-import Chessbot3.Pieces.PieceResources.iPiece;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
@@ -23,18 +21,13 @@ public class King extends SimplePiece {
         else imageKey = "Kb";
     }
     @Override
-    public ArrayList<Move> getMoves(Board bård){
+    public ArrayList<Move> getMoves(Board bård, Tuple<Integer, Integer> pos){
         //En konges lovlige trekk kan regnes ut på samme måte som i supermetoden, men i tillegg skal den ha opptil 2 lovlige rokadetrekk.
         //Disse sjekkes og legges til av getCastleMoves.
         //Denne metoden tar ikke hensyn til at trekket eventuellt setter kongen i sjakk.
-        ArrayList<Move> ret = super.getMoves(bård);
+        ArrayList<Move> ret = super.getMoves(bård, pos);
         ret.addAll(getCastleMoves(bård));
         return ret;
-    }
-
-    @Override
-    public iPiece copy() {
-        return new King(color, position.copy());
     }
 
     private ArrayList<Move> getCastleMoves(Board bård){
@@ -46,20 +39,19 @@ public class King extends SimplePiece {
         // 4: Ingen av rutene fra og med kongen til og med der kongen vil flytte blir truet av noen fiendtlig brikke.
         // Nummer 4 ignorerer vi, fordi det ville mangedoblet kompleksiteten.
         ArrayList<Move> ret = new ArrayList<>();
+        boolean[] castle = bård.getCastle();
         if(color == WHITE){
-            Tuple<Boolean, Boolean> wCastle = bård.getWhiteCastle();
-            if(wCastle.getY() && bård.getPiece(5, 7) ==  null && bård.getPiece(6, 7) == null){
+            if(castle[1] && bård.getPiece(5, 7) ==  null && bård.getPiece(6, 7) == null){
                 ret.add(new Move(new Tuple(4, 7), new Tuple(6, 7))); //Hvit rokerer kort
             }
-            if(wCastle.getX() && bård.getPiece(3, 7) ==  null && bård.getPiece(2, 7) == null && bård.getPiece(1, 7) ==  null){
+            if(castle[0] && bård.getPiece(3, 7) ==  null && bård.getPiece(2, 7) == null && bård.getPiece(1, 7) ==  null){
                 ret.add(new Move(new Tuple(4, 7), new Tuple(2, 7))); //Hvit rokerer langt
             }
         }else if(color == BLACK){
-            Tuple<Boolean, Boolean> bCastle = bård.getBlackCastle();
-            if(bCastle.getY() && bård.getPiece(5, 0) ==  null && bård.getPiece(6, 0) == null){
+            if(castle[3] && bård.getPiece(5, 0) ==  null && bård.getPiece(6, 0) == null){
                 ret.add(new Move(new Tuple(4, 0), new Tuple(6, 0))); //Svart rokerer kort
             }
-            if(bCastle.getX() && bård.getPiece(3, 0) == null && bård.getPiece(2, 0) ==  null && bård.getPiece(1, 0) ==  null){
+            if(castle[2] && bård.getPiece(3, 0) == null && bård.getPiece(2, 0) ==  null && bård.getPiece(1, 0) ==  null){
                 ret.add(new Move(new Tuple(4, 0), new Tuple(2, 0))); //Svart rokerer langt
             }
         }

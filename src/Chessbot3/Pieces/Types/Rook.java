@@ -17,9 +17,4 @@ public class Rook extends SimplePiece {
         if(c == WHITE) imageKey = "Rw";
         else imageKey = "Rb";
     }
-
-    @Override
-    public iPiece copy() {
-        return new Rook(color, position.copy());
-    }
 }

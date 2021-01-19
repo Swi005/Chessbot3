@@ -102,7 +102,7 @@ import java.util.List;
                 }
 
                 endPos = new Tuple(chars.indexOf(endofmove.charAt(0)), 8 - Integer.parseInt(endofmove.substring(1)));
-                List<Move> posMoves = board.genCompletelyLegalMoves(board.getColorToMove());
+                List<Move> posMoves = board.getLegalMoves();
                 posMoves = pruneMoves(posMoves, endPos);
                 Iterator var10 = posMoves.iterator();
 

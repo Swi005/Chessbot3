@@ -14,14 +14,14 @@ public class Tempbot implements iBot{
     public Move findMove(Board bård) throws IllegalStateException{
         //Gir verdi til hvert enkelt Move, og sorterer dem.
         WhiteBlack myColor = bård.getColorToMove();
-        List<Move> legals = bård.genCompletelyLegalMoves(); //bruker den kompliserte metoden første gangen, og standard GenMoves alle de andre gangene.
+        List<Move> legals = bård.getLegalMoves(); //bruker den kompliserte metoden første gangen, og standard GenMoves alle de andre gangene.
         if(legals.size() == 0) throw new IllegalStateException();
         for(Move move : legals){
             Board copy = bård.copy();
             copy.movePiece(move);
             move.addWeight(copy.getScore());
 
-            List<Move> countermoves = copy.genMoves();
+            List<Move> countermoves = copy.getMoves();
             for(Move counter : countermoves){
                 counter.addWeight(copy.getValue(counter));
             }

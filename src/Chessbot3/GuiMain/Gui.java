@@ -186,13 +186,13 @@ public class Gui extends JFrame {
     //Lager et popup-felt med valgfri melding.
     public void displayPopupMessage(String s){ JOptionPane.showMessageDialog(this, s); }
 
-    public void lightUpButtons(Tuple initpos) throws IllegalArgumentException{
+    public void lightUpButtons(Tuple<Integer, Integer> initpos) throws IllegalArgumentException{
         //Tar en posisjon, finner brikken som står der, og lyser opp alle de lovlige trekkene den brikken kan gjøre.
         //Forutsetter at det faktisk står en brikke der, gir feilmelding ellers.
         Board bård = game.getCurrentBoard();
         iPiece pie = bård.getPiece(initpos);
         if(pie == null) throw new IllegalArgumentException("The piece is null, and has noe legal moves");
-        for(Move move : pie.getMoves(bård)){
+        for(Move move : pie.getMoves(bård, initpos)){
             if(bård.checkMoveLegality(move)) {
                 int x;
                 int y;

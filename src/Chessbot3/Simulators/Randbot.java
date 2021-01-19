@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Randbot {
     public static Move findMove(Board bård) throws IllegalStateException{
-        List<Move> possibles = bård.genCompletelyLegalMoves();
+        List<Move> possibles = bård.getLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
         Collections.shuffle(possibles);
 

@@ -17,9 +17,4 @@ public class Bishop extends SimplePiece {
         if(c == WHITE)imageKey = "Bw";
         else imageKey = "Bb";
     }
-
-    @Override
-    public iPiece copy() {
-        return new Bishop(color, position.copy());
-    }
 }

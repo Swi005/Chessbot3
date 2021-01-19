@@ -117,11 +117,11 @@ public class Tests {
     @Test void hashMapHandlesUniques(){
         ArrayList<Board> boards = new ArrayList();
         Board bård1 = new Board();
-        for(Move move : bård1.genMoves()){
+        for(Move move : bård1.getMoves()){
             Board b = new Board();
             b.movePiece(move);
             boards.add(b);
-            for(Move m : b.genMoves()){
+            for(Move m : b.getMoves()){
                 Board n = new Board();
                 n.movePiece(move);
                 n.movePiece(m);
@@ -153,30 +153,13 @@ public class Tests {
     }
 
     @Test
-    void testCastleTuples(){
-        gui.game.stop = false;
-
-        Board bård = new Board();
-        Board copy = bård.copy();
-        assertTrue(bård.getBlackCastle().equals(copy.getBlackCastle()));
-        assertTrue(bård.getWhiteCastle().equals(copy.getWhiteCastle()));
-
-        iBot bot = new AlphaBota();
-        bot.findMove(copy);  //Simulerer mye, kan være tuplene blir endret når de ikke skal
-
-        assertTrue(bård.getBlackCastle().equals(copy.getBlackCastle()));
-        assertTrue(bård.getWhiteCastle().equals(copy.getWhiteCastle()));
-
-    }
-
-    @Test
     void testUndoSpeed(){
         Board bård = new Board();
         long starttid = System.nanoTime();
-        for(Move move : bård.genMoves()){
+        for(Move move : bård.getMoves()){
             Board copy = bård.copy();
             copy.movePiece(move);
-            for(Move counter : copy.genMoves()){
+            for(Move counter : copy.getMoves()){
                 Board co = copy.copy();
                 co.movePiece(counter);
             }
@@ -185,13 +168,13 @@ public class Tests {
         System.out.println("Copy: " + (sluttid-starttid)/100000 + "ms.");
 
         starttid = System.nanoTime();
-        for(Move move : bård.genMoves()){
+        for(Move move : bård.getMoves()){
             bård.movePiece(move);
-            for(Move counter : bård.genMoves()){
+            for(Move counter : bård.getMoves()){
                 bård.movePiece(counter);
-                bård.undoMove();
+                bård.goBack();
             }
-            bård.undoMove();
+            bård.goBack();
         }
         sluttid = System.nanoTime();
         System.out.println("Undo: " + (sluttid-starttid)/100000 + "ms.");

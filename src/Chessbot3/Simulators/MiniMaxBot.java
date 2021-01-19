@@ -16,7 +16,7 @@ public class MiniMaxBot implements iBot {
     private static HashMap<Board, Integer> uniqueBoards = new HashMap<>();
 
     public Move findMove(Board bård) {
-        List<Move> possibles = bård.genCompletelyLegalMoves();
+        List<Move> possibles = bård.getLegalMoves();
         if (possibles.size() == 0) throw new IllegalStateException();
 
         if (bård.getColorToMove() == WHITE) {
@@ -53,14 +53,14 @@ public class MiniMaxBot implements iBot {
         int value;
         if (isMaximizing) {
             value = -2147483648;
-            for (Move move : bård.genMoves()) {
+            for (Move move : bård.getMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);
                 value = Math.max(value, minimax(copy, depth - 1, false));
             }
         } else {
             value = 2147483647;
-            for (Move move : bård.genMoves()) {
+            for (Move move : bård.getMoves()) {
                 Board copy = bård.copy();
                 copy.movePiece(move);
                 value = Math.min(value, minimax(copy, depth - 1, true));

@@ -1,13 +1,5 @@
 package Chessbot3.GameBoard;
 
-import static Chessbot3.GuiMain.Chess.gui;
-import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
-import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
-import static java.lang.StrictMath.abs;
-import static java.lang.StrictMath.min;
-
-import java.util.*;
-
 import Chessbot3.MiscResources.Move;
 import Chessbot3.MiscResources.Tuple;
 import Chessbot3.Pieces.PieceResources.PieceFactory;
@@ -16,15 +8,16 @@ import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Pieces.Types.King;
 import Chessbot3.Pieces.Types.Pawn;
 import Chessbot3.Pieces.Types.Queen;
-import Chessbot3.Pieces.Types.Rook;
-import com.sun.jdi.VMOutOfMemoryException;
 
-/**
- * Board
- */
-public class Board implements Comparable {
+import java.util.*;
+import java.util.stream.Collectors;
 
-    //Det initielle brettet. Denne kan endres på for å debugge ting litt fortere.
+import static Chessbot3.GuiMain.Chess.gui;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
+import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
+
+public class Board {
+
     private static final char[][] initialBoard = new char[][]{
             new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             new char[]{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
@@ -36,522 +29,253 @@ public class Board implements Comparable {
             new char[]{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     };
 
-    //Hjørneindekser
-    private static final Tuple A8 = new Tuple(0,0);
-    private static final Tuple H8 = new Tuple(7,0);
-    private static final Tuple A1 = new Tuple(0,7);
-    private static final Tuple H1 = new Tuple(7,7);
-
-    //Andre nyttige indekser
-    private static final Tuple E1 = new Tuple(4,7);
-    private static final Tuple E8 = new Tuple(4,0);
-    private static final Tuple G1 = new Tuple(6,7);
-    private static final Tuple C1 = new Tuple(2,7);
-    private static final Tuple G8 = new Tuple(6,0);
-    private static final Tuple C8 = new Tuple(2,0);
-
-    //Rutenettet av brikker
-    private iPiece[][] grid;
-
-    //'Verdien' til brettet. Positivt tall er bra for hvit, negativt er bra for svart.
-    private int score;
-
-    //Hvem sin tur det er. Begynner alltid med hvit #SexismInVideoGames
+    private int counter = 0;
     private WhiteBlack colorToMove = WHITE;
+    private iPiece[][] grid = new iPiece[8][8];
+    private Stack<Move> moves = new Stack<>();
+    private Stack<Integer> scores = new Stack<>();
+    private Stack<DeathLog> deaths = new Stack<>();
+    private Stack<boolean[]> castles = new Stack<>();
 
-    //Hvor hvit kan rokere.
-    private Tuple<Boolean, Boolean> wCastle;
-
-    //Hvor svart kan rokere.
-    private Tuple<Boolean, Boolean> bCastle;
-
-    //Hvor det er lov til å ta en passant.
-    //Denne er vanligvis (-1, -1), som er utenfor brettet, men blir endret når en bonde flytter to skritt frem.
-    private Tuple<Integer, Integer> passantPos;
-
-
-    private int moveindex = 0;
-    private List<Move> previousMoves = new ArrayList<>();
-    private LinkedList<iPiece> capturedPieces = new LinkedList();
-    private List<Tuple<Boolean, Boolean>> wCastles = new ArrayList<>();
-    private List<Tuple<Boolean, Boolean>> bCastles = new ArrayList<>();
-    private List<Tuple<Integer, Integer>> passants = new ArrayList();
-    private LinkedList<Integer> promotingtimes = new LinkedList<>();
-    private List<Integer> previousScores = new ArrayList<>();
-
-    public Board() {
-        //Det initielle brettet. Plasserer brikker med hensyn på initialBoard.
-        grid = new iPiece[8][8];
+    public Board copy(){
+        iPiece[][] newGrid = new iPiece[8][8];
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                iPiece pie = PieceFactory.getPiece(initialBoard[y][x], new Tuple(x, y));
-                grid[x][y] = pie;
+                newGrid[y][x] = grid[y][x];
             }
         }
-        wCastle = new Tuple<>(true, true);
-        bCastle = new Tuple<>(true, true);
-        score = 0;
-        passantPos = new Tuple(-1, -1);
-        previousScores.add(0);
-        wCastles.add(wCastle.copy());
-        bCastles.add(bCastle.copy());
-        passants.add(passantPos.copy());
-        if (!(getPiece(H1) instanceof Rook)) wCastle.setY(false);
-        if (!(getPiece(A1) instanceof Rook)) wCastle.setX(false);
-        if (!(getPiece(H8) instanceof Rook)) bCastle.setY(false);
-        if (!(getPiece(A8) instanceof Rook)) bCastle.setX(false);
+        Stack<Move> newMoves = (Stack<Move>) moves.clone();
+        Stack<Integer> newScores = (Stack<Integer>) scores.clone();
+        Stack<DeathLog> newDeaths = (Stack<DeathLog>) deaths.clone();
+        Stack<boolean[]> newCastles = (Stack<boolean[]>) castles.clone();
+        return new Board(counter, colorToMove, newGrid, newMoves, newScores, newDeaths, newCastles);
     }
 
-    public Board(iPiece[][] customBoard, WhiteBlack colorToMove, int score, Tuple<Boolean, Boolean> wCastle,
-                 Tuple<Boolean, Boolean> bCastle, Tuple<Integer, Integer> passantPos,
-                 List<Move> previousMoves, List<Integer> previousScores, List<Tuple<Boolean,
-            Boolean>> wCastles, List<Tuple<Boolean, Boolean>> bCastles, LinkedList<iPiece> capturedPieces,
-                 LinkedList<Integer> promotingtimes, List<Tuple<Integer, Integer>> passants, int moveIndex){
-        //En konstruktør som kun skal brukes for å opprette en komplett kopi av et tidligere brett.
-        //Denne tar inn score, rokadebetingelser, osv fra det forrige brettet.
-        //Jeg vet denne ser helt jævlig ut, ikke døm meg.
-        this.grid = customBoard;
+    //Hjørneindekser og andre nyttige ting
+    private static final Tuple<Integer, Integer> A1 = new Tuple<>(0, 7);
+    private static final Tuple<Integer, Integer> H1 = new Tuple<>(7, 7);
+    private static final Tuple<Integer, Integer> A8 = new Tuple<>(0, 0);
+    private static final Tuple<Integer, Integer> H8 = new Tuple<>(7, 0);
+    private static final Tuple<Integer, Integer> E1 = new Tuple<>(4, 7);
+    private static final Tuple<Integer, Integer> E8 = new Tuple<>(4, 0);
+
+    public Board(){
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                grid[y][x] = PieceFactory.getPiece(initialBoard[y][x], new Tuple<>(x, y));
+            }
+        }
+        moves.push(new Move(new Tuple<>(4, 7), new Tuple<>(4, 6)));    //Defaultmove er Ke2, bare fordi stacken må ha minste ett move for å unngå kræsj i getMoves.
+        scores.push(0);                                                      //Initiell score
+        castles.push(new boolean[] {true, true, true, true});                     //Til å begynne med kan begge rokere begge veier.
+    }
+
+    public Board(int counter, WhiteBlack colorToMove, iPiece[][] grid, Stack<Move> moves,
+                 Stack<Integer> scores, Stack<DeathLog> deaths, Stack<boolean[]> castles){
+        this.counter = counter;
         this.colorToMove = colorToMove;
-        this.wCastle = wCastle;
-        this.bCastle = bCastle;
-        this.score = score;
-        this.passantPos = passantPos;
-        this.bCastles = bCastles;
-        this.wCastles = wCastles;
-        this.previousScores = previousScores;
-        this.previousMoves = previousMoves;
-        this.promotingtimes = promotingtimes;
-        this.capturedPieces = capturedPieces;
-        this.passants = passants;
-        this.moveindex = moveIndex;
+        this.grid = grid;
+        this.moves = moves;
+        this.scores = scores;
+        this.deaths = deaths;
+        this.castles = castles;
     }
 
-    public Board copy() {
-        //Returnerer en kopi av brettet, og husker hvem som kan rokerer hvor, og scoren til hver spiller.
-        return new Board(this.getGridCopy(), this.colorToMove, this.score, this.wCastle.copy(), this.bCastle.copy(),
-            this.passantPos.copy(), new ArrayList<>(previousMoves), new ArrayList<>(previousScores),
-            new ArrayList<>(wCastles), new ArrayList<>(bCastles), new LinkedList<>(capturedPieces),
-            new LinkedList<>(promotingtimes), new ArrayList(passants), moveindex);
+    private static final Tuple<Integer, Integer> defaultPassantPos = new Tuple(-1, -1);
+    public Tuple<Integer, Integer> getPassantPos(){
+        Move prev = moves.peek();
+        iPiece pie = grid[prev.getTo().getY()][prev.getTo().getX()];
+        if (pie != null && pie instanceof Pawn && Math.abs(prev.getFrom().getY() - prev.getTo().getY()) == 2){
+            return new Tuple(prev.getFrom().getX(), (prev.getFrom().getY() + prev.getTo().getY()) / 2);
+        }
+        else return defaultPassantPos;
     }
 
-    //Lager en liste over nesten-lovlige trekk som kan gjøres akkurat nå.
-    //Denne tar IKKE hensyn til om trekket setter kongen i sjakk.
-    public List<Move> genMoves(){ return genMoves(colorToMove); }
-
-    public List<Move> genMoves(WhiteBlack color){
-        //Tar inn en farge og gir deg en liste over alle trekk den spilleren kan ta akkurat nå,
-        //inkludert rokader og en passant.
-        ArrayList<Move> ret = new ArrayList();
-        for(iPiece pie : getPieceList(color)){
-            ret.addAll(pie.getMoves(this));
+    public ArrayList<Move> getMoves(WhiteBlack color){
+        ArrayList<Move> ret = new ArrayList<>();
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                iPiece pie = grid[y][x];
+                if (pie != null && pie.getColor() == colorToMove) ret.addAll(pie.getMoves(this, new Tuple<>(x, y)));
+            }
         }
         return ret;
     }
+    
+    public ArrayList<Move> getMoves(){ return getMoves(colorToMove); }
 
-    //Returnerer en liste over helt lovlige trekk. Denne er mye mer kompleks enn GenMoves, og bør ikke brukes av botten.
-    public List<Move> genCompletelyLegalMoves(){ return genCompletelyLegalMoves(colorToMove); }
+    public void movePiece(Move move){ movePiece(move, false); }
 
-    //Alternativ versjon, om du vil finne de teoritiske lovlige trekkene til en spesifikk farge,
-    //selv om det ikke nødvendigvis er den sin tur.
-    public List<Move> genCompletelyLegalMoves(WhiteBlack color){
-        List<Move> ret = new ArrayList<>();
-        for(Move move : genMoves(color)){
-            if(checkMoveLegality(move)) ret.add(move);
-        }
-        return ret;
-    }
+    private static final Tuple[] castleMoves = {
+            new Tuple<>(new Move(new Tuple<>(4, 7), new Tuple<>(2, 7)),
+                        new Move(new Tuple<>(0, 7), new Tuple<>(3, 7))),
+            new Tuple<>(new Move(new Tuple<>(4, 7), new Tuple<>(6, 7)),
+                        new Move(new Tuple<>(7, 7), new Tuple<>(5, 7))),
+            new Tuple<>(new Move(new Tuple<>(4, 0), new Tuple<>(2, 0)),
+                        new Move(new Tuple<>(0, 0), new Tuple<>(3, 0))),
+            new Tuple<>(new Move(new Tuple<>(4, 0), new Tuple<>(6, 0)),
+                        new Move(new Tuple<>(7, 0), new Tuple<>(5, 0)))
+    };
+    public void movePiece(Move move, boolean isHumanPlayer){
+        int scoreDelta = 0;
 
-    public int getValue(Move move){
-        //Regner ut den umiddelbare verdien av et trekk.
-        //Denne gir høy score om du tar en brikke eller flytter til en bedre posisjon,
-        //og lav score om du flytter til en dårligere posisjon.
-        //Denne ignorerer helt hva motstanderen kan gjøre, så om trekket ditt er å ofre en dronning for å ta en bonde,
-        //mener denne funksjonen fortsatt at det er et bra trekk.
+        Tuple<Integer, Integer> from = move.getFrom();
+        Tuple<Integer, Integer> to   = move.getTo();
 
-        //Gir score for å flytte til en bedre posisjon.
-        iPiece pie = getPiece(move.getFrom());
-        int ret = pie.getValueAt(move.getTo()) - pie.getValueAt(move.getFrom());
-
-        //Gir score for å ta en brikke på normalt vis.
-        iPiece target = getPiece(move.getTo());
-        if(target != null) ret += target.getCombinedValue(move.getTo());
-
-        //Gir score for å ta en passant.
-        if(move.getTo() == passantPos) ret += 120; //Lettere enn å regne ut den egentlige verdien av å ta den brikken.
-
-        if(colorToMove == WHITE) return ret;
-        else return -ret;
-    }
-
-    private void addScore(int x){
-        //Legger til score.
-        //Holder selv styr på hvem sin tur det er, og dermed også om den skal legge til eller trekke fra score.
-        if(colorToMove == WHITE) score += x;
-        else score -= x;
-    }
-
-    public void goForward(){
-        //Om du har tatt tilbake et trekk, og ombestemt ombestemmingen og vil gå fremover igjen.
-        if(moveindex < previousMoves.size()){
-            movePiece(previousMoves.get(moveindex), false, false);
-        }else throw new IllegalStateException("Can't go further forward");
-    }
-
-    public void undoMove(){ undoMove(true);}
-
-    public void undoMove(boolean deleteFuture){
-        //Tar tilbake et trekk, og resetter hele brettet til en tidligere tilstand.
-        if(moveindex <= 0) throw new IllegalStateException("Can't go further back");
-        moveindex--;
-        Move move = previousMoves.get(moveindex);
-
-        Tuple<Integer, Integer> fra = move.getFrom();
-        Tuple<Integer, Integer> til = move.getTo();
-        iPiece pie = getPiece(til);
-
-        //Sjekker om trekket var å promotere en bonde
-        if(!promotingtimes.isEmpty() && promotingtimes.getFirst() == moveindex){
-            promotingtimes.removeFirst();
-            grid[fra.getX()][fra.getY()] = new Pawn(pie.getColor(), fra);
-            grid[til.getX()][til.getY()] = null;
-        }else{
-            //flytter brikken tilbake
-            grid[fra.getX()][fra.getY()] = pie;
-            grid[til.getX()][til.getY()] = null;
-            pie.setPosition(fra);
+        iPiece piece = grid[from.getY()][from.getX()];
+        if (piece == null) throw new NullPointerException("The piece to move is null: " + move + "\n" + this);
+        iPiece target = grid[to.getY()][to.getX()];
+        if (target != null){
+            scoreDelta += target.getCombinedValue(to);
+            deaths.push(new DeathLog(counter, target, to));
         }
 
-        //Respawner drepte brikker
-        if(!capturedPieces.isEmpty()){
-            iPiece recent = capturedPieces.getFirst();
-            if(recent.getDeathDate() == moveindex){
-                capturedPieces.removeFirst();
-                grid[recent.getPosition().getX()][recent.getPosition().getY()] = recent;
-                recent.setDeathDate(-1);
+        for (Tuple<Move, Move> tup : castleMoves){
+            if (move.equals(tup.getX())){
+                grid[tup.getY().getTo().getY()][tup.getY().getTo().getX()] = grid[tup.getY().getFrom().getY()][tup.getY().getFrom().getX()];
+                grid[tup.getY().getFrom().getY()][tup.getY().getFrom().getX()] = null;
+                scoreDelta += 25;     //Bonuspoeng for å rokere.
+                break;
             }
         }
+        if (to.equals(getPassantPos())){
+            iPiece untouchedTarget = grid[from.getY()][to.getX()];
+            if (untouchedTarget == null) throw new NullPointerException("The passantpos is null? " + move + "\n" + this);
+            scoreDelta += untouchedTarget.getCombinedValue(new Tuple<>(to.getX(), from.getY()));
+            grid[from.getY()][to.getX()] = null;
 
-        //Flytter tårn tilbake, om trekket var en rokade
-        if(pie instanceof King){
-            if(fra.equals(E1) && til.equals(G1)){
-                grid[7][7] = grid[5][7];
-                grid[5][7] = null;
-                grid[7][7].setPosition(new Tuple(7, 7));
-            }
-            else if(fra.equals(E1) && til.equals(C1)){
-                grid[0][7] = grid[3][7];
-                grid[3][7] = null;
-                grid[0][7].setPosition(new Tuple(0, 7));
-            }
-            else if(fra.equals(E8) && til.equals(G8)){
-                grid[7][0] = grid[5][0];
-                grid[5][0] = null;
-                grid[7][0].setPosition(new Tuple(7, 0));
-            }
-            else if(fra.equals(E8) && til.equals(C8)){
-                grid[0][0] = grid[3][0];
-                grid[3][0] = null;
-                grid[0][0].setPosition(new Tuple(0, 0));
-            }
         }
-        //Oppdaterer rokadebetingelser
-        wCastle = wCastles.get(moveindex).copy();
-        bCastle = bCastles.get(moveindex).copy();
 
-        //Oppdaterer score
-        score = previousScores.get(moveindex);
+        scoreDelta -= piece.getValueAt(from);
+        scoreDelta += piece.getValueAt(to);
 
-        //Oppdaterer hvor det er greit å ta en passant
-        passantPos = passants.get(moveindex).copy();
+        grid[to.getY()][to.getX()] = grid[from.getY()][from.getX()];
+        grid[from.getY()][from.getX()] = null;
 
-        //Bytter farge på hvem sin tur det er
+        if (piece instanceof Pawn && (to.getY() == 0 || to.getY() == 7)){
+            iPiece promoted;
+            if (isHumanPlayer) promoted = gui.promotePawn(to);
+            else promoted = new Queen(colorToMove, to);
+            grid[to.getY()][to.getX()] = promoted;
+
+            //Når er bonde blir promotert, skriver vi at den 'dør', slik at vi husker at det sto en bonde der når vi flytter tilbkae igjen.
+            deaths.push(new DeathLog(counter, piece, from));
+            scoreDelta -= piece.getCombinedValue(to);
+            scoreDelta += promoted.getCombinedValue(to);
+        }
+
+        counter++;
+        if (colorToMove == WHITE) scores.push(scores.peek() + scoreDelta);
+        else scores.push(scores.peek() - scoreDelta);
         colorToMove = getOppositeColor(colorToMove);
-
-        if(deleteFuture){
-            wCastles.remove(moveindex+1);
-            bCastles.remove(moveindex+1);
-            previousScores.remove(moveindex+1);
-            previousMoves.remove(moveindex);
-            passants.remove(moveindex+1);
-        }
+        moves.push(move);
+        boolean[] prevCastle = castles.peek();
+        castles.push(new boolean[]{prevCastle[0] && !from.equals(A1) && !to.equals(A1) && !from.equals(E1),
+                                   prevCastle[1] && !from.equals(H1) && !to.equals(H1) && !from.equals(E1),
+                                   prevCastle[2] && !from.equals(A8) && !to.equals(A8) && !from.equals(E8),
+                                   prevCastle[3] && !from.equals(H8) && !to.equals(H8) && !from.equals(E8)});
     }
 
-    public void movePiece(Move move){ movePiece(move, false, true); }
-
-    public void movePiece(Move move, boolean isHumanPlayer, boolean isNewMove) {
-        //Flytter en brikke. Denne oppdaterer rokadebetingelser og en passant.
-        //Denne driter i om trekket er lovlig eller ikke, det må sjekkes med CheckPlayerMove/GenMoves.
-        //Om isHumanPlayer=true, og trekket er at en bonde blir flyttet til enden av brettet,
-        //vil denne lage et pupup-vindu om hvilken brikke bonden skal promoteres til.
-        //Hvis ikke, spawnes bare en dronning.
-
-        Tuple<Integer, Integer> fra = move.getFrom();
-        Tuple<Integer, Integer> til = move.getTo();
-        iPiece pie = getPiece(fra);
-        iPiece target = getPiece(til);
-
-        //Oppdaterer rokadebetingelser
-        //Om et tårn blir tatt eller flyttet, kan ikke lenger spilleren rokere den veien.
-        if     (fra.equals(A1) || til.equals(A1)) wCastle.setX(false);
-        else if(fra.equals(H1) || til.equals(H1)) wCastle.setY(false);
-        else if(fra.equals(A8) || til.equals(A8)) bCastle.setX(false);
-        else if(fra.equals(H8) || til.equals(H8)) bCastle.setY(false);
-
-        //Om kongen flytter seg, kan den aldri rokere.
-        else if(fra.equals(E1)) wCastle = new Tuple(false, false);
-        else if(fra.equals(E8)) bCastle = new Tuple(false, false);
-
-        //Flytter tårnet, om kongen rokerer.
-        if(pie instanceof King){
-            iPiece tempRook = new Rook(pie.getColor(), null); //Et midldertidig tårn kun for å regne ut verdien av å flytte et tårn når kongen rokererer.
-            if(fra.equals(E1) && til.equals(G1)){
-                addScore(tempRook.getValueAt(5, 7) - tempRook.getValueAt(7, 7));
-                grid[5][7] = grid[7][7]; //Flytter tårnet når hvit rokerer kort.
-                grid[7][7] = null;
-                grid[5][7].setPosition(new Tuple(5, 7));
-            }else if(fra.equals(E1) && til.equals(C1)){
-                addScore(tempRook.getValueAt(3, 7) - tempRook.getValueAt(0, 7));
-                grid[3][7] = grid[0][7]; //Flytter tårnet når hvit rokerer langt.
-                grid[0][7] = null;
-                grid[3][7].setPosition(new Tuple(3, 7));
-            }else if(fra.equals(E8) && til.equals(G8)){
-                addScore(tempRook.getValueAt(5, 0) - tempRook.getValueAt(7, 0));
-                grid[5][0] = grid[7][0]; //Flytter tårnet når svart rokerer kort.
-                grid[7][0] = null;
-                grid[5][0].setPosition(new Tuple<>(5, 0));
-            }else if(fra.equals(E8) && til.equals(C8)){
-                addScore(tempRook.getValueAt(3, 0) - tempRook.getValueAt(0, 0));
-                grid[3][0] = grid[0][0]; //Flytter tårnet når svart rokerer langt.
-                grid[0][0] = null;
-                grid[3][0].setPosition(new Tuple(3, 0));
-            }
-        }
-
-        //Flytter faktisk brikken.
-        grid[til.getX()][til.getY()] = pie;
-        grid[fra.getX()][fra.getY()] = null;
-
-        //Dreper en bonde, om trekket er en passant.
-        if(til.equals(passantPos) && pie instanceof Pawn){
-            Tuple<Integer, Integer> tempPos;
-
-            //Finner hvor den drepte brikken er.
-            //Dette er mer komplisert enn vanlig, siden en passant gjør at du kan drepe en brikke uten å ta på den.
-            if(til.getY() == 2) tempPos = new Tuple(til.getX(), 3);
-            else tempPos = new Tuple(til.getX(), 4);
-
-            addScore(getPiece(tempPos).getCombinedValue(tempPos)); //Legger til score for den drepte brikken.
-            grid[tempPos.getX()][tempPos.getY()] = null; //Dreper faktisk brikken.
-        }
-        //oppdaterer passantbetingelser.
-        if(passantPos.getX() != -1) passantPos.setX(-1);
-        if(pie instanceof Pawn){
-            if(abs(fra.getY()-til.getY()) == 2){
-                passantPos.setX(fra.getX());
-                passantPos.setY((fra.getY()+til.getY())/2);
-            }
-            //Promoterer bønder.
-            else if(til.getY() == 0 || til.getY() == 7){
-                if(!isHumanPlayer) grid[til.getX()][til.getY()] = new Queen(pie.getColor(), new Tuple(til.getX(), til.getY())); //Botten får alltid en dronning.
-                else grid[til.getX()][til.getY()] = gui.promotePawn(til); //Lager et popup-vindu for å promotere.
-                addScore(getPiece(til).getCombinedValue(til)); //Legger til bonusscore for å få en ny brikke.
-                promotingtimes.addFirst(moveindex);
-            }
-        }
-        //Legger til score for å flytte til en bedre posisjon.
-        addScore(pie.getValueAt(til) - pie.getValueAt(fra));
-
-
-        pie.setPosition(til);
-
-        //Legger til score når du tar en brikke.
-        if(target != null){
-            target.setDeathDate(moveindex);
-            capturedPieces.addFirst(target);
-            addScore(target.getCombinedValue(til));
-        }
-
-        //Bytter farge på hvem sin tur det er.
+    public void goBack(){
+        if (counter <= 0) throw new IllegalStateException("Cannot go further back!");
+        counter--;
         colorToMove = getOppositeColor(colorToMove);
+        scores.pop();
+        castles.pop();
+        Move prev = moves.pop();
 
-        //Om trekket er et nytt trekk, altså at det ikke er et resultat av .goForward(), må alle fremtidige trekk på listen slettes.
-        //Dvs, om noen har gjort to trekk, gått tilbake et trekk, og gjort et annet, vil dette sørge for at kun de to faktiske trekkene
-        //Er i listen. Samme med rokadetupler, scores, osv.
-        if(isNewMove) {
-            previousMoves = previousMoves.subList(0, moveindex);
-            previousScores = previousScores.subList(0, moveindex+1);
-            wCastles = wCastles.subList(0, moveindex+1);
-            bCastles = bCastles.subList(0, moveindex+1);
-            passants = passants.subList(0, moveindex+1);
-            previousScores.add(score);
-            wCastles.add(wCastle.copy());
-            bCastles.add(bCastle.copy());
-            previousMoves.add(move);
-            passants.add(passantPos.copy());
+        grid[prev.getFrom().getY()][prev.getFrom().getX()] = grid[prev.getTo().getY()][prev.getTo().getX()];
+        grid[prev.getTo().getY()][prev.getTo().getX()] = null;
+
+        //Respawner opptil to drepte brikker. Det eneste tilfellet der to brikker har dødd på samme tur
+        // er om en bonde tar en brikke samtidig som den promoterer seg selv. Da 'dør' bonden.
+        for (int i = 0; i < 2; i++) {
+            if (deaths.isEmpty()) break;
+            DeathLog last = deaths.peek();
+            if (last.time == counter){
+                grid[last.pos.getY()][last.pos.getX()] = last.piece;
+                deaths.pop();
+            }
+            else break;
         }
-        moveindex++;
+
+        for (Tuple<Move, Move> cmove : castleMoves){
+            if (cmove.getX().equals(prev)){
+                grid[cmove.getY().getFrom().getY()][cmove.getY().getFrom().getX()] = grid[cmove.getY().getTo().getY()][cmove.getY().getTo().getX()];
+                grid[cmove.getY().getTo().getY()][cmove.getY().getTo().getX()] = null;
+                break;
+            }
+        }
+
     }
 
-    public Boolean checkMoveLegality(Move inputMove) {
-        //Sjekker om spillerens trekk er lovlig.
-        // Tar hensyn til om trekket setter seg selv i sjakk.
-        // Returnerer true om det er lov.
-        iPiece pie = getPiece(inputMove.getFrom());
-        if(pie == null){
-            return false;
-        }
+    // Funksjonell programmering FTW 8)
+    public List<Move> getLegalMoves(){
+        return getMoves().stream().filter(this::checkMoveLegality).collect(Collectors.toList());
+    }
+
+    // TODO: 19.01.2021 Denne er litt buggy
+    public boolean checkMoveLegality(Move move){
+        iPiece pie = grid[move.getFrom().getY()][move.getFrom().getX()];
+        if (pie == null) throw new NullPointerException("The piece is null: " + move + "\n" + this);
         boolean ret = false;
-        for (Move move : pie.getMoves(this)) {
-            if (move.equals(inputMove)) {
+        for (Move m : pie.getMoves(this, move.getFrom())){
+            if (m.equals(move)){        //Jeg skjønner ikke hvorfor, men vi må gjøre dette istedet for å bruke .contains().
                 ret = true;
                 break;
             }
         }
-        //Om spillerens trekk er på listen, er det kanskje lovlig.
-        //Da må vi simulere at det trekket blir gjort, og se om motstanderen har noen trekk han kan gjøre for å umiddelbart ta kongen.
-        //Hvis ja, betyr det at spilleren har satt seg selv i sjakk, eller at han sto i sjakk og ingorerte det.
-        //Da er trekket ulovlig, og returnerer false
-        if(ret) {
-            movePiece(inputMove);
-            for (Move counter : genMoves()) {
-                iPiece target = getGridCopy()[counter.getTo().getX()][counter.getTo().getY()]; //Finner hvilke brikker fiendtlige trekk eventuelt kan ta.
-                if (target instanceof King){
-                    undoMove();
-                    return false; //Om motstanderen kan ta kongen.
+        if (ret) {
+            WhiteBlack color = colorToMove;
+            movePiece(move, false);
+            for (Move counter : getMoves()) {
+                iPiece target = grid[counter.getTo().getY()][counter.getTo().getX()];
+                if (target instanceof King && target.getColor() == color) {
+                    System.out.println("Broooo");
+                    goBack();
+                    return false;
                 }
             }
-            undoMove();
-            return true; //Om motstanderen ikke har noen trekk som kan ta kongen
+            goBack();
+            return true;
         }
-        return false; //Om trekket ikke engang er på den originale listen.
+        else{
+            System.out.println("Bruuuuh");
+            return false;
+        }
     }
 
     public Boolean checkCheckMate(){
-        //Sjekker om brettet er sjakkmatt.
-        //Returnerer true om det matt, null om det er patt (uavgjort) og false ellers.
-        List<Move> legals = genCompletelyLegalMoves();
-        if(legals.size()>0) return false; //Om spilleren har lovlige trekk.
-        else{
-            for(Move move : genMoves(getOppositeColorToMove())){
-                iPiece target = grid[move.getTo().getX()][move.getTo().getY()];
-                if(target instanceof King) return true; //Om spilleren ikke har noen lovlige trekk, og kongen blir truet.
-            }
-            return null; //Om spilleren ikke har noen lovlige trekk, men heller ikke blir truet. Da er det patt.
-        }
-    }
-    //Returnerer score. positivt er bra for hvit, negativt er bra for svart.
-    public Integer getScore() { return score; }
-
-    public iPiece[][] getGridCopy() {
-        //Returnerer en kopi av selve rutenettet av brikker.
-        iPiece[][] retgrid = new iPiece[8][8];
-        for(int x=0; x<8; x++){
-            for(int y=0; y<8; y++){
-                iPiece pie = grid[x][y];
-                if (pie != null) pie = pie.copy();
-                retgrid[x][y] = pie;
-            }
-        }
-        return retgrid;
+        return false; // TODO: 19.01.2021
     }
 
-    //Returnerer hvilken farge som skal flytte.
-    public WhiteBlack getColorToMove(){ return colorToMove; }
-
-    //Returnerer den andre fargen, den fargen som ikke skal flytte.
-    public WhiteBlack getOppositeColorToMove(){ return getOppositeColor(colorToMove); }
-    
-    public static WhiteBlack getOppositeColor(WhiteBlack c){
-        //Tar en farge, og returnerer den andre fargen.
-        //Dette er litt det samme som å sette et ikke-tegn foran en farge.
-        if(c == WHITE) return BLACK;
-        else return WHITE;
-    }
-
-    public int getNumberOfPieces(){
-        int ret = 0;
+    public ArrayList<iPiece> getPieceList(WhiteBlack color){
+        ArrayList ret = new ArrayList();
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                if(grid[y][x] != null) ret++;
-            }
-        }
-        return ret;
-    }
-
-    //Returnerer en liste over brikker som tilhører den som skal flytte.
-    //Nyttig for å generere trekk.
-    public List<iPiece> getPieceList(){ return getPieceList(colorToMove); }
-
-    public List<iPiece> getPieceList(WhiteBlack c){
-        //Lager en liste over alle brikkene til en spesifikk farge.
-        List<iPiece> ret = new ArrayList<>();
-        for(int y=0; y<8; y++){
-            for(int x=0; x<8; x++){
                 iPiece pie = grid[y][x];
-                if(pie != null && pie.getColor() == c) ret.add(pie);
+                if (pie != null && pie.getColor() == color) ret.add(pie);
             }
         }
         return ret;
     }
-    public Tuple<Boolean, Boolean> getWhiteCastle(){ return wCastle; }
 
-    public Tuple<Boolean, Boolean> getBlackCastle(){ return bCastle; }
+    public int getValue(Move move) { return 0; } // TODO: 19.01.2021
 
-    //Returnerer posisjonen hvor det er greit å ta en passant.
-    public Tuple<Integer, Integer> getPassantPos(){ return passantPos; }
+    public ArrayList<Move> getPreviousMoves(){ return new ArrayList<>(moves); }
+    public int getScore(){ return scores.peek(); }
+    public boolean[] getCastle(){ return castles.peek(); }
+    public WhiteBlack getColorToMove(){ return colorToMove; }
 
-    //Returnerer hvilke brikke som befinner seg i en posisjon.
-    public iPiece getPiece(Tuple<Integer, Integer> pos) { return grid[pos.getX()][pos.getY()]; }
+    public iPiece getPiece (Tuple<Integer, Integer> pos) {return grid[pos.getY()][pos.getX()]; }
+    public iPiece getPiece(int x, int y){ return grid[y][x]; }
 
-    //Samme som over, men med x,y-koordinater istedet.
-    public iPiece getPiece(int x, int y){ return grid[x][y]; }
-
-    //Sammenligner brett med hensyn på score.
-    //Om botten skal sortere brett etter verdi må den være klar over om den skal sortere baklengs eller ikke,
-    //avhengig av fargen den spiller som.
-    public int compareTo(Object other){ return this.getScore().compareTo(((Board) other).getScore()); }
-
-    @Override
-    public boolean equals(Object obj){
-        Board other = (Board) obj;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-
-                iPiece one = this.grid[i][j];
-                iPiece two = other.grid[i][j];
-
-                if(one == null || two == null){
-                    if(one == two) continue;
-                    else return false;
-                }
-                if(!one.equals(two)) return false;
-            }
-        }
-        if(!this.wCastle.equals(other.wCastle) || !this.bCastle.equals(other.bCastle)) return false;
-        return true;
-    }
-
-    @Override
-    public int hashCode(){
-
-        int[] primes = {29, 31, 37, 41, 43, 47, 53, 59, 61};
-        int result = 0;
-        for (int i = 0; i < 8; i++) {
-            result += primes[i] * (Arrays.deepHashCode(grid[i]));
-        }
-        result += primes[8] * Objects.hash(colorToMove);
-        return result;
-    }
-
-    public void printPiecePosition(){
-        for (iPiece pie : getPieceList(WHITE)){
-            System.out.println(pie.getPosition());
-        }
-    }
-
-    public void printPieceMoves(Tuple<Integer, Integer> tup){
-        for (Move move : getPiece(tup).getMoves(this)){
-            System.out.println(move);
+    private static class DeathLog{
+        final int time;
+        final iPiece piece;
+        final Tuple<Integer, Integer> pos;
+        public DeathLog(int time, iPiece type, Tuple<Integer, Integer> pos){
+            this.time = time; this.piece = type; this.pos = pos;
         }
     }
 
@@ -570,45 +294,13 @@ public class Board implements Comparable {
             }
             ret += rekke + "\n";
         }
-        ret += "Score: " + score;
+        ret += "Score: " + getScore();
         return ret;
     }
 
-    public List<Move> getPreviousMoves() { return previousMoves; }
-
-    public void printMoveHistory() { for (Move move : previousMoves){ System.out.println(move); } }
-
-    public void printBoardIndex() { System.out.println(moveindex); }
-
-    public void printScores(){ System.out.println(previousScores); }
-
-    public void printCastles(){
-        System.out.println("White castles: ");
-        for(Tuple tup : wCastles){
-            System.out.println(tup);
-        }
-        System.out.println("Black castles: ");
-        for (Tuple tup :bCastles){
-            System.out.println(tup);
-        }
+    public static WhiteBlack getOppositeColor(WhiteBlack c){
+        if (c == WHITE) return BLACK;
+        else return WHITE;
     }
 
-    public void printCurrentCastle(){
-        System.out.println("White castle: " + wCastle);
-        System.out.println("Black castle: " + bCastle);
-    }
-
-    public void printCaptures(){
-        for (iPiece pie : capturedPieces){
-            System.out.println(pie + ", died at move " + pie.getDeathDate());
-        }
-    }
-
-    public void positionTest(){
-        for(int x=0; x<8; x++){
-            for (int y = 0; y < 8; y++) {
-                assert getPiece(x, y).getPosition().equals(new Tuple<>(x, y));
-            }
-        }
-    }
 }

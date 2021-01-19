@@ -18,7 +18,7 @@ public class Copybot implements iBot{
     static int beta = 999999999;
 
     public Move findMove(Board bård) throws IllegalStateException {
-        List<Move> possibles = bård.genCompletelyLegalMoves();
+        List<Move> possibles = bård.getLegalMoves();
         if (possibles.size() == 0) throw new IllegalStateException();
         System.out.println();
         Move bestMove = possibles.get(0);
@@ -50,7 +50,7 @@ public class Copybot implements iBot{
         Board copy = bård.copy();
 
         copy.movePiece(node);
-        List<Move> counters = copy.genMoves();
+        List<Move> counters = copy.getMoves();
         int theWorstThatCanHappen = 0;
 
         if(bård.getColorToMove() == WHITE){

@@ -3,15 +3,11 @@ package Chessbot3.Simulators;
 import Chessbot3.GameBoard.Board;
 import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
-import com.sun.jdi.AbsentInformationException;
 
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IllformedLocaleException;
 import java.util.List;
 
-import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class AlphaBota implements iBot{
@@ -35,7 +31,7 @@ public class AlphaBota implements iBot{
     }
     
     public static Move setupSearch(Board bård, int depth) throws IllegalStateException{
-        List<Move> possibles = bård.genCompletelyLegalMoves();
+        List<Move> possibles = bård.getLegalMoves();
         if(possibles.size() == 0) throw new IllegalStateException();
 
         //Regner ut den umiddelbare verdien til hvert trekk, slik at alfabeta kan starte med en nesten sortert liste
@@ -51,7 +47,7 @@ public class AlphaBota implements iBot{
                 int value = alphaBeta(bård, depth-1, -2147483648, 2147483647, false);
                 move.setWeight(value);
                 System.out.println(move + ": " + value);
-                bård.undoMove();
+                bård.goBack();
             }
             System.out.println();
             Collections.sort(possibles, Collections.reverseOrder());
@@ -66,7 +62,7 @@ public class AlphaBota implements iBot{
                 int value = alphaBeta(bård, depth-1, -2147483648, 2147483647, true);
                 move.setWeight(value);
                 System.out.println(move + ": " + value);
-                bård.undoMove();
+                bård.goBack();
             }
             System.out.println();
             Collections.sort(possibles);
@@ -98,7 +94,7 @@ public class AlphaBota implements iBot{
         int value;
         if (isMaximizing){
             value = -2147483648;
-            for(Move move : bård.genMoves()) {
+            for(Move move : bård.getMoves()) {
 
                 //Board copy = bård.copy();
                 bård.movePiece(move);
@@ -106,16 +102,16 @@ public class AlphaBota implements iBot{
                 alpha = Math.max(alpha, value);
                 if (alpha >= beta) {
                     //transpositions.put(bård, new Transposition(value, LOWER_BOUND, move, depth));
-                    bård.undoMove();
+                    bård.goBack();
                     break;
                     //return value;
                 }
-                bård.undoMove();
+                bård.goBack();
             }
         }
         else{
             value = 2147483647;
-            for(Move move : bård.genMoves()) {
+            for(Move move : bård.getMoves()) {
 
                 //Board copy = bård.copy();
                 bård.movePiece(move);
@@ -123,11 +119,11 @@ public class AlphaBota implements iBot{
                 beta = Math.min(beta, value);
                 if (beta <= alpha) {
                     //transpositions.put(bård, new Transposition(value, UPPER_BOUND, move, depth));
-                    bård.undoMove();
+                    bård.goBack();
                     break;
                     //return value;
                 }
-                bård.undoMove();
+                bård.goBack();
             }
         }
 

@@ -71,8 +71,8 @@ public class Game {
         try{
             stop = true;
             gui.makeButtonsGrey();
-            currentBoard.undoMove(false);
-            if(bots.size() == 1 && !isBotThinking) currentBoard.undoMove(false);
+            currentBoard.goBack();
+            if(bots.size() == 1 && !isBotThinking) currentBoard.goBack();
         }
         catch(IllegalStateException x){
             gui.displayTextFieldMessage("Cannot go further back!");
@@ -83,10 +83,12 @@ public class Game {
         }
     }
 
+
     public void goForward(){
+        // TODO: 19.01.2021 Lag denne på nytt?
         //Går fremover igjen, om du har ombestemt ombestemmingen fra goBack().
         //Om det er PvE går du frem to trekk.
-        try{
+    /*    try{
             stop = true;
             gui.makeButtonsGrey();
             currentBoard.goForward();
@@ -99,6 +101,8 @@ public class Game {
             gui.paintPieces(currentBoard);
             updateStop();
         }
+
+     */
     }
 
     public void newGame(){
@@ -147,7 +151,7 @@ public class Game {
         if(isBotThinking) return false;
         stop = true;
         if(currentBoard.checkMoveLegality(move)) {
-            currentBoard.movePiece(move, true, true);
+            currentBoard.movePiece(move, true);
             gui.paintPieces(currentBoard);
             handleWinCondition();
             return true;
@@ -163,7 +167,7 @@ public class Game {
         Boolean check = currentBoard.checkCheckMate();
 
         //Sjekker om det er patt, eller om begge spillerene har nøyaktig én brikke igjen.
-        if(check == null || (currentBoard.getPieceList(currentBoard.getColorToMove()).size() == 1 && currentBoard.getPieceList(currentBoard.getOppositeColorToMove()).size() == 1)){
+        if(check == null || (currentBoard.getPieceList(currentBoard.getColorToMove()).size() == 1 && currentBoard.getPieceList(Board.getOppositeColor(currentBoard.getColorToMove())).size() == 1)){
             gui.makeButtonsGrey();
             gui.displayPopupMessage("Draw!");
             stop = true;
@@ -171,7 +175,7 @@ public class Game {
         //Sjekker om det er matt.
         else if(check){
             gui.makeButtonsGrey();
-            gui.displayPopupMessage("Checkmate! " + currentBoard.getOppositeColorToMove() + " wins!");
+            gui.displayPopupMessage("Checkmate! " + Board.getOppositeColor(currentBoard.getColorToMove()) + " wins!");
             stop = true;
         }
         //Hvis vi kommer hit er spillet fortsatt igang. Da må vi sjekke om det er bottens tur og aktivere den.
@@ -204,14 +208,11 @@ public class Game {
     public void printTurn() { System.out.println(currentBoard.getColorToMove() + " to move"); }
 
     //Printer alle trekk som kan bli gjort akkurat nå. Nyttig for debugging.
-    public void printPossibleMoves() { for(Move move : currentBoard.genCompletelyLegalMoves()) System.out.println(move); }
-
-    //Printer en liste over brikker som tilhører spilleren som skal flytte. Nyttig for debugging.
-    public void printPieces() { for(iPiece pie : currentBoard.getPieceList()) System.out.println(pie); }
+    public void printPossibleMoves() { for(Move move : currentBoard.getLegalMoves()) System.out.println(move); }
 
     public void testGetValue(){
         System.out.println(currentBoard.getColorToMove());
-        for(Move move : currentBoard.genMoves()){
+        for(Move move : currentBoard.getMoves()){
             System.out.println(move + ": " + currentBoard.getValue(move));
         }
     }

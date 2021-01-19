@@ -17,9 +17,4 @@ public class Knight extends SimplePiece {
         if(c == WHITE) imageKey = "Nw";
         else imageKey = "Nb";
     }
-
-    @Override
-    public iPiece copy() {
-        return new Knight(color, position.copy());
-    }
 }

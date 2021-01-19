@@ -17,9 +17,4 @@ public class Queen extends SimplePiece {
         if(c == WHITE)imageKey = "Qw";
         else imageKey = "Qb";
     }
-
-    @Override
-    public iPiece copy() {
-        return new Queen(color, position.copy());
-    }
 }
