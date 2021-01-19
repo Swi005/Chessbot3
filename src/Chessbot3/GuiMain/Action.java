@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 
 import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
+import static Chessbot3.MiscResources.Move.isAMove;
 
 public class Action extends KeyAdapter implements ActionListener {
     //Action har som jobb å ta imot input fra brukeren, og oversette det til kommandoer til Gui og Game.
@@ -20,10 +21,6 @@ public class Action extends KeyAdapter implements ActionListener {
     //En midlertidig variabel. Hver gang brukeren trykker på en rute, blir denne oppdatert.
     //Har brukeren trykket på to ruter er denne klar til å bli sendt til game.playerMove().
     private static Move pressedMove = new Move(null, null);
-
-    //Hjelpestrenger, for å kunne parse det brukeren skriver inn til trekk.
-    private static String chars = "abcdefgh";
-    private static String nums = "12345678";
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -133,11 +130,12 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("captures")) game.getCurrentBoard().printCaptures();
 
         //Om det brukeren skrev kan tolkes som et trekk (f. eks 'e2e4'), prøver spillet å gjøre trekket.
-        else if(isAMove(usertext)) game.playerMove(parse(usertext));
+        else if(isAMove(usertext)) game.playerMove(new Move(usertext));
 
         else gui.displayPopupMessage("Unrecognized command");
     }
 
+    /*
     public static Move parse(String input) {
         //Tar en streng fra brukeren og oversetter det til et trekk.
         //f. eks 'e2 e4' blir til new Move((4, 6) (4, 4)).
@@ -162,4 +160,6 @@ public class Action extends KeyAdapter implements ActionListener {
         return (chars.contains(input.substring(0, 1)) && nums.contains(input.substring(1, 2))
                 && chars.contains(input.substring(2, 3)) && nums.contains(input.substring(3, 4)));
     }
+
+     */
 }

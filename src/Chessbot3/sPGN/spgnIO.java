@@ -23,7 +23,7 @@ public class spgnIO implements IspgnIO {
                 if (line.length() > 0 && Character.isDigit(line.toCharArray()[0])) {
                     String[] tmpStr = line.split("[.]");
                     String[] mv = tmpStr[1].split(":");
-                    moves.add(Action.parse(mv[0] + " " + mv[1]));
+                    moves.add(new Move(mv[0] + " " + mv[1]));
                 }
             }
             return moves.toArray(new Move[]{});
