@@ -9,8 +9,8 @@ import static Chessbot3.GuiMain.Chess.imageDict;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Bishop extends SimplePiece {
-    public Bishop(WhiteBlack c, Tuple position) {
-        super(c, position);
+    public Bishop(WhiteBlack c) {
+        super(c);
         canSprint = true;
         inherentValue = 320;
         symbol = 'B';

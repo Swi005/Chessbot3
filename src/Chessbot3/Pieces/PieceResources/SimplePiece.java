@@ -19,7 +19,7 @@ public abstract class SimplePiece implements iPiece {
     protected Boolean canSprint;
     protected String imageKey;
 
-    public SimplePiece(WhiteBlack c, Tuple position){
+    public SimplePiece(WhiteBlack c){
         //Det eneste som er felles for alle brikker er hvordan fargen blir assignert.
         //Verdi, symbolet, bildet osv er unikt for hver brikketype, og blir fikset i konstruktøren til de andre brikkeklassene.
         this.color = c;

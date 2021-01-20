@@ -292,10 +292,10 @@ public class Gui extends JFrame {
         WhiteBlack color = game.getCurrentBoard().getColorToMove();
         int n = JOptionPane.showOptionDialog(this, "Please pick a piece to promote to.", "Promotion", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, new String[]{"Queen", "Rook", "Knight", "Bishop"}, 0);
-        if(n == 1) return new Rook(color, pos);
-        else if(n == 2) return new Knight(color, pos);
-        else if(n == 3) return new Bishop(color, pos);
-        else return new Queen(color, pos); //Standardverdi.
+        if(n == 1) return new Rook(color);
+        else if(n == 2) return new Knight(color);
+        else if(n == 3) return new Bishop(color);
+        else return new Queen(color); //Standardverdi.
     }
 
     public void openMenu() {

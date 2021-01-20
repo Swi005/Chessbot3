@@ -30,8 +30,6 @@ public class Move implements Comparable
         if (!isAMove(input)) throw new IllegalArgumentException("Could not parse.");
         from = new Tuple<>(chars.indexOf(input.charAt(0)), 7 - nums.indexOf(input.charAt(1)));
         to = new Tuple<>(chars.indexOf(input.charAt(2)), 7 - nums.indexOf(input.charAt(3)));
-        System.out.println(from);
-        System.out.println(to);
     }
 
     public Move(Tuple<Integer, Integer> from , Tuple<Integer, Integer> to, boolean stabIndex, int weight) {

@@ -9,8 +9,8 @@ import static Chessbot3.GuiMain.Chess.imageDict;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Knight extends SimplePiece {
-    public Knight(WhiteBlack c, Tuple position) {
-        super(c, position);
+    public Knight(WhiteBlack c) {
+        super(c);
         canSprint = false;
         inherentValue = 280;
         symbol = 'N';

@@ -8,45 +8,45 @@ import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class PieceFactory 
 {
-    public static iPiece getPiece(char bokstav, Tuple pos) {
+    public static iPiece getPiece(char bokstav) {
         //Tar inn en bokstav, spawner en ny tilsvarende brikke, og returnerer brikken.
         iPiece pie;
         switch(bokstav){
             case 'p':
-                pie = new Pawn(BLACK, pos);
+                pie = new Pawn(BLACK);
                 break;
             case 'P':
-                pie = new Pawn(WHITE, pos);
+                pie = new Pawn(WHITE);
                 break;
             case 'r':
-                pie = new Rook(BLACK, pos);
+                pie = new Rook(BLACK);
                 break;
             case 'R':
-                pie = new Rook(WHITE, pos);
+                pie = new Rook(WHITE);
                 break;
             case 'n':
-                pie = new Knight(BLACK, pos);
+                pie = new Knight(BLACK);
                 break;
             case 'N':
-                pie = new Knight(WHITE, pos);
+                pie = new Knight(WHITE);
                 break;
             case 'b':
-                pie = new Bishop(BLACK, pos);
+                pie = new Bishop(BLACK);
                 break;
             case 'B':
-                pie = new Bishop(WHITE, pos);
+                pie = new Bishop(WHITE);
                 break;
             case 'q':
-                pie = new Queen(BLACK, pos);
+                pie = new Queen(BLACK);
                 break;
             case 'Q':
-                pie = new Queen(WHITE, pos);
+                pie = new Queen(WHITE);
                 break;
             case 'k':
-                pie = new King(BLACK, pos);
+                pie = new King(BLACK);
                 break;
             case 'K':
-                pie = new King(WHITE, pos);
+                pie = new King(WHITE);
                 break;
             case '.':
                 pie = null;

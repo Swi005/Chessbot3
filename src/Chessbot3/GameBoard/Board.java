@@ -13,10 +13,29 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static Chessbot3.GuiMain.Chess.gui;
+import static Chessbot3.MiscResources.Move.isAMove;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.BLACK;
 import static Chessbot3.Pieces.PieceResources.WhiteBlack.WHITE;
 
 public class Board {
+
+    public static void main(String[] args) {
+        Board bård = new Board();
+        Scanner scanner = new Scanner(System.in);
+        while (true){
+            System.out.println(bård);
+            String input = scanner.nextLine();
+            if (input.equals("back")){
+                bård.goBack();
+                continue;
+            }
+            if (!isAMove(input)) continue;
+            Move move = new Move(input);
+            if (!bård.checkMoveLegality(move)) System.out.println("Illegal move!");
+            else bård.movePiece(move);
+        }
+    }
+
 
     private static final char[][] initialBoard = new char[][]{
             new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
@@ -62,7 +81,7 @@ public class Board {
     public Board(){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                grid[y][x] = PieceFactory.getPiece(initialBoard[y][x], new Tuple<>(x, y));
+                grid[y][x] = PieceFactory.getPiece(initialBoard[y][x]);
             }
         }
         moves.push(new Move(new Tuple<>(4, 7), new Tuple<>(4, 6)));    //Defaultmove er Ke2, bare fordi stacken må ha minste ett move for å unngå kræsj i getMoves.
@@ -138,10 +157,11 @@ public class Board {
                 break;
             }
         }
-        if (to.equals(getPassantPos())){
+        if (piece instanceof Pawn && to.equals(getPassantPos())){
             iPiece untouchedTarget = grid[from.getY()][to.getX()];
             if (untouchedTarget == null) throw new NullPointerException("The passantpos is null? " + move + "\n" + this);
             scoreDelta += untouchedTarget.getCombinedValue(new Tuple<>(to.getX(), from.getY()));
+            deaths.push(new DeathLog(counter, untouchedTarget, new Tuple(to.getX(), from.getY())));
             grid[from.getY()][to.getX()] = null;
 
         }
@@ -155,10 +175,10 @@ public class Board {
         if (piece instanceof Pawn && (to.getY() == 0 || to.getY() == 7)){
             iPiece promoted;
             if (isHumanPlayer) promoted = gui.promotePawn(to);
-            else promoted = new Queen(colorToMove, to);
+            else promoted = new Queen(colorToMove);
             grid[to.getY()][to.getX()] = promoted;
 
-            //Når er bonde blir promotert, skriver vi at den 'dør', slik at vi husker at det sto en bonde der når vi flytter tilbkae igjen.
+            //Når er bonde blir promotert, skriver vi at den 'dør', slik at vi husker at det sto en bonde der når vi flytter tilbake igjen.
             deaths.push(new DeathLog(counter, piece, from));
             scoreDelta -= piece.getCombinedValue(to);
             scoreDelta += promoted.getCombinedValue(to);
@@ -217,7 +237,7 @@ public class Board {
     // TODO: 19.01.2021 Denne er litt buggy
     public boolean checkMoveLegality(Move move){
         iPiece pie = grid[move.getFrom().getY()][move.getFrom().getX()];
-        if (pie == null) throw new NullPointerException("The piece is null: " + move + "\n" + this);
+        if (pie == null) return false;
         boolean ret = false;
         for (Move m : pie.getMoves(this, move.getFrom())){
             if (m.equals(move)){        //Jeg skjønner ikke hvorfor, men vi må gjøre dette istedet for å bruke .contains().
@@ -231,7 +251,6 @@ public class Board {
             for (Move counter : getMoves()) {
                 iPiece target = grid[counter.getTo().getY()][counter.getTo().getX()];
                 if (target instanceof King && target.getColor() == color) {
-                    System.out.println("Broooo");
                     goBack();
                     return false;
                 }
@@ -239,10 +258,7 @@ public class Board {
             goBack();
             return true;
         }
-        else{
-            System.out.println("Bruuuuh");
-            return false;
-        }
+        else return false;
     }
 
     public Boolean checkCheckMate(){
@@ -277,25 +293,29 @@ public class Board {
         public DeathLog(int time, iPiece type, Tuple<Integer, Integer> pos){
             this.time = time; this.piece = type; this.pos = pos;
         }
+        public String toString(){ return piece + ", Time: " + time + ", pos: " + pos; }
     }
 
     @Override
     public String toString(){
         //Lager en streng av brettet, og printer score nederst.
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         for(int y=0; y<8; y++){
-            String rekke = "";
+            StringBuilder rekke = new StringBuilder();
             for(int x=0; x<8; x++){
                 iPiece pie = getPiece(x, y);
-                if(pie == null) rekke += ".";
-                else if(pie.isWhite()) rekke += pie.getSymbol();
-                else rekke += Character.toLowerCase(pie.getSymbol());
-                rekke += "";
+                if(pie == null) rekke.append(".");
+                else if(pie.isWhite()) rekke.append(pie.getSymbol());
+                else rekke.append(Character.toLowerCase(pie.getSymbol()));
+                rekke.append("");
             }
-            ret += rekke + "\n";
+            ret.append(rekke).append("\n");
         }
-        ret += "Score: " + getScore();
-        return ret;
+        ret.append("Score: ").append(getScore());
+        ret.append("\nPrevious moves: ").append(moves);
+        ret.append("\nDeaths: ").append(deaths);
+        ret.append("\nTo move: ").append(colorToMove);
+        return ret.toString();
     }
 
     public static WhiteBlack getOppositeColor(WhiteBlack c){
