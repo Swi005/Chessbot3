@@ -4,17 +4,18 @@ import Chessbot3.MiscResources.Move;
 
 public class GameManager
 {
-    Player host;
-    Player client;
-    Player currPlayer = null;
+    private Player host;
+    private Player client;
+    private Player currPlayer = null;
 
-    boolean hostIsWhite;
-    boolean gameInProgress = false;
-    Move lastMove;
+    private boolean hostIsWhite;
+    private boolean gameInProgress = false;
+    private Move lastMove;
 
     public GameManager(Player host, boolean hostIsWhite)
     {
         this.host = host;
+        host.setCurrentGame(this);
         this.hostIsWhite = hostIsWhite;
         if(this.hostIsWhite)
         {
@@ -25,6 +26,7 @@ public class GameManager
     public GameManager(Player host, boolean hostIsWhite, Player client)
     {
         this.host = host;
+        host.setCurrentGame(this);
         this.client = client;
         this.hostIsWhite = hostIsWhite;
         if(this.hostIsWhite)
@@ -33,19 +35,17 @@ public class GameManager
             currPlayer = client;
     }
 
-    public void addClient(Player client) throws Exception {
+    public void addClient(Player client){
         if(!gameInProgress)
         {
-            if(client.getCurrentGame().equals(null))
+            if(client.getCurrentGame() == null)
             {
                 this.client = client;
                 client.setCurrentGame(this);
 
                 if(!hostIsWhite)
                     currPlayer = client;
-            }else
-                throw new Exception("Error this Client is already part of a game");
-
+            }
         }
     }
 
@@ -75,5 +75,13 @@ public class GameManager
             else currPlayer = host;
             lastMove = mv;
         }
+    }
+    public synchronized Player getPlayerOne()
+    {
+        return host;
+    }
+    public synchronized Player getPlayerTwo()
+    {
+        return client;
     }
 }

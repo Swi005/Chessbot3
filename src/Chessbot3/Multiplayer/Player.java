@@ -4,13 +4,15 @@ public class Player
 {
     GameManager currGame = null;
 
-    public Player()
+    private String userName;
+    public Player(String userName)
     {
+        this.userName = userName;
     }
 
     public void setCurrentGame(GameManager game)
     {
-        if(!currGame.equals(null))
+        if(currGame != null)
             this.currGame = game;
     }
 

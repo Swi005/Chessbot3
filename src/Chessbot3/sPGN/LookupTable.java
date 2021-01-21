@@ -32,11 +32,12 @@ public class LookupTable implements Ispgn
         this.opWin = Double.parseDouble(opWin);
         String[] prs = Parser.parseMoves(moves);
         this.moves = new Move[prs.length];
+        Converter cvn = new Converter();
         for (int i = 0; i <prs.length; i++)
         {
-            this.moves[i] = Converter.convertToMove(prs[i]);
+            this.moves[i] = cvn.convertToMove(prs[i]);
         }
-        this.path = "C:\\Users\\Sande\\Documents\\INF101\\Chessbot3\\src\\Chessbot3\\files\\lookuptables" + name+ ".spgn";
+        this.path = "C:\\Users\\Sande\\Documents\\INF101\\Chessbot3\\src\\Chessbot3\\files\\lookuptables\\" + name+ ".spgn";
 
     }
     public LookupTable(String name,String color, String perfRating, String plyrWin, String draw, String opWin, Move[] moves)
@@ -110,7 +111,7 @@ public class LookupTable implements Ispgn
     {
         HashMap<String,Object> map = new HashMap<>();
         map.put("NAME", name);
-        map.put("SCORE", color);
+        map.put("Color", color);
         map.put("PVP", perfRating);
         map.put("PLYRWIN", plyrWin);
         map.put("DRAW", draw);

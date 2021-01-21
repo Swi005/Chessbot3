@@ -12,15 +12,21 @@ import java.util.List;
 
     public class Converter {
 
-        public static Move convertToMove(String str)
+        Board board = new Board();
+        String chars = "abcdefgh";
+        String badstuff = "+#*";
+
+        public Converter()
         {
-            Board board = new Board();
-            String chars = "abcdefgh";
-            String badstuff = "x+#*";
+
+        }
+        public Move convertToMove(String str)
+        {
             boolean extraInfo = false;
             Tuple<Integer, Integer> partialInfo = null;
             char[] temp = str.toCharArray();
             str = "";
+            List<Move> posMoves;
 
             for(int i = 0; i < temp.length; ++i)
             {
@@ -31,7 +37,7 @@ import java.util.List;
                 }
             }
 
-            char fst = str.charAt(0);
+            char fst = str.toCharArray()[0];
             String endofmove = "";
             if (str.equals("O-O")) //Kingside casteling
             {
@@ -52,7 +58,7 @@ import java.util.List;
                 Move mv;
                 if(board.getColorToMove() == WhiteBlack.WHITE)//Check if mover is white
                 {
-                    mv = new Move(new Tuple<Integer, Integer>(4,8), new Tuple<Integer, Integer>(6,8));
+                    mv = new Move(new Tuple<Integer, Integer>(4,7), new Tuple<Integer, Integer>(6,7));
 
                 }
                 else{//Else is black
@@ -63,13 +69,11 @@ import java.util.List;
             }
             else
             {
-                if (str == "Be7") {
-                    System.out.println("test");
-                }
                 if (Character.isUpperCase(fst)) {
                     endofmove = str.substring(1);
                 } else {
                     if (Character.isDigit(fst)) {
+                        System.out.println("Error: The move started with a number instead of a letter");
                         return null;
                     }
 
@@ -77,13 +81,21 @@ import java.util.List;
                     fst = 'P';
                 }
 
+                if(endofmove.contains("x") && endofmove.length()>2)
+                {
+                    endofmove = endofmove.split("[x]")[1];
+                }
                 Tuple endPos;
-                if (endofmove.length() > 2) {
+                if (endofmove.length() > 2)
+                {
+
                     extraInfo = true;
                     if (endofmove.length() == 4) {
                         endPos = new Tuple(chars.indexOf(endofmove.charAt(0)), 8 - chars.indexOf(endofmove.charAt(1)));
                         Tuple<Integer, Integer> end = new Tuple(chars.indexOf(endofmove.charAt(2)), 8 - chars.indexOf(endofmove.charAt(3)));
-                        return new Move(endPos, end);
+                        Move mv =new Move(endPos, end);
+                        board.movePiece(mv);
+                        return mv;
                     }
 
                     if (endofmove.length() == 3) {
@@ -98,12 +110,12 @@ import java.util.List;
                 }
 
                 endPos = new Tuple(chars.indexOf(endofmove.charAt(0)), 8 - Integer.parseInt(endofmove.substring(1)));
-                List<Move> posMoves = board.genCompletelyLegalMoves(board.getColorToMove());
+                posMoves = board.genCompletelyLegalMoves(board.getColorToMove());
                 posMoves = pruneMoves(posMoves, endPos);
 
                 for (Move m: posMoves)
                 {
-                    //Check that its the correct pice
+                    //Check that its the correct piece
                     if(fst == Character.toUpperCase(board.getPiece((Integer) m.getX().getX(), (Integer) m.getX().getY()).getSymbol()))
                     {
                         if (extraInfo && (Integer) partialInfo.getX() == -1)//Check if extra id info exists
@@ -134,15 +146,14 @@ import java.util.List;
 
         static List<Move> pruneMoves(List<Move> list, Tuple<Integer, Integer> endPos) {
             List<Move> retList = new ArrayList();
-            Iterator var3 = list.iterator();
 
-            while(var3.hasNext()) {
-                Move m = (Move)var3.next();
-                if (m.getY().equals(endPos)) {
-                    retList.add(m);
+            for (Move mv :list)
+            {
+                if(mv.getY().equals(endPos))
+                {
+                    retList.add(mv);
                 }
             }
-
             return retList;
         }
 
@@ -150,16 +161,16 @@ import java.util.List;
             String[] var1 = Parser.parseMoves(new File("C:\\Users\\Sande\\Documents\\INF101\\Chessbot3\\src\\Chessbot3\\files\\test.pgn"));
             int var2 = var1.length;
 
+            Converter cvn = new Converter();
             for(int var3 = 0; var3 < var2; ++var3) {
                 String s = var1[var3];
-                Move move = convertToMove(s);
+                Move move = cvn.convertToMove(s);
                 if (move != null) {
                     System.out.println(move.toAlgebraicNotation());
                 } else {
                     System.out.println("oh-oh- something went wrong!");
                 }
             }
-
         }
     }
 

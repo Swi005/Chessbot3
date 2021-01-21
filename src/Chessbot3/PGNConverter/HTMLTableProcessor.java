@@ -72,7 +72,14 @@ public class HTMLTableProcessor
         spgnIO io = new spgnIO();
         LookupTable[] xs = processFile(file);
         for (LookupTable table:xs) {
-            io.WriteSPGNtoFile(table, new File(table.GetPathToFile()));
+            try
+            {
+                io.WriteSPGNtoFile(table, new File(table.GetPathToFile()));
+            }
+            catch(NullPointerException e)
+            {
+                System.out.println("WARNING: An error occured when trying to parse " + table.GetName());
+            }
         }
     }
 }
