@@ -89,6 +89,12 @@ public class Board {
         castles.push(new boolean[] {true, true, true, true});                     //Til å begynne med kan begge rokere begge veier.
     }
 
+    //Board for custom games.
+    public Board(iPiece[][] grid){
+        this();
+        this.grid = grid;
+    }
+
     public Board(int counter, WhiteBlack colorToMove, iPiece[][] grid, Stack<Move> moves,
                  Stack<Integer> scores, Stack<DeathLog> deaths, Stack<boolean[]> castles){
         this.counter = counter;
@@ -234,7 +240,6 @@ public class Board {
         return getMoves().stream().filter(this::checkMoveLegality).collect(Collectors.toList());
     }
 
-    // TODO: 19.01.2021 Denne er litt buggy
     public boolean checkMoveLegality(Move move){
         iPiece pie = grid[move.getFrom().getY()][move.getFrom().getX()];
         if (pie == null) return false;
@@ -261,8 +266,22 @@ public class Board {
         else return false;
     }
 
+    /**
+     * Sjekker om spillet er over eller ikke.
+     * Her brukes 3-verdi-logikk, siden vi har 3 forskjellige utfall.
+     *
+     * @return true om noen har vunnet.
+     * @return false om spillet fortsatt pågår
+     * @return null om det ble patt / remis / uavgjort.
+     */
     public Boolean checkCheckMate(){
-        return false; // TODO: 19.01.2021
+        List<Move> legals = getLegalMoves();
+        if (legals.size() != 0) return false;   //Sjekker om det finnes lovlige trekk.
+        for (Move move : getMoves(getOppositeColor(colorToMove))){
+            iPiece target = getPiece(move.getTo().getX(), move.getTo().getY());
+            if (target instanceof King && target.getColor() == colorToMove) return true;    //Om siden som ikke skal flytte truer kongen. Da er det sjakk matt.
+        }
+        return null; //Om det ikke finnes lovlige trekk, og det heller ikke finnes noen trusler mot kongen, er det sjakk patt / remis / uavgjort.
     }
 
     public ArrayList<iPiece> getPieceList(WhiteBlack color){

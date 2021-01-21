@@ -58,7 +58,7 @@ public abstract class SimplePiece implements iPiece {
 
     @Override
     public boolean equals(Object obj){
-        return this.getClass() == obj.getClass() && (this.getColor() == ((SimplePiece) obj).getColor());
+        return this.getClass().equals(obj.getClass()) && (this.getColor().equals(((SimplePiece) obj).getColor()));
     }
 
     @Override
