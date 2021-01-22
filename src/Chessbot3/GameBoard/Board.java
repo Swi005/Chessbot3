@@ -8,6 +8,7 @@ import Chessbot3.Pieces.PieceResources.iPiece;
 import Chessbot3.Pieces.Types.King;
 import Chessbot3.Pieces.Types.Pawn;
 import Chessbot3.Pieces.Types.Queen;
+import Chessbot3.Simulators.AlphaBota;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -121,7 +122,7 @@ public class Board {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 iPiece pie = grid[y][x];
-                if (pie != null && pie.getColor() == colorToMove) ret.addAll(pie.getMoves(this, new Tuple<>(x, y)));
+                if (pie != null && pie.getColor() == color) ret.addAll(pie.getMoves(this, new Tuple<>(x, y)));
             }
         }
         return ret;
@@ -155,12 +156,14 @@ public class Board {
             deaths.push(new DeathLog(counter, target, to));
         }
 
-        for (Tuple<Move, Move> tup : castleMoves){
-            if (move.equals(tup.getX())){
-                grid[tup.getY().getTo().getY()][tup.getY().getTo().getX()] = grid[tup.getY().getFrom().getY()][tup.getY().getFrom().getX()];
-                grid[tup.getY().getFrom().getY()][tup.getY().getFrom().getX()] = null;
-                scoreDelta += 25;     //Bonuspoeng for å rokere.
-                break;
+        if (piece instanceof King){
+            for (Tuple<Move, Move> tup : castleMoves){
+                if (move.equals(tup.getX())){
+                    grid[tup.getY().getTo().getY()][tup.getY().getTo().getX()] = grid[tup.getY().getFrom().getY()][tup.getY().getFrom().getX()];
+                    grid[tup.getY().getFrom().getY()][tup.getY().getFrom().getX()] = null;
+                    scoreDelta += 25;     //Bonuspoeng for å rokere.
+                    break;
+                }
             }
         }
         if (piece instanceof Pawn && to.equals(getPassantPos())){
@@ -196,10 +199,10 @@ public class Board {
         colorToMove = getOppositeColor(colorToMove);
         moves.push(move);
         boolean[] prevCastle = castles.peek();
-        castles.push(new boolean[]{prevCastle[0] && !from.equals(A1) && !to.equals(A1) && !from.equals(E1),
-                                   prevCastle[1] && !from.equals(H1) && !to.equals(H1) && !from.equals(E1),
-                                   prevCastle[2] && !from.equals(A8) && !to.equals(A8) && !from.equals(E8),
-                                   prevCastle[3] && !from.equals(H8) && !to.equals(H8) && !from.equals(E8)});
+        castles.push(new boolean[]{prevCastle[0] && !from.equals(A1) && !to.equals(A1) && !from.equals(E1) && !to.equals(E1),
+                                   prevCastle[1] && !from.equals(H1) && !to.equals(H1) && !from.equals(E1) && !to.equals(E1),
+                                   prevCastle[2] && !from.equals(A8) && !to.equals(A8) && !from.equals(E8) && !to.equals(E8),
+                                   prevCastle[3] && !from.equals(H8) && !to.equals(H8) && !from.equals(E8) && !to.equals(E8)});
     }
 
     public void goBack(){
@@ -242,7 +245,7 @@ public class Board {
 
     public boolean checkMoveLegality(Move move){
         iPiece pie = grid[move.getFrom().getY()][move.getFrom().getX()];
-        if (pie == null) return false;
+        if (pie == null || pie.getColor() != colorToMove) return false;
         boolean ret = false;
         for (Move m : pie.getMoves(this, move.getFrom())){
             if (m.equals(move)){        //Jeg skjønner ikke hvorfor, men vi må gjøre dette istedet for å bruke .contains().
@@ -279,12 +282,12 @@ public class Board {
         if (legals.size() != 0) return false;   //Sjekker om det finnes lovlige trekk.
         for (Move move : getMoves(getOppositeColor(colorToMove))){
             iPiece target = getPiece(move.getTo().getX(), move.getTo().getY());
-            if (target instanceof King && target.getColor() == colorToMove) return true;    //Om siden som ikke skal flytte truer kongen. Da er det sjakk matt.
+            if (target instanceof King && target.getColor().equals(colorToMove)) return true;    //Om siden som ikke skal flytte truer kongen. Da er det sjakk matt.
         }
         return null; //Om det ikke finnes lovlige trekk, og det heller ikke finnes noen trusler mot kongen, er det sjakk patt / remis / uavgjort.
     }
 
-    public ArrayList<iPiece> getPieceList(WhiteBlack color){
+    public ArrayList getPieceList(WhiteBlack color){
         ArrayList ret = new ArrayList();
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
@@ -326,7 +329,6 @@ public class Board {
                 if(pie == null) rekke.append(".");
                 else if(pie.isWhite()) rekke.append(pie.getSymbol());
                 else rekke.append(Character.toLowerCase(pie.getSymbol()));
-                rekke.append("");
             }
             ret.append(rekke).append("\n");
         }
@@ -338,7 +340,7 @@ public class Board {
     }
 
     public static WhiteBlack getOppositeColor(WhiteBlack c){
-        if (c == WHITE) return BLACK;
+        if (c.equals(WHITE)) return BLACK;
         else return WHITE;
     }
 

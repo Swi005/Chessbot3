@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 import static Chessbot3.GuiMain.Chess.gui;
 import static Chessbot3.GuiMain.Gui.*;
@@ -118,6 +119,7 @@ public class Action extends KeyAdapter implements ActionListener {
         else if(usertext.equals("stop")) game.stop = true;
         else if(usertext.equals("gamemode")) gui.chooseGamemode();
         else if(usertext.equals("value")) game.testGetValue();
+        else if(usertext.equals("castle")) System.out.println(Arrays.toString(game.getCurrentBoard().getCastle()));
         /*else if(usertext.equals("check")) System.out.println(game.getCurrentBoard().checkCheckMate());
         else if(usertext.equals("positions")) game.getCurrentBoard().printPiecePosition();
         else if(usertext.equals("scores")) game.getCurrentBoard().printScores();

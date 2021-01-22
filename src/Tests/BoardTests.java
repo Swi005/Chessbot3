@@ -180,9 +180,45 @@ public class BoardTests {
         bård.goBack();
     }
 
+    /** Denne funksjonen prøver å rokere, flytter vekk en brikke, prøver igjen, osv. */
     @Test
     void blockingPiecesPreventsCastling(){
-        // TODO: 21.01.2021  
+        assertFalse(bård.checkMoveLegality(new Move("e1g1")));
+        bård.movePiece(new Move("f1e2"));
+        assertFalse(bård.checkMoveLegality(new Move("e1g1")));
+        bård.movePiece(new Move("g1f3"));
+        assertTrue(bård.checkMoveLegality(new Move("e1g1")));
+
+        bård.movePiece(new Move("e1g1"));
+        assertFalse(bård.checkMoveLegality(new Move("e1g1")));
+        bård.goBack();
+        assertTrue(bård.checkMoveLegality(new Move("e1g1")));
+        bård.goBack();
+        bård.goBack();
+
+
+        assertFalse(bård.checkMoveLegality(new Move("e1c1")));
+        bård.movePiece(new Move("b1c3"));
+        assertFalse(bård.checkMoveLegality(new Move("e1c1")));
+        bård.movePiece(new Move("c1d2"));
+        assertFalse(bård.checkMoveLegality(new Move("e1c1")));
+        bård.movePiece(new Move("d1d2"));
+        bård.movePiece(new Move("e8e7"));
+        assertTrue(bård.checkMoveLegality(new Move("e1c1")));
+
+        bård.movePiece(new Move("e1c1"));
+        assertFalse(bård.checkMoveLegality(new Move("e1c1")));
+        assertNull(bård.getPiece(0, 7));
+        assertNull(bård.getPiece(4, 7));
+        assertEquals(new Rook(WHITE), bård.getPiece(3, 7));
+        assertEquals(new King(WHITE), bård.getPiece(2, 7));
+
+        bård.goBack();
+        assertTrue(bård.checkMoveLegality(new Move("e1c1")));
+        assertNotNull(bård.getPiece(0, 7));
+        assertNotNull(bård.getPiece(4, 7));
+        assertNull(bård.getPiece(3, 7));
+        assertNull(bård.getPiece(2, 7));
     }
 
     @Test
@@ -191,7 +227,7 @@ public class BoardTests {
         assertFalse(bård.checkCheckMate());
         bård.movePiece(new Move("e7e5"));
         assertFalse(bård.checkCheckMate());
-        bård.movePiece(new Move("g2g4")); //Ikke spill sånn i et reellt parti
+        bård.movePiece(new Move("g2g4")); //Ikke spill slik i et reellt parti
         assertFalse(bård.checkCheckMate());
         bård.movePiece(new Move("d8h4"));
         assertTrue(bård.checkCheckMate());

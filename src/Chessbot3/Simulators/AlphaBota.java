@@ -4,6 +4,7 @@ import Chessbot3.GameBoard.Board;
 import Chessbot3.GuiMain.Gui;
 import Chessbot3.MiscResources.Move;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,10 +47,8 @@ public class AlphaBota implements iBot{
                 bård.movePiece(move);
                 int value = alphaBeta(bård, depth-1, -2147483648, 2147483647, false);
                 move.setWeight(value);
-                System.out.println(move + ": " + value);
                 bård.goBack();
             }
-            System.out.println();
             Collections.sort(possibles, Collections.reverseOrder());
         }
         else{
@@ -61,10 +60,8 @@ public class AlphaBota implements iBot{
                 bård.movePiece(move);
                 int value = alphaBeta(bård, depth-1, -2147483648, 2147483647, true);
                 move.setWeight(value);
-                System.out.println(move + ": " + value);
                 bård.goBack();
             }
-            System.out.println();
             Collections.sort(possibles);
         }
         //System.out.println("Unike brett etter " + depth + " trekk: " + uniqueBoards.size());
