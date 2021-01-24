@@ -17,7 +17,7 @@ public class LookupTableController //Give it an interface maybe?
 {
     private List<Ispgn> openingTables;
     private List<Move> movesMade;
-    int turnIndex = movesMade.size();
+    int turnIndex = movesMade.size()-1;
     private final spgnIO io = new spgnIO();
     private final String pathToTables = "";//TODO: Assign path
 
@@ -83,7 +83,7 @@ public class LookupTableController //Give it an interface maybe?
         if(openingTables.size() == 0)
             return null; //If no strats are available, return null
         Ispgn strat = openingTables.get(rnd.nextInt(openingTables.size()));//Chose a random available strat
-        return strat.GetAllMoves()[turnIndex-1];//Return the move
+        return strat.GetAllMoves()[turnIndex];//Return the move
     }
 
 
