@@ -5,6 +5,7 @@ public class Player
     GameManager currGame = null;
 
     private String userName;
+
     public Player(String userName)
     {
         this.userName = userName;
@@ -19,5 +20,9 @@ public class Player
     public GameManager getCurrentGame()
     {
         return currGame;
+    }
+    public String getUserName()
+    {
+        return userName;
     }
 }
